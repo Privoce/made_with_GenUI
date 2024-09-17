@@ -1,4 +1,6 @@
-use gen_components::components::{button::GButtonWidgetRefExt, input::GInputWidgetRefExt};
+use gen_components::components::{
+    button::GButtonWidgetRefExt, file_upload::GUploadWidgetRefExt, input::GInputWidgetRefExt,
+};
 use makepad_widgets::*;
 
 use crate::{
@@ -155,7 +157,7 @@ impl MatchEvent for App {
             });
         ginput.set_text_and_redraw(cx, self.state.msg.as_str());
         // then ls the bucket
-        dbg!("ls result");
+        // dbg!("ls result");
         match ls(&self.state.bucket) {
             Ok(res) => {
                 let main_view = self.root.main_view(id!(main_view));

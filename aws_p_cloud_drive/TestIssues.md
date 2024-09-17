@@ -2,4 +2,5 @@
 
 - GInput: 缺少read_only模式
 - GTable need to be virtual table!!!
+- GUpload 需要可以发送文件夹地址
 - FFI和unity 嵌入其他语言UI框架或opengl嵌入界面

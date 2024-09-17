@@ -1,12 +1,15 @@
 use gen_components::components::{
-    card::GCard, label::GLabelWidgetExt, tab::body::GTabBodyWidgetExt, table::{
-        body::GTableBodyWidgetExt, cell::GTableCellWidgetRefExt, row::{GTableRowRef, GTableRowWidgetRefExt}, virt::GVTableBodyWidgetExt, GTableWidgetExt
-    }
+    card::GCard,
+    file_upload::{event::GFileUploadEvent, GUploadWidgetExt},
+    label::GLabelWidgetExt,
+    table::{
+        row::{GTableRowRef, GTableRowWidgetRefExt},
+        GTableWidgetExt,
+    },
 };
 use makepad_widgets::*;
-use splitter::SplitterWidgetExt;
 
-use crate::{aws_structs::LsResult, commands::ls};
+use crate::aws_structs::LsResult;
 
 live_design! {
     import makepad_widgets::base::*;
@@ -41,16 +44,13 @@ live_design! {
             align: FromB(200),
             b: <GVLayout>{
                 align: {x: 0.5, y: 0.5},
-                vv = <GVTBody>{
-
-                }
                 <GCard>{
                     theme: Dark,
                     height: 100.0,
                     width: 300.0,
                     flow: Down,
                     align: {x: 0.5, y: 0.5},
-                    <GUpload>{
+                    upload = <GUpload>{
                         icon: {
                             theme: Warning
                         }
@@ -96,7 +96,8 @@ live_design! {
                        visible: false,
                     }
                     ls_table = <GTable>{
-                        height: 100.0,
+                        mode: Virtual,
+                        height: Fit,
                         width: Fill,
                         header: {
                             height: Fit,
@@ -124,53 +125,7 @@ live_design! {
                                 }
                             }
                         }
-                        // body: {
-                        //     height: Fit,
-                            // <GTRow>{
-                            //     height: 32.0,
-                            //     width: Fill,
-                            //     <GTCell>{
-                            //         height: Fill,
-                            //         width: 300.0,
-                            //         align: {x: 0.1, y: 0.5},
-                            //         <GLabel>{
-                            //             color: #E36640,
-                            //             text: "-",
-                            //         }
-                            //     }
-                            //     <GTCell>{
-                            //         height: Fill,
-                            //         width: Fill,
-                            //         align: {x: 0.1, y: 0.5},
-                            //         region_str = <GLabel>{
-                            //             color: #1C2128,
-                            //             text: "-",
-                            //         }
-                            //     }
-                            // }
-                            // <GTRow>{
-                            //     height: 32.0,
-                            //     width: Fill,
-                            //     <GTCell>{
-                            //         height: Fill,
-                            //         width: 300.0,
-                            //         align: {x: 0.1, y: 0.5},
-                            //         <GLabel>{
-                            //             color: #E36640,
-                            //             text: "-",
-                            //         }
-                            //     }
-                            //     <GTCell>{
-                            //         height: Fill,
-                            //         width: Fill,
-                            //         align: {x: 0.1, y: 0.5},
-                            //         region_str = <GLabel>{
-                            //             color: #1C2128,
-                            //             text: "-",
-                            //         }
-                            //     }
-                            // }
-                        // }
+
                     }
                 }
             }
@@ -217,14 +172,11 @@ impl MainView {
                         }
                     });
                 }
-                table.body.children = self.ls_children.clone();
+                table.body_virtual.children = self.ls_children.clone();
+                table.body_virtual.walk.height = Size::Fit;
             });
             self.ls_tables = ls_tables;
-            self.gvtable_body(id!(vv)).borrow_mut().map(|mut x| {
-                x.children = self.ls_children.clone();
-            });
         });
-
     }
 }
 
@@ -233,6 +185,15 @@ impl Widget for MainView {
         self.super_widget.draw_walk(cx, scope, walk)
     }
     fn handle_event(&mut self, cx: &mut Cx, event: &Event, scope: &mut Scope) {
-        self.super_widget.handle_event(cx, event, scope)
+        let actions = cx.capture_actions(|cx| self.super_widget.handle_event(cx, event, scope));
+
+        self.gupload(id!(upload)).borrow_mut().map(|x| {
+            // x.handle_after_select(&actions).map(|x|{
+            //     dbg!("selected", x);
+            // });
+            if let Some(selected) = x.after_select(&actions){
+                dbg!("selected", selected);
+            }
+        });
     }
 }
