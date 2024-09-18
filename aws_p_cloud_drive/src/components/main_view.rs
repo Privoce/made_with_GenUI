@@ -51,6 +51,7 @@ live_design! {
                     flow: Down,
                     align: {x: 0.5, y: 0.5},
                     upload = <GUpload>{
+                        mode: Folder,
                         icon: {
                             theme: Warning
                         }

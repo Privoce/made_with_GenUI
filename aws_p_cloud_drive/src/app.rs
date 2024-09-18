@@ -1,6 +1,4 @@
-use gen_components::components::{
-    button::GButtonWidgetRefExt, file_upload::GUploadWidgetRefExt, input::GInputWidgetRefExt,
-};
+use gen_components::components::{button::GButtonWidgetRefExt, input::GInputWidgetRefExt};
 use makepad_widgets::*;
 
 use crate::{
@@ -113,6 +111,7 @@ live_design! {
                             border_radius: 0.0,
                             width: Fill,
                             text: "This is Message Output",
+                            read_only: true,
                         }
                     }
                 }
