@@ -18,8 +18,8 @@ live_design! {
             spacing: 6.0,
             align: {x: 0.5, y: 0.5},
             <GImage>{
-                height: 20.0,
-                width: 28.0,
+                height: 24.0,
+                width: 32.0,
                 src: dep("crate://self/resources/aws.png"),
             }
             <GLabel>{

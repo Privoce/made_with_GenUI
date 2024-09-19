@@ -1,6 +1,6 @@
 use std::process::Command;
 
-use crate::aws_structs::LsResult;
+use super::LsResult;
 
 pub fn ls(bucket: &str) -> Result<Vec<LsResult>, String>{
     let command = Command::new("aws").arg(bucket).arg("ls").output();

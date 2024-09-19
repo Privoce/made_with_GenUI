@@ -30,15 +30,16 @@ impl Default for State {
 }
 
 impl State {
-    pub fn check_toolkit(&mut self) {
+    pub fn check_toolkit(&mut self) -> bool{
         let command = Command::new("aws").arg("--version").output();
         match command {
             Ok(msg) => {
                 self.check = true;
                 self.msg = format!(
-                    "Success: {:?}",
+                    "Success: \n{:?}",
                     String::from_utf8_lossy(msg.stdout.as_slice())
                 );
+                return true;
                 // the msg is json, so use serde_json to parse it
                 // dbg!(&msg);
                 // let msg_str: Value = serde_json::from_str(&msg).unwrap();
@@ -51,7 +52,8 @@ impl State {
             }
             Err(e) => {
                 self.check = false;
-                self.msg = format!("Error: {:?}\n{}", e, "Please install aws cli toolkit first! Download from https://aws.amazon.com/cli/");
+                self.msg = format!("Error: \n{:?}\n{}", e, "Please install aws cli toolkit first! Download from https://aws.amazon.com/cli/");
+                return false;
             }
         }
     }

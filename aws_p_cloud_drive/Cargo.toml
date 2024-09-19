@@ -8,3 +8,4 @@ makepad-widgets = { path = "E:/Rust/try/makepad/makepad/rik/makepad/widgets", ve
 gen_components = { path = "E:/Rust/try/makepad/Gen-UI/gen/components" }
 serde_json = "1.0.128"
 dirs-next = "2.0.0"
+lazy_static = "1.5.0"
