@@ -1,4 +1,9 @@
-use gen_components::components::{button::GButtonWidgetExt, card::GCard, label::GLabelWidgetExt};
+use gen_components::components::{
+    button::GButtonWidgetExt,
+    card::{GCard, GCardWidgetExt},
+    input::GInputWidgetExt,
+    label::GLabelWidgetExt,
+};
 use makepad_widgets::*;
 
 use crate::utils::APP_STATE;
@@ -52,7 +57,7 @@ live_design! {
                     font_size: 10.0,
                     text: "AWS Access Key ID:",
                 }
-                <GInput>{
+                accsee_key_input = <GInput>{
                     theme: Dark,
                     height: 32.0,
                     width: Fill,
@@ -69,12 +74,41 @@ live_design! {
                     font_size: 10.0,
                     text: "AWS Access Secret:",
                 }
-                <GInput>{
+                secret_key_input = <GInput>{
                     theme: Dark,
                     height: 32.0,
                     width: Fill,
                     placeholder: "Please input your secret key",
                 }
+            }
+            <GVLayout>{
+                height: Fit,
+                spacing: 8.0,
+                align: {x: 0.0, y: 0.5},
+                padding: 16.0,
+                <GLabel>{
+                    font_family: (BOLD_FONT),
+                    font_size: 10.0,
+                    text: "Region:",
+                }
+                accsee_key_input = <GInput>{
+                    theme: Dark,
+                    height: 32.0,
+                    width: Fill,
+                    placeholder: "Please input your access key",
+                }
+            }
+            <GVLayout>{
+                height: Fit,
+                spacing: 8.0,
+                align: {x: 0.0, y: 0.5},
+                padding: 16.0,
+                <GLabel>{
+                    font_family: (BOLD_FONT),
+                    font_size: 10.0,
+                    text: "Output Format:",
+                }
+                
             }
             res_str = <GLabel>{
                 color: #FF7043,
@@ -89,26 +123,24 @@ live_design! {
                 spacing: 16.0,
                 align: {x: 0.5, y: 0.5},
                 margin: {top: 24.0},
-                download_btn = <GButton>{
-                    visible: false
-                    theme: Dark,
-                    width: 260.0,
-                    slot: <GHLayout>{
-                        height: Fit,
-                        width: Fit,
-                        spacing: 6.0,
-                        align: {x: 0.5, y: 0.5},
-                        <GIcon>{
-                            height: 14.0,
-                            width: 16.0,
-                            icon_type: Download,
-                            theme: Dark,
-                        }
-                        <GLabel>{
-                            font_family: (BOLD_FONT),
-                            font_size: 9.0,
-                            text: "Download!",
-                        }
+                download_btn = <GHLayout>{
+                    visible: false,
+                    height: Fit,
+                    width: Fit,
+                    spacing: 6.0,
+                    align: {x: 0.5, y: 0.5},
+                    <GIcon>{
+                        height: 14.0,
+                        width: 16.0,
+                        icon_type: Download,
+                        theme: Dark,
+                    }
+                    <GLink>{
+                        theme: Error,
+                        font_family: (BOLD_FONT),
+                        font_size: 9.0,
+                        text: "Download!",
+                        href: "https://aws.amazon.com/cli/"
                     }
                 }
                 auto_connect = <GButton>{
@@ -164,15 +196,46 @@ impl Widget for SiginPage {
             // get state and call
             let mut state = APP_STATE.lock().unwrap();
             // check if the toolkit is available
-            if state.check_toolkit() {
-                self.glabel(id!(res_str))
-                    .set_text_and_redraw(cx, &state.msg);
-                let _ = self.gbutton(id!(download_btn)).borrow_mut().map(|mut x| {
+            if !state.check_toolkit() {
+                let _ = self.gcard(id!(download_btn)).borrow_mut().map(|mut x| {
                     x.visible = true;
-                    x.redraw(cx);
                 });
+                self.redraw(cx);
             }
+            self.glabel(id!(res_str))
+                .set_text_and_redraw(cx, &state.msg);
+
+            if state.check {
+                state.msg.clear();
+                // check config and credentials
+                let _ = state.check_config_credentials();
+                if state.login {
+                    self.ginput(id!(accsee_key_input))
+                        .borrow_mut()
+                        .map(|mut x| {
+                            x.text = state.accsee_key.to_string();
+                        });
+                    self.ginput(id!(secret_key_input))
+                        .borrow_mut()
+                        .map(|mut x| {
+                            x.text = state.secret_key.to_string();
+                        });
+                    // todo nav to main page
+                }
+            }
+            self.glabel(id!(res_str))
+                .set_text_and_redraw(cx, &state.msg);
+        }
+
+        if self.gbutton(id!(try_connect)).clicked(&actions).is_some() {
+            let mut state = APP_STATE.lock().unwrap();
+            self.ginput(id!(accsee_key_input)).borrow().map(|x| {
+                state.accsee_key = x.text.to_string();
+            });
+            self.ginput(id!(secret_key_input)).borrow().map(|x| {
+                state.secret_key = x.text.to_string();
+            });
+            state.sso_login();
         }
     }
 }
-

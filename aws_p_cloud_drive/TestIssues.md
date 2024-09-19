@@ -5,3 +5,6 @@
 - GUpload 需要可以发送文件夹地址 ✅
 
 - GDropDown 会阻碍事件冒泡
+- GLink重新构建，目标为GButton
+- 缺少selector
+- 缺少radio_wrapper

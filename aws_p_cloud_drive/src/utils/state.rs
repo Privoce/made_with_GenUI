@@ -61,7 +61,7 @@ impl State {
         // find aws config and credentials file
         // here we should special os system to find the root file (use dirs_next crate)
         if let Some(home) = dirs_next::home_dir() {
-            self.msg.push_str("Success: Found home directory!");
+            self.msg.push_str("Success: Found home directory!\n");
             let config_path = home.join(".aws").join("config");
             let credentials_path = home.join(".aws").join("credentials");
             self.read_config_credentials(config_path, credentials_path);
@@ -111,6 +111,26 @@ impl State {
             self.login = false;
             self.msg
                 .push_str(format!("Error: Not found aws config and credentials file!").as_str());
+        }
+    }
+
+    pub fn sso_login(&mut self) -> bool{
+        let command = Command::new("aws").args(["sso", "login", "--profile", "my-dev-profile"]).output();
+        self.msg.clear();
+        match command{
+            Ok(res) => {
+                if res.status.success(){
+                    self.msg = String::from_utf8_lossy(&res.stdout.as_slice()).to_string();
+                    return true;
+                }else{
+                    self.msg = String::from_utf8_lossy(&res.stderr.as_slice()).to_string();
+                    return false;
+                }
+            },
+            Err(e) => {
+                self.msg = e.to_string();
+                return false;
+            },
         }
     }
 }
