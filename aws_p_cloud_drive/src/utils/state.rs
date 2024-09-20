@@ -26,11 +26,10 @@ impl Default for State {
             bucket: "s3".to_string(),
         }
     }
-    
 }
 
 impl State {
-    pub fn check_toolkit(&mut self) -> bool{
+    pub fn check_toolkit(&mut self) -> bool {
         let command = Command::new("aws").arg("--version").output();
         match command {
             Ok(msg) => {
@@ -68,6 +67,37 @@ impl State {
         } else {
             self.msg.push_str("Error: Not found home directory!");
         }
+    }
+    pub fn get_confih_credentials(&mut self) {
+        let mut cmd_call = |target: &str| -> Option<String> {
+            match Command::new("aws")
+                .args(["configure", "get", target])
+                .output()
+            {
+                Ok(out) => {
+                    if out.status.success() {
+                        return Some(String::from_utf8_lossy(out.stdout.as_slice()).to_string());
+                    } else {
+                        self.msg = String::from_utf8_lossy(&out.stderr.as_slice()).to_string();
+                    }
+                }
+                Err(e) => self.msg = e.to_string(),
+            }
+            return None;
+        };
+
+        cmd_call("region").map(|res| {
+            self.region = res;
+        });
+        cmd_call("output").map(|res| {
+            self.output = res;
+        });
+        cmd_call("aws_access_key_id").map(|res| {
+            self.accsee_key = res;
+        });
+        cmd_call("aws_secret_access_key").map(|res| {
+            self.secret_key = res;
+        });
     }
     pub fn read_config_credentials<P>(&mut self, config_path: P, credentials_path: P)
     where
@@ -114,23 +144,59 @@ impl State {
         }
     }
 
-    pub fn sso_login(&mut self) -> bool{
-        let command = Command::new("aws").args(["sso", "login", "--profile", "my-dev-profile"]).output();
+    pub fn sso_login(&mut self) -> bool {
+        let command = Command::new("aws")
+            .args(["sso", "login", "--profile", "my-dev-profile"])
+            .output();
         self.msg.clear();
-        match command{
+        match command {
             Ok(res) => {
-                if res.status.success(){
+                if res.status.success() {
                     self.msg = String::from_utf8_lossy(&res.stdout.as_slice()).to_string();
                     return true;
-                }else{
+                } else {
                     self.msg = String::from_utf8_lossy(&res.stderr.as_slice()).to_string();
                     return false;
                 }
-            },
+            }
             Err(e) => {
                 self.msg = e.to_string();
                 return false;
-            },
+            }
         }
+    }
+    pub fn set_config_all(&mut self) -> bool {
+        let mut cmd_call = |target: &str, replace: &str| -> bool {
+            match Command::new("aws")
+                .args(["configure", "set", target, replace])
+                .output()
+            {
+                Ok(out) => {
+                    if out.status.success() {
+                        return true;
+                    } else {
+                        self.msg = String::from_utf8_lossy(&out.stderr.as_slice()).to_string();
+                    }
+                }
+                Err(e) => self.msg = e.to_string(),
+            }
+            return false;
+        };
+
+        let mut flag = true;
+        if !cmd_call("region", &self.region) {
+            flag = false;
+        }
+        if !cmd_call("output", &self.output) {
+            flag = false;
+        }
+        if !cmd_call("aws_access_key_id", &self.accsee_key) {
+            flag = false;
+        }
+        if !cmd_call("aws_secret_access_key", &self.secret_key) {
+            flag = false;
+        }
+
+        flag
     }
 }

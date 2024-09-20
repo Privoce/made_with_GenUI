@@ -1,12 +1,12 @@
 use gen_components::components::{
-    button::GButtonWidgetExt,
+    button::{event::GButtonEvent, GButtonWidgetExt},
     card::{GCard, GCardWidgetExt},
     input::GInputWidgetExt,
     label::GLabelWidgetExt,
 };
 use makepad_widgets::*;
 
-use crate::utils::APP_STATE;
+use crate::utils::{ls, APP_STATE};
 
 live_design! {
     import makepad_widgets::base::*;
@@ -25,7 +25,7 @@ live_design! {
             x: 0.5,
             y: 0.0
         },
-        spacing: 18.0,
+        spacing: 16.0,
         <GVLayout>{
             height: 260.0,
             background_visible: true,
@@ -40,18 +40,18 @@ live_design! {
         <GVLayout>{
             width: Fill,
             align: {x: 0.5, y: 0.0},
-            spacing: 8.0,
+            spacing: 12.0,
             <GLabel>{
                 font_family: (BOLD_FONT2),
                 font_size: 20.0,
                 text: "Connect And Config"
-                margin: {bottom: 64.0},
+                margin: {bottom: 32.0},
             }
             <GVLayout>{
                 height: Fit,
-                spacing: 8.0,
+                spacing: 4.0,
                 align: {x: 0.0, y: 0.5},
-                padding: 16.0,
+                padding: {left: 16.0, right: 16.0},
                 <GLabel>{
                     font_family: (BOLD_FONT),
                     font_size: 10.0,
@@ -66,9 +66,9 @@ live_design! {
             }
             <GVLayout>{
                 height: Fit,
-                spacing: 8.0,
+                spacing: 4.0,
                 align: {x: 0.0, y: 0.5},
-                padding: 16.0,
+                padding: {left: 16.0, right: 16.0},
                 <GLabel>{
                     font_family: (BOLD_FONT),
                     font_size: 10.0,
@@ -83,9 +83,9 @@ live_design! {
             }
             <GVLayout>{
                 height: Fit,
-                spacing: 8.0,
+                spacing: 4.0,
                 align: {x: 0.0, y: 0.5},
-                padding: 16.0,
+                padding: {left: 16.0, right: 16.0},
                 <GLabel>{
                     font_family: (BOLD_FONT),
                     font_size: 10.0,
@@ -100,15 +100,15 @@ live_design! {
             }
             <GVLayout>{
                 height: Fit,
-                spacing: 8.0,
+                spacing: 4.0,
                 align: {x: 0.0, y: 0.5},
-                padding: 16.0,
+                padding: {left: 16.0, right: 16.0},
                 <GLabel>{
                     font_family: (BOLD_FONT),
                     font_size: 10.0,
                     text: "Output Format:",
                 }
-                
+
             }
             res_str = <GLabel>{
                 color: #FF7043,
@@ -192,6 +192,7 @@ impl Widget for SiginPage {
     }
     fn handle_event(&mut self, cx: &mut Cx, event: &Event, scope: &mut Scope) {
         let actions = cx.capture_actions(|cx| self.super_widget.handle_event(cx, event, scope));
+
         if self.gbutton(id!(auto_connect)).clicked(&actions).is_some() {
             // get state and call
             let mut state = APP_STATE.lock().unwrap();
@@ -221,6 +222,9 @@ impl Widget for SiginPage {
                             x.text = state.secret_key.to_string();
                         });
                     // todo nav to main page
+                    if ls().is_ok(){
+                
+                    }
                 }
             }
             self.glabel(id!(res_str))
@@ -235,7 +239,11 @@ impl Widget for SiginPage {
             self.ginput(id!(secret_key_input)).borrow().map(|x| {
                 state.secret_key = x.text.to_string();
             });
-            state.sso_login();
+            // do set config then do ls
+            state.set_config_all();
+            if ls().is_ok(){
+
+            }
         }
     }
 }
