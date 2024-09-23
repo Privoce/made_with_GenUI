@@ -86,7 +86,9 @@ live_design! {
                 }
             }
         }
-
+        loading = <GLoading>{
+            theme: Dark,
+        }
     }
 }
 

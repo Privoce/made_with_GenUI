@@ -1,8 +1,10 @@
 use gen_components::components::{
-    button::{event::GButtonEvent, GButtonWidgetExt},
+    button::GButtonWidgetExt,
     card::{GCard, GCardWidgetExt},
     input::GInputWidgetExt,
     label::GLabelWidgetExt,
+    radio::group::GRadioGroupWidgetExt,
+    select::GSelectWidgetExt,
 };
 use makepad_widgets::*;
 
@@ -91,11 +93,15 @@ live_design! {
                     font_size: 10.0,
                     text: "Region:",
                 }
-                accsee_key_input = <GInput>{
+                region_select = <GSelect>{
                     theme: Dark,
-                    height: 32.0,
                     width: Fill,
-                    placeholder: "Please input your access key",
+                    background_visible: true,
+                    color: #1F1F1F,
+                    select_options: {
+                        height: 180.0,
+                        width: 380.0
+                    }
                 }
             }
             <GVLayout>{
@@ -108,7 +114,29 @@ live_design! {
                     font_size: 10.0,
                     text: "Output Format:",
                 }
-
+                output_group = <GRadioGroup>{
+                    width: Fill,
+                    spacing: 16.0,
+                    selected: 0,
+                    <GRadio>{
+                        theme: Dark,
+                        font_family: (BOLD_FONT),
+                        color: #FFF,
+                        text: "json"
+                    }
+                    <GRadio>{
+                        theme: Dark,
+                        font_family: (BOLD_FONT),
+                        color: #FFF,
+                        text: "yaml"
+                    }
+                    <GRadio>{
+                        theme: Dark,
+                        font_family: (BOLD_FONT),
+                        color: #FFF,
+                        text: "text"
+                    }
+                }
             }
             res_str = <GLabel>{
                 color: #FF7043,
@@ -184,7 +212,39 @@ pub struct SiginPage {
     pub super_widget: GCard,
 }
 
-impl LiveHook for SiginPage {}
+impl LiveHook for SiginPage {
+    fn after_apply(&mut self, cx: &mut Cx, apply: &mut Apply, index: usize, nodes: &[LiveNode]) {
+        let _ = self.super_widget.after_apply(cx, apply, index, nodes);
+        let _ = self.gselect(id!(region_select)).borrow_mut().map(|mut x| {
+            x.options = vec![
+                ("美国东部(俄亥俄) us-east-2", "us-east-2").into(),
+                ("美国东部(弗吉尼亚州北部) us-east-1", "us-east-1").into(),
+                ("美国西部(加利福尼亚州北部) us-west-1", "us-west-1").into(),
+                ("美国西部(俄勒冈) us-west-2", "us-west-2").into(),
+                ("亚太地区(首尔) ap-northeast-2", "ap-northeast-2").into(),
+                ("亚太地区(东京) ap-northeast-1", "ap-northeast-1").into(),
+                ("亚太地区(大阪) ap-northeast-3", "ap-northeast-3").into(),
+                ("亚太地区(香港) ap-east-1", "ap-east-1").into(),
+                ("亚太地区(孟买) ap-south-1", "ap-south-1").into(),
+                ("亚太地区(新加坡) ap-southeast-1", "ap-southeast-1").into(),
+                ("亚太地区(悉尼) ap-southeast-2", "ap-southeast-2").into(),
+                ("加拿大(中部) ca-central-1", "ca-central-1").into(),
+                ("中国(北京) cn-north-1", "cn-north-1").into(),
+                ("中国(宁夏) cn-northwest-1", "cn-northwest-1").into(),
+                ("欧洲(法兰克福) eu-central-1", "eu-central-1").into(),
+                ("欧洲(爱尔兰) eu-west-1", "eu-west-1").into(),
+                ("欧洲(伦敦) eu-west-2", "eu-west-2").into(),
+                ("欧洲(巴黎) eu-west-3", "eu-west-3").into(),
+                ("欧洲(斯德哥尔摩) eu-north-1", "eu-north-1").into(),
+                ("中东(巴林) me-south-1", "me-south-1").into(),
+                ("南美洲(圣保罗) sa-east-1", "sa-east-1").into(),
+                ("非洲(开普敦) af-south-1", "af-south-1").into(),
+                ("AWS GovCloud(美国东部)", "us-gov-east-1").into(),
+                ("AWS GovCloud(美国西部)", "us-gov-west-1").into(),
+            ]
+        });
+    }
+}
 
 impl Widget for SiginPage {
     fn draw_walk(&mut self, cx: &mut Cx2d, scope: &mut Scope, walk: Walk) -> DrawStep {
@@ -221,10 +281,28 @@ impl Widget for SiginPage {
                         .map(|mut x| {
                             x.text = state.secret_key.to_string();
                         });
+                    self.gselect(id!(region_select)).borrow_mut().map(|mut x| {
+                        for (index, option) in x.options.clone().iter().enumerate() {
+                            if option.value == state.region {
+                                x.selected = index;
+                            }
+                        }
+                    });
+                    self.gradio_group(id!(output_group))
+                        .borrow_mut()
+                        .map(|mut x| {
+                            x.set_selected(
+                                cx,
+                                match state.output.as_str() {
+                                    "json" => 0,
+                                    "yaml" => 1,
+                                    "text" => 2,
+                                    _ => 0,
+                                },
+                            );
+                        });
                     // todo nav to main page
-                    if ls().is_ok(){
-                
-                    }
+                    if ls().is_ok() {}
                 }
             }
             self.glabel(id!(res_str))
@@ -239,11 +317,15 @@ impl Widget for SiginPage {
             self.ginput(id!(secret_key_input)).borrow().map(|x| {
                 state.secret_key = x.text.to_string();
             });
+            self.gselect(id!(region_select)).borrow().map(|x| {
+                state.region = x.options[x.selected].value.to_string();
+            });
+            self.gradio_group(id!(output_group)).borrow().map(|x| {
+                state.output = ["json", "yaml", "text"][x.selected as usize].to_string();
+            });
             // do set config then do ls
             state.set_config_all();
-            if ls().is_ok(){
-
-            }
+            if ls().is_ok() {}
         }
     }
 }
