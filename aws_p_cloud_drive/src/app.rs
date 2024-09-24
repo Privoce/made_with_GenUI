@@ -12,9 +12,64 @@ live_design! {
     import gen_components::components::*;
     import crate::views::start_page::*;
     import crate::views::sigin_page::*;
+    import crate::views::settings_page::*;
+    import crate::views::main_page::*;
 
     BOLD_FONT = dep("crate://self/resources/JuliaMono-BlackItalic.ttf");
+    AppTab = <RadioButton> {
+        height: Fill
+        width: Fill
+        flow: Down
+        spacing: 5.0
+        align: {x: 0.5, y: 0.5}
 
+        icon_walk: {margin: { left: 0. }, width: 20, height: 20}
+        label_walk: {
+            width: Fit, height: Fit,
+            margin: { left: 0. }
+        }
+        label_align: { y: 0.0 }
+
+        draw_radio: {
+            radio_type: Tab,
+            fn pixel(self) -> vec4 {
+                return vec4(0.0);
+            }
+        }
+        draw_text: {
+            // text_style: <APP_NAVIGATION_FONT> {}
+            color_selected: #FF7043,
+            color_unselected: #000,
+            color_unselected_hover: #111,
+            text_style: {
+                font_size: 8.0,
+                font: {
+                    path: (BOLD_FONT)
+                }
+            }
+            
+            fn get_color(self) -> vec4 {
+                return mix(
+                    mix(
+                        self.color_unselected,
+                        self.color_unselected_hover,
+                        self.hover
+                    ),
+                    self.color_selected,
+                    self.selected
+                )
+            }
+        }
+        draw_icon: {
+            fn get_color(self) -> vec4 {
+                return mix(
+                    #000,
+                    #FF7043,
+                    self.selected
+                )
+            }
+        }
+    }
     App = {{App}}{
         root: <Root>{
             main_window = <GWindow>{
@@ -34,42 +89,86 @@ live_design! {
                 clip_y: true,
                 body = <GVLayout>{
                     // <StartPage>{}
-                    height: Fill,
+                    // height: Fill,
+                    // <SettingsPage>{}
                     // margin: {
                     //     top: 32.0
                     // }
                     // <SiginPage>{}
-                    navigation = <StackNavigation>{
-                        start_page = <StackNavigationView> {
-                            height: Fill,
-                            draw_bg: {
-                                color: #F5F5F500,
-                            }
-                            header = <View>{
-                                height: 0.0,
-                                visible: false,
-                            }
-                            body = {
-                                margin: {top: 32.0},
-                                start_screen = <StartPage>{}
-                            }
-                        }
-                        sigin_page_view = <StackNavigationView> {
-                            draw_bg: {
-                                color: #F5F5F500,
-                            }
-                            header = <View>{
-                                height: 0.0,
-                                visible: false,
-                            }
-                            body = {
-                                margin: {top: 32.0},
-                                sigin_screen = <SiginPage>{
+                    <MainPage>{}
+                    // navigation = <StackNavigation>{
+                    //     root_view = {
+                    //         width: Fill
+                    //         height: Fill
+                    //         padding: 0
+                    //         flow: Down
+                    //         align: {x: 0.0, y: 0.0}
+                    //         spacing: 0
+                    //         application_pages = <View> {
+                    //             margin: 0.0,
+                    //             padding: 0.0
+                    //             flow: Overlay
+                    //             main_frame = <MainPage>{visible: true}
+                    //             setting_frame = <SettingsPage> {visible: false}
+                    //         }
+                    //         menu = <GCard>{
+                    //             border_radius: 0.0,
+                    //             theme: Dark,
+                    //             height: 46.0,
+                    //             width: Fill,
+                    //             modes = <GHLayout>{
+                    //                 height: Fill,
+                    //                 width: Fill,
+                    //                 align: {x: 0.5, y: 0.5},
+                    //                 spacing: 16.0,
+                    //                 tab1 = <AppTab>{
+                    //                     animator: {selected = {default: on}}
+                    //                     text: "Upload"
+                    //                     draw_icon: {
+                    //                         svg_file: dep("crate://self/resources/upload.svg"),
+                    //                     }
+                    //                 }
+                    //                 tab2 = <AppTab>{
+                    //                     animator: {selected = {default: off}}
+                    //                     text: "Settings"
+                    //                     draw_icon: {
+                    //                         svg_file: dep("crate://self/resources/setting.svg"),
+                    //                     }
+                    //                 }
+                    //             }
+                    //         }
+                    //     }
+                        
+                    //     start_page = <StackNavigationView> {
+                    //         height: Fill,
+                    //         draw_bg: {
+                    //             color: #F5F5F500,
+                    //         }
+                    //         header = <View>{
+                    //             height: 0.0,
+                    //             visible: false,
+                    //         }
+                    //         body = {
+                    //             margin: {top: 32.0},
+                    //             start_screen = <StartPage>{}
+                    //         }
+                    //     }
+                    //     sigin_page_view = <StackNavigationView> {
+                    //         draw_bg: {
+                    //             color: #F5F5F500,
+                    //         }
+                    //         header = <View>{
+                    //             height: 0.0,
+                    //             visible: false,
+                    //         }
+                    //         body = {
+                    //             margin: {top: 32.0},
+                    //             sigin_screen = <SiginPage>{
                                     
-                                }
-                            }
-                        }
-                    }
+                    //             }
+                    //         }
+                    //     }
+                    // }
                 }
             }
         }
@@ -90,7 +189,8 @@ impl LiveRegister for App {
         crate::gen_components::live_design(cx);
         crate::views::start_page::live_design(cx);
         crate::views::sigin_page::live_design(cx);
-
+        crate::views::settings_page::live_design(cx);
+        crate::views::main_page::live_design(cx);
     }
 }
 
@@ -105,15 +205,23 @@ impl MatchEvent for App {
         cx.stop_timer(self.timer);
     }
     fn handle_startup(&mut self, cx: &mut Cx) {
-        self.timer = cx.start_timeout(12.0);
-        let uid = self.root.widget_uid();
-        cx.widget_action(
-            uid,
-            &Scope::empty().path,
-            StackNavigationAction::NavigateTo(live_id!(start_page)),
-        );
+        // self.timer = cx.start_timeout(12.0);
+        // let uid = self.root.widget_uid();
+        // cx.widget_action(
+        //     uid,
+        //     &Scope::empty().path,
+        //     StackNavigationAction::NavigateTo(live_id!(start_page)),
+        // );
+        
     }
     fn handle_actions(&mut self, cx: &mut Cx, actions: &Actions) {
+        self.root.radio_button_set(ids!(
+            modes.tab1,
+            modes.tab2
+        )).selected_to_visible(cx, &self.root, &actions, ids!(
+            application_pages.main_frame,
+            application_pages.setting_frame
+        ));
         let mut navigation = self.root.stack_navigation(id!(navigation));
         navigation.handle_stack_view_actions(cx, &actions);
     }

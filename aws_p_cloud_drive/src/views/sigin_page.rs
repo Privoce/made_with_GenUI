@@ -47,7 +47,7 @@ live_design! {
                 font_family: (BOLD_FONT2),
                 font_size: 20.0,
                 text: "Connect And Config"
-                margin: {bottom: 32.0},
+                margin: {bottom: 24.0},
             }
             <GVLayout>{
                 height: Fit,
@@ -302,7 +302,13 @@ impl Widget for SiginPage {
                             );
                         });
                     // todo nav to main page
-                    if ls().is_ok() {}
+                    if ls().is_ok() {
+                        cx.widget_action(
+                            self.widget_uid(),
+                            &scope.path,
+                            StackNavigationAction::NavigateTo(live_id!(root_view)),
+                        );
+                    }
                 }
             }
             self.glabel(id!(res_str))
