@@ -1,3 +1,6 @@
+#[allow(unused_imports)]
+use std::default;
+
 #[derive(Debug, Clone, Default)]
 pub struct LsResult{
     pub date: String,
@@ -20,4 +23,19 @@ impl Default for S3Data {
     fn default() -> Self {
         S3Data::Bucket(vec![])
     }
+}
+
+#[derive(Debug, Clone, Default)]
+pub enum Handles{
+    Ls,
+    Delete,
+    Downlaod,
+    #[default]
+    None
+}
+
+#[derive(Debug, Clone, Default)]
+pub struct FileTableItem{
+    pub name: String,
+    pub size: usize,
 }

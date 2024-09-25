@@ -1,6 +1,9 @@
+use std::{fs::read_dir, os::windows::fs::MetadataExt, path::PathBuf};
+
 use gen_components::components::{
     button::GButtonWidgetExt,
     card::{GCard, GCardWidgetExt},
+    file_upload::GUploadWidgetExt,
     icon::GIconWidgetExt,
     label::{GLabelWidgetExt, GLabelWidgetRefExt},
     table::{
@@ -10,7 +13,7 @@ use gen_components::components::{
 };
 use makepad_widgets::*;
 
-use crate::utils::{ls, ls_dir, LsResult, S3Data};
+use crate::utils::{ls, ls_dir, rm, FileTableItem, Handles, LsResult, S3Data};
 
 live_design! {
     import makepad_widgets::base::*;
@@ -23,12 +26,13 @@ live_design! {
     BtnLink = <GButton>{
         padding: 0.0,
         theme: Dark,
-        background_visible: false,
+        background_visible: true,
         spread_radius: 0.0,
-        width: Fill,
+        width: 15.0,
+        height: 16.0,
+        border_radius: 3.8,
         slot: {
-            font_size: 8.0
-
+            text: ""
         }
     }
 
@@ -90,17 +94,54 @@ live_design! {
                         y: 0.5
                     },
                     choose_btn = <BtnLink>{
-                        width: 20.0,
-                        slot: {
-                            color: #161616,
-                            text: "ls"
-                        }
+                        theme: Success
                     }
                     delete_btn = <BtnLink>{
-                        slot: {
-                            color: #F44336,
-                            text: "delete"
-                        }
+                        theme: Error
+                    }
+                    download_btn = <BtnLink>{
+                        theme: Primary
+                    }
+                }
+            }
+        }
+        ls_item2: <GTRow>{
+            height: 32.0,
+            width: Fill,
+            <GTCell>{
+                height: Fill,
+                width: 180.0,
+                align: {x: 0.1, y: 0.5},
+                name_str2 = <GLabel>{
+                    color: #E36640,
+                    text: "-",
+                    font_size: 8.0
+                }
+            }
+
+            <GTCell>{
+                height: Fill,
+                width: 120.0,
+                align: {x: 0.1, y: 0.5},
+                size_str2 = <GLabel>{
+                    color: #1C2128,
+                    text: "-",
+                    font_size: 8.0
+                }
+            }
+            opt_cell2 = <GTCell>{
+                height: Fill,
+                width: Fill,
+                align: {x: 0.5, y: 0.5},
+                <GHLayout>{
+                    height: Fit,
+                    spacing: 6.0,
+                    align: {
+                        x: 0.5,
+                        y: 0.5
+                    },
+                    upload_btn = <BtnLink>{
+                        theme: Primary
                     }
                 }
             }
@@ -124,23 +165,76 @@ live_design! {
                 border_radius: 0.0,
                 theme: Dark,
                 height: Fit,
-
+                spacing: 6.0,
                 align: {
                     x: 0.0,
                     y: 0.5
                 }
                 <GLabel>{
-                    width: Fill,
+                    width: 348.0,
                     text: "AWS S3 Bucket",
                     font_family: (BOLD_FONT)
                 }
-                <GIcon>{
-                    theme: Dark,
-                    cursor: Hand,
-                    height: 16.0,
-                    width: 16.0,
-                    icon_type: Share,
-                    stroke_width: 1.4,
+                <GDropDown>{
+                    mode: Dialog,
+                    height: Fit,
+                    width: Fit,
+                    trigger = <GIcon>{
+                        theme: Dark,
+                        cursor: Hand,
+                        height: 16.0,
+                        width: 16.0,
+                        icon_type: Share,
+                        stroke_width: 1.4,
+                    }
+                    popup :<GDialog> {
+                        container: {
+                            height: 280.0,
+                            width: 360.0,
+                            flow: Down,
+                            spacing: 10.0,
+                            padding: 10.0,
+                            <GCard>{
+                                theme: Dark,
+                                height: Fill,
+                                width: Fill,
+                                spread_radius: 4.6,
+                                blur_radius: 4.6,
+                                spacing: 12.0,
+                                flow: Down,
+                                clip_x: false,
+                                clip_y: false,
+                                padding: 2.0,
+                                shadow_offset: vec2(0.0, 2.0),
+                                align: {
+                                    x: 0.5,
+                                    y: 0.5
+                                }
+                                <GImage>{
+                                    height: 86.0,
+                                    width: 86.0,
+                                    src: dep("crate://self/resources/share.png")
+                                }
+                                <GLabel>{
+                                    font_size: 9.0,
+                                    font_family:(BOLD_FONT2),
+                                    text:"Scan the QR code!",
+                                }
+                                <GLabel>{
+                                    font_size: 9.0,
+                                    font_family: (BOLD_FONT2),
+                                    text: "Copy the link to share!"
+                                }
+                                <GInput>{
+                                    theme: Warning,
+                                    width: Fill,
+                                    height: 64.0,
+                                    margin: 8.0,
+                                    text: "https://github.com/Privoce/made_with_GenUI/tree/main/aws_p_cloud_drive"
+                                }
+                            }
+                        }
+                    }
                 }
                 fresh_s3 = <GIcon>{
                     theme: Dark,
@@ -183,59 +277,86 @@ live_design! {
                     }
                 }
             }
-
-            ls_table1 = <GTable>{
+            table_view = <GVLayout>{
                 visible: false,
-                margin: 8.0,
-                mode: Virtual,
                 height: Fit,
-                width: Fill,
-                header: {
+                spacing: 6.0,
+                padding: 8.0,
+                <GHLayout>{
                     height: Fit,
                     width: Fill,
-                    <GTRow>{
-                        height: 32.0,
-                        width: Fill,
-                        <GTCell>{
-                            height: Fill,
-                            width: 140.0,
-                            align: {x: 0.1, y: 0.5},
-                            <GLabel>{
-                                color: #E36640,
-                                text: "Name",
-                                font_family: (BOLD_FONT2)
-                            }
-                        }
-                        <GTCell>{
-                            height: Fill,
-                            width: 110.0,
-                            align: {x: 0.1, y: 0.5},
-                            <GLabel>{
-                                color: #1C2128,
-                                text: "Date",
-                                font_family: (BOLD_FONT2)
-                            }
-                        }
-                        <GTCell>{
-                            height: Fill,
-                            width: 90.0,
-                            align: {x: 0.1, y: 0.5},
-                            <GLabel>{
-                                color: #1C2128,
-                                text: "Size",
-                                font_family: (BOLD_FONT2)
-                            }
-                        }
-                        <GTCell>{
-                            height: Fill,
-                            width: Fill,
-                            align: {x: 0.1, y: 0.5},
-
-                        }
+                    spacing: 4.0
+                    <BtnLink>{
+                        theme: Success
+                    }
+                    <GLabel>{
+                        text: "ls"
+                    }
+                    <BtnLink>{
+                        theme: Error
+                    }
+                    <GLabel>{
+                        text: "delete"
+                    }
+                    <BtnLink>{
+                        theme: Primary
+                    }
+                    <GLabel>{
+                        text: "download/upload"
                     }
                 }
+                ls_table1 = <GTable>{
+                    mode: Virtual,
+                    height: Fit,
+                    width: Fill,
+                    header: {
+                        height: Fit,
+                        width: Fill,
+                        <GTRow>{
+                            height: 32.0,
+                            width: Fill,
+                            <GTCell>{
+                                height: Fill,
+                                width: 140.0,
+                                align: {x: 0.1, y: 0.5},
+                                <GLabel>{
+                                    color: #E36640,
+                                    text: "Name",
+                                    font_family: (BOLD_FONT2)
+                                }
+                            }
+                            <GTCell>{
+                                height: Fill,
+                                width: 110.0,
+                                align: {x: 0.1, y: 0.5},
+                                <GLabel>{
+                                    color: #1C2128,
+                                    text: "Date",
+                                    font_family: (BOLD_FONT2)
+                                }
+                            }
+                            <GTCell>{
+                                height: Fill,
+                                width: 90.0,
+                                align: {x: 0.1, y: 0.5},
+                                <GLabel>{
+                                    color: #1C2128,
+                                    text: "Size",
+                                    font_family: (BOLD_FONT2)
+                                }
+                            }
+                            <GTCell>{
+                                height: Fill,
+                                width: Fill,
+                                align: {x: 0.1, y: 0.5},
 
+                            }
+                        }
+                    }
+
+                }
             }
+
         }
         <GDivider>{
             height: 2.0,
@@ -246,7 +367,7 @@ live_design! {
             },
             theme: Dark,
         }
-        <GVLayout>{
+        upload_view = <GVLayout>{
             <GCard>{
                 padding: 12.0,
                 width: Fill,
@@ -270,10 +391,11 @@ live_design! {
                         x: 0.5,
                         y: 0.5
                     },
-                    <GUpload>{
+                    upload_icon = <GUpload>{
                         height: 16.0,
                         width: 16.0,
                         mode: Folder,
+                        clear: true,
                         icon: {
                             theme: Warning,
                             height: 16.0,
@@ -281,7 +403,7 @@ live_design! {
                         }
                     }
                 }
-                <GIcon>{
+                fresh_upload = <GIcon>{
                     theme: Dark,
                     cursor: Hand,
                     height: 16.0,
@@ -290,7 +412,7 @@ live_design! {
                     stroke_width: 1.4,
                 }
             }
-            <GLabel>{
+            tip2 = <GLabel>{
                 margin: 16.0,
                 align: {
                     x: 0.5
@@ -315,7 +437,7 @@ live_design! {
                         width: Fill,
                         <GTCell>{
                             height: Fill,
-                            width: 200.0,
+                            width: 180.0,
                             align: {x: 0.1, y: 0.5},
                             <GLabel>{
                                 color: #E36640,
@@ -325,7 +447,7 @@ live_design! {
                         }
                         <GTCell>{
                             height: Fill,
-                            width: 100.0,
+                            width: 120.0,
                             align: {x: 0.1, y: 0.5},
                             <GLabel>{
                                 color: #1C2128,
@@ -339,7 +461,7 @@ live_design! {
                             align: {x: 0.1, y: 0.5},
                             <GLabel>{
                                 color: #1C2128,
-                                text: "Suffix",
+                                text: "Operations",
                                 font_family: (BOLD_FONT2)
                             }
                         }
@@ -357,12 +479,16 @@ pub struct MainPage {
     pub super_widget: GCard,
     #[live]
     pub ls_item1: Option<LivePtr>,
+    #[live]
+    pub ls_item2: Option<LivePtr>,
     #[rust]
     pub s3_datas: S3Data,
     #[rust]
     pub current_choose: Option<String>,
     #[rust]
     step: Step,
+    #[rust]
+    upload_dir: PathBuf,
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -396,6 +522,28 @@ impl Widget for MainPage {
     fn handle_event(&mut self, cx: &mut Cx, event: &Event, scope: &mut Scope) {
         let actions = cx.capture_actions(|cx| self.super_widget.handle_event(cx, event, scope));
         let mut ls_flag = false;
+        let mut upload_flag = false;
+        self.gicon(id!(fresh_upload)).borrow().map(|icon| {
+            if icon.clicked(&actions).is_some() {
+                self.handle_upload(cx);
+                upload_flag = true;
+            }
+        });
+
+        self.gupload(id!(upload_icon)).borrow().map(|upload| {
+            if let Some(uploads_dirs) = upload.after_select(&actions) {
+                self.upload_dir = uploads_dirs[0].clone();
+                self.handle_upload(cx);
+                upload_flag = true;
+            }
+        });
+        if upload_flag {
+            self.gcard(id!(upload_view)).borrow_mut().map(|mut card| {
+                card.redraw(cx);
+            });
+            return;
+        }
+
         self.gicon(id!(fresh_s3)).borrow().map(|x| {
             if x.clicked(&actions).is_some() {
                 dbg!("clicked");
@@ -419,7 +567,6 @@ impl Widget for MainPage {
                     }
                     Step::Dir => {
                         let target_dir_name = self.current_choose.as_ref().unwrap().to_string();
-                        dbg!(&target_dir_name);
                         match self.s3_datas.clone() {
                             S3Data::Bucket(_) => {
                                 if let Ok(res) = ls_dir(&target_dir_name) {
@@ -430,7 +577,6 @@ impl Widget for MainPage {
                             }
                             S3Data::Dir(_) => {
                                 if let Ok(res) = ls_dir(&target_dir_name) {
-                                    dbg!(res.is_some());
                                     self.s3_datas = S3Data::Dir(res);
                                     ls_flag = true;
                                     self.step = Step::Fresh;
@@ -463,6 +609,15 @@ impl Widget for MainPage {
 
         if !self.step.is_fresh() {
             ls_flag = self.ls_dir(&actions);
+        } else {
+            match self.s3_datas {
+                S3Data::Bucket(_) => {
+                    self.step = Step::Bucket;
+                }
+                S3Data::Dir(_) => {
+                    self.step = Step::Dir;
+                }
+            }
         }
         // means check inner
         if ls_flag {
@@ -491,6 +646,11 @@ impl Widget for MainPage {
                                                     x.visible = false;
                                                 },
                                             );
+                                            cell.gbutton(id!(download_btn)).borrow_mut().map(
+                                                |mut x| {
+                                                    x.visible = false;
+                                                },
+                                            );
                                         });
                                     }
                                 });
@@ -512,6 +672,11 @@ impl Widget for MainPage {
                                             cell.glabel(id!(size_str)).set_text_and_redraw(
                                                 cx,
                                                 &format!("{}B", ls_table.size),
+                                            );
+                                            cell.gbutton(id!(choose_btn)).borrow_mut().map(
+                                                |mut x| {
+                                                    x.visible = false;
+                                                },
                                             );
                                             cell.gbutton(id!(delete_btn)).borrow_mut().map(
                                                 |mut x| {
@@ -557,19 +722,27 @@ impl MainPage {
                             cell.gbutton(id!(delete_btn)).borrow_mut().map(|mut x| {
                                 x.visible = false;
                             });
+                            cell.gbutton(id!(download_btn)).borrow_mut().map(|mut x| {
+                                x.visible = false;
+                            });
                         });
                     }
                 });
             }
             table.body_virtual.children = ls_children.clone();
             table.body_virtual.walk.height = Size::Fit;
-            table.visible = true;
             flag = true;
         });
+        if flag {
+            self.gcard(id!(table_view)).borrow_mut().map(|mut x| {
+                x.visible = true;
+            });
+        }
         flag
     }
     fn ls_dir(&mut self, actions: &Actions) -> bool {
         let mut ls_flag = false;
+        let mut handle = Handles::default();
         self.gtable(id!(ls_table1)).borrow().map(|table| {
             for (_row_index, (_, row)) in table.body_virtual.children.iter().enumerate() {
                 let mut flag = false;
@@ -585,36 +758,114 @@ impl MainPage {
                         cell.gbutton(id!(choose_btn)).borrow().map(|btn| {
                             if btn.clicked(&actions).is_some() {
                                 flag = true;
+                                handle = Handles::Ls;
+                            }
+                        });
+                        cell.gbutton(id!(delete_btn)).borrow().map(|btn| {
+                            if btn.clicked(&actions).is_some() {
+                                flag = true;
+                                handle = Handles::Delete;
+                            }
+                        });
+                        cell.gbutton(id!(download_btn)).borrow().map(|btn| {
+                            if btn.clicked(&actions).is_some() {
+                                flag = true;
+                                handle = Handles::Downlaod;
                             }
                         });
                     });
                 }
                 if flag {
-                    // do ls inner
-                    match self.s3_datas.clone() {
-                        S3Data::Bucket(_) => {
-                            if let Ok(res) = ls_dir(&target_dir_name) {
-                                self.current_choose.replace(target_dir_name);
-                                self.s3_datas = S3Data::Dir(res);
-                                ls_flag = true;
-                                self.step = Step::Dir;
+                    match handle {
+                        Handles::Ls => {
+                            // do ls inner
+                            match self.s3_datas.clone() {
+                                S3Data::Bucket(_) => {
+                                    if let Ok(res) = ls_dir(&target_dir_name) {
+                                        self.current_choose.replace(target_dir_name);
+                                        self.s3_datas = S3Data::Dir(res);
+                                        ls_flag = true;
+                                        self.step = Step::Dir;
+                                    }
+                                }
+                                S3Data::Dir(_) => {
+                                    self.current_choose.as_ref().map(|x| {
+                                        target_dir_name = format!("{}/{}", x, target_dir_name);
+                                    });
+                                    if let Ok(res) = ls_dir(&target_dir_name) {
+                                        self.current_choose.replace(target_dir_name);
+                                        self.s3_datas = S3Data::Dir(res);
+                                        ls_flag = true;
+                                        self.step = Step::Dir;
+                                    }
+                                }
                             }
+                            break;
                         }
-                        S3Data::Dir(_) => {
+                        Handles::Delete => {
+                            let mut dir = None;
                             self.current_choose.as_ref().map(|x| {
-                                target_dir_name = format!("{}/{}", x, target_dir_name);
+                                dir.replace(x.to_string());
                             });
-                            if let Ok(res) = ls_dir(&target_dir_name) {
-                                self.current_choose.replace(target_dir_name);
-                                self.s3_datas = S3Data::Dir(res);
-                                ls_flag = true;
-                                self.step = Step::Dir;
+
+                            match rm(&dir.unwrap(), &target_dir_name) {
+                                Ok(res) => {
+                                    self.s3_datas = S3Data::Dir(res);
+                                    ls_flag = true;
+                                    self.step = Step::Dir;
+                                }
+                                Err(e) => {
+                                    dbg!(e);
+                                }
                             }
                         }
+                        Handles::Downlaod => {
+                            dbg!(&target_dir_name);
+                        }
+                        Handles::None => (),
                     }
                 }
             }
         });
         return ls_flag;
+    }
+    fn handle_upload(&mut self, cx: &mut Cx) {
+        // find all files in upload dir
+        let mut files = vec![];
+        for entry in read_dir(self.upload_dir.as_path()).unwrap() {
+            let entry = entry.unwrap();
+            if entry.path().is_file() {
+                let f_meta = entry.metadata().unwrap();
+                files.push(FileTableItem {
+                    name: entry.file_name().to_str().unwrap().to_string(),
+                    size: f_meta.file_size() as usize,
+                });
+            }
+        }
+
+        self.glabel(id!(tip2)).borrow_mut().map(|mut x| {
+            x.visible = false;
+        });
+        let mut rows: ComponentMap<LiveId, GTableRowRef> = ComponentMap::default();
+        self.gtable(id!(ls_table2)).borrow_mut().map(|mut table| {
+            for (index, file) in files.iter().enumerate() {
+                let row = rows.get_or_insert(cx, LiveId(index as u64), |cx| {
+                    WidgetRef::new_from_ptr(cx, self.ls_item2).as_gtable_row()
+                });
+                row.borrow_mut().map(|row| {
+                    for (_, cell) in row.children.iter() {
+                        cell.borrow_mut().map(|cell| {
+                            cell.glabel(id!(name_str2))
+                                .set_text_and_redraw(cx, &file.name);
+                            cell.glabel(id!(size_str2))
+                                .set_text_and_redraw(cx, &format!("{}B", file.size));
+                        });
+                    }
+                });
+            }
+            table.body_virtual.children = rows;
+            table.body_virtual.walk.height = Size::Fit;
+            table.visible = true;
+        });
     }
 }

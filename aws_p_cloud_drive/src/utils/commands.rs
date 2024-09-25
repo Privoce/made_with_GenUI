@@ -41,6 +41,39 @@ pub fn ls_dir(target: &str) -> Result<Option<LsResultDir>, String> {
     }
 }
 
+pub fn rm(dir: &str, target: &str) -> Result<Option<LsResultDir>, String> {
+    let target_rm = format!("s3://{}/{}", dir, target);
+    let command = Command::new("aws").args(["s3", "rm", &target_rm]).output();
+    match command {
+        Ok(out) => {
+            if out.status.success() {
+                return ls_dir(dir);
+            } else {
+                return Err(format!("rm :{} failed", target_rm));
+            }
+        }
+        Err(e) => {
+            return Err(format!("rm failed: {}", e.to_string()));
+        }
+    }
+}
+
+pub fn cp(from: &str, to: &str) -> Result<(), String> {
+    let command = Command::new("aws").args(["s3", "cp", from, to]).output();
+    match command {
+        Ok(out) => {
+            if out.status.success() {
+                return Ok(());
+            } else {
+                return Err(format!("cp failed! From: {} to {}", from, to));
+            }
+        }
+        Err(e) => {
+            return Err(format!("cp failed: {}", e.to_string()));
+        }
+    }
+}
+
 fn format_str_bucket(s: &str) -> Vec<LsResult> {
     let lines: Vec<&str> = s.trim().split("\r\n").collect();
     let mut results = Vec::new();
@@ -73,10 +106,10 @@ fn format_str_dir(s: &str) -> LsResultDir {
         } else {
             let mut ls_res = LsResult::default();
             let mut target = line.split_whitespace();
-            
+
             let date = target.next().unwrap();
             let time = target.next().unwrap();
-            target.next().map(|target|{
+            target.next().map(|target| {
                 ls_res.size = usize::from_str_radix(target, 10).unwrap_or(0);
             });
             ls_res.dir = target.next().unwrap().to_string();
