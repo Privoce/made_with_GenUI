@@ -85,19 +85,35 @@ impl State {
             }
             return None;
         };
-
-        cmd_call("region").map(|res| {
-            self.region = res;
-        });
-        cmd_call("output").map(|res| {
-            self.output = res;
-        });
-        cmd_call("aws_access_key_id").map(|res| {
-            self.accsee_key = res;
-        });
-        cmd_call("aws_secret_access_key").map(|res| {
-            self.secret_key = res;
-        });
+        let mut flag = true;
+        cmd_call("region").map_or_else(
+            || flag = false,
+            |res| {
+                self.region = res;
+            },
+        );
+        cmd_call("output").map_or_else(
+            || flag = false,
+            |res| {
+                self.output = res;
+            },
+        );
+        cmd_call("aws_access_key_id").map_or_else(
+            || flag = false,
+            |res| {
+                self.accsee_key = res;
+            },
+        );
+        cmd_call("aws_secret_access_key").map_or_else(
+            || flag = false,
+            |res| {
+                self.secret_key = res;
+            },
+        );
+        if flag{
+            self.check = true;
+            self.login = true;
+        }
     }
     pub fn read_config_credentials<P>(&mut self, config_path: P, credentials_path: P)
     where

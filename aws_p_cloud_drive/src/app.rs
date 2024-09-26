@@ -1,5 +1,7 @@
 use makepad_widgets::*;
 
+use crate::utils::APP_STATE;
+
 // use crate::{
 //     commands::ls,
 //     components::{main_view::MainViewWidgetRefExt, personal_view::PersonalWidgetRefExt},
@@ -14,6 +16,8 @@ live_design! {
     import crate::views::sigin_page::*;
     import crate::views::settings_page::*;
     import crate::views::main_page::*;
+    import crate::views::bucket_page::*;
+    import crate::views::upload_page::*;
 
     BOLD_FONT = dep("crate://self/resources/JuliaMono-BlackItalic.ttf");
     AppTab = <RadioButton> {
@@ -95,7 +99,9 @@ live_design! {
                     //     top: 32.0
                     // }
                     // <SiginPage>{}
-                    <MainPage>{}
+                    // <MainPage>{}
+                    // <BucketPage>{}
+                    <UploadPage>{}
                     // navigation = <StackNavigation>{
                     //     root_view = {
                     //         width: Fill
@@ -123,12 +129,19 @@ live_design! {
                     //                 spacing: 16.0,
                     //                 tab1 = <AppTab>{
                     //                     animator: {selected = {default: on}}
+                    //                     text: "Home"
+                    //                     draw_icon: {
+                    //                         svg_file: dep("crate://self/resources/home.svg"),
+                    //                     }
+                    //                 }
+                    //                 tab2 = <AppTab>{
+                    //                     animator: {selected = {default: off}}
                     //                     text: "Upload"
                     //                     draw_icon: {
                     //                         svg_file: dep("crate://self/resources/upload.svg"),
                     //                     }
                     //                 }
-                    //                 tab2 = <AppTab>{
+                    //                 tab3 = <AppTab>{
                     //                     animator: {selected = {default: off}}
                     //                     text: "Settings"
                     //                     draw_icon: {
@@ -191,34 +204,42 @@ impl LiveRegister for App {
         crate::views::sigin_page::live_design(cx);
         crate::views::settings_page::live_design(cx);
         crate::views::main_page::live_design(cx);
+        crate::views::bucket_page::live_design(cx);
+        crate::views::upload_page::live_design(cx);
     }
 }
 
 impl MatchEvent for App {
     fn handle_timer(&mut self, cx: &mut Cx, _e:&TimerEvent) {
-        let uid = self.root.widget_uid();
-        cx.widget_action(
-            uid,
-            &Scope::empty().path,
-            StackNavigationAction::NavigateTo(live_id!(sigin_page_view)),
-        );
-        cx.stop_timer(self.timer);
+        // let uid = self.root.widget_uid();
+        // cx.widget_action(
+        //     uid,
+        //     &Scope::empty().path,
+        //     StackNavigationAction::NavigateTo(live_id!(root_view)),
+        // );
+        
+        // cx.stop_timer(self.timer);
     }
     fn handle_startup(&mut self, cx: &mut Cx) {
-        // self.timer = cx.start_timeout(12.0);
+        // self.timer = cx.start_timeout(15.0);
         // let uid = self.root.widget_uid();
         // cx.widget_action(
         //     uid,
         //     &Scope::empty().path,
         //     StackNavigationAction::NavigateTo(live_id!(start_page)),
         // );
+        // get configs
+        let mut state = APP_STATE.lock().unwrap();
+        let _ = state.get_confih_credentials();
         
     }
     fn handle_actions(&mut self, cx: &mut Cx, actions: &Actions) {
         self.root.radio_button_set(ids!(
             modes.tab1,
-            modes.tab2
+            modes.tab2,
+            modes.tab3
         )).selected_to_visible(cx, &self.root, &actions, ids!(
+            application_pages.bucket_frame,
             application_pages.main_frame,
             application_pages.setting_frame
         ));

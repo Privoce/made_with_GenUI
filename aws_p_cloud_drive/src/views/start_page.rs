@@ -1,7 +1,4 @@
-use gen_components::{
-    components::card::{event::GCardEvent, GCard},
-    utils::filter_widget_actions,
-};
+use gen_components::components::card::GCard;
 use makepad_widgets::*;
 
 live_design! {
@@ -104,19 +101,20 @@ impl Widget for StartPage {
     fn draw_walk(&mut self, cx: &mut Cx2d, scope: &mut Scope, walk: Walk) -> DrawStep {
         self.super_widget.draw_walk(cx, scope, walk)
     }
-    fn handle_event(&mut self, cx: &mut Cx, event: &Event, scope: &mut Scope) {
-        let actions = cx.capture_actions(|cx| self.super_widget.handle_event(cx, event, scope));
-        filter_widget_actions(&actions, self.widget_uid()).map(|actions| {
-            actions.iter().for_each(|action| {
-                if let GCardEvent::FingerUp(_) = action.cast() {
-                    let uid = self.widget_uid();
-                    cx.widget_action(
-                        uid,
-                        &scope.path,
-                        StackNavigationAction::NavigateTo(live_id!(sigin_page_view)),
-                    );
-                }
-            });
-        });
+    fn handle_event(&mut self, _cx: &mut Cx, _event: &Event, _scope: &mut Scope) {
+        // 暂时不需要 -----------------------------------------------------------------------------
+        // let actions = cx.capture_actions(|cx| self.super_widget.handle_event(cx, event, scope));
+        // filter_widget_actions(&actions, self.widget_uid()).map(|actions| {
+        //     actions.iter().for_each(|action| {
+        //         if let GCardEvent::FingerUp(_) = action.cast() {
+        //             let uid = self.widget_uid();
+        //             cx.widget_action(
+        //                 uid,
+        //                 &scope.path,
+        //                 StackNavigationAction::NavigateTo(live_id!(sigin_page_view)),
+        //             );
+        //         }
+        //     });
+        // });
     }
 }

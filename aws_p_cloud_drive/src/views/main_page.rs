@@ -13,7 +13,7 @@ use gen_components::components::{
 };
 use makepad_widgets::*;
 
-use crate::utils::{ls, ls_dir, rm, FileTableItem, Handles, LsResult, S3Data};
+use crate::utils::{cp, ls, ls_dir, rm, CpId, FileTableItem, Handles, LsResult, S3Data, THREAD_POOL, TODO_LIST};
 
 live_design! {
     import makepad_widgets::base::*;
@@ -489,6 +489,10 @@ pub struct MainPage {
     step: Step,
     #[rust]
     upload_dir: PathBuf,
+    #[rust]
+    time: Timer,
+    #[rust]
+    todo_list: Vec<CpId>
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -523,6 +527,13 @@ impl Widget for MainPage {
         let actions = cx.capture_actions(|cx| self.super_widget.handle_event(cx, event, scope));
         let mut ls_flag = false;
         let mut upload_flag = false;
+        self.upload_to_s3(cx, &actions);
+        if self.time.is_event(event).is_some(){
+            dbg!("timer");
+            if !TODO_LIST.lock().unwrap().is_empty(){
+                // TODO_LIST.iter()
+            }
+        }
         self.gicon(id!(fresh_upload)).borrow().map(|icon| {
             if icon.clicked(&actions).is_some() {
                 self.handle_upload(cx);
@@ -671,7 +682,7 @@ impl Widget for MainPage {
                                                 .set_text_and_redraw(cx, &ls_table.date);
                                             cell.glabel(id!(size_str)).set_text_and_redraw(
                                                 cx,
-                                                &format!("{}B", ls_table.size),
+                                                &format!("{}B", ls_table.size.unwrap()),
                                             );
                                             cell.gbutton(id!(choose_btn)).borrow_mut().map(
                                                 |mut x| {
@@ -739,6 +750,45 @@ impl MainPage {
             });
         }
         flag
+    }
+    fn upload_to_s3(&mut self, cx: &mut Cx,actions: &Actions) {
+        self.gtable(id!(ls_table2)).borrow().map(|table| {
+            for (_row_index, (_, row)) in table.body_virtual.children.iter().enumerate() {
+                let mut flag = false;
+                let mut target_dir_name = String::new();
+                for (_cell_index, (_cell_id, cell)) in
+                    row.borrow().unwrap().children.iter().enumerate()
+                {
+                    let name = cell.glabel(id!(name_str2)).text();
+                    if !name.is_empty() {
+                        target_dir_name = name;
+                    }
+                    cell.borrow().map(|cell| {
+                        cell.gbutton(id!(upload_btn)).borrow().map(|btn| {
+                            if btn.clicked(&actions).is_some() {
+                                flag = true;
+                            }
+                        });
+                    });
+                }
+                if flag {
+                    let from = self.upload_dir.join(target_dir_name).to_str().unwrap().to_string();
+                    let to = self.current_choose.clone().unwrap();
+                    THREAD_POOL.block_on(async{
+                        // if let Ok(special_id) = cp(&from, &to, true){
+                        //     self.todo_list.push(special_id);
+                        //     self.time = cx.start_interval(10.0);
+                        // }
+                       
+                        
+
+                    });
+
+                    
+                    // dbg!("upload", target_dir_name);
+                }
+            }
+        });
     }
     fn ls_dir(&mut self, actions: &Actions) -> bool {
         let mut ls_flag = false;

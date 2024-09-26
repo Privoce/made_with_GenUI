@@ -198,7 +198,7 @@ live_design! {
                     slot: {
                         font_family: (BOLD_FONT2),
                         font_size: 9.0,
-                        text: "Try Connect",
+                        text: "Change Config",
                     }
                 }
             }
