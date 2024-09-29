@@ -26,7 +26,7 @@ live_design! {
             padding: 12.0,
             <GLabel>{
                 width: Fill,
-                font_size: 12.0,
+                font_size: 14.0,
                 font_family: (BOLD_FONT),
                 text: "HOME",
             }
@@ -85,7 +85,7 @@ live_design! {
                     }
                 }
                 <GLabel>{
-                    font_size: 8.0,
+                    font_size: 10.0,
                     font_family: (BOLD_FONT2),
                     text: "Set Download Folder"
                 }
@@ -206,22 +206,23 @@ live_design! {
                 spacing: 6.0,
                 <GLabel>{
                     font_family: (BOLD_FONT),
-                    font_size: 8.0,
+                    font_size: 9.0,
                     text: "Amazon Simple Storage Service Documentation",
-
                 }
                 <GLabel>{
                     color: #D5DBDB,
                     width: Fill,
                     font_family: (BOLD_FONT),
-                    font_size: 7.0,
+                    font_size: 8.0,
                     text: "Amazon Simple Storage Service (Amazon S3) is storage for the internet",
+                    margin: {left: 4.0}
                 }
                 <GLabel>{
                     color: #D5DBDB,
                     width: Fill,
                     font_family: (BOLD_FONT),
-                    font_size: 7.0,
+                    font_size: 8.0,
+                    margin: {left: 4.0}
                     text: "Amazon S3 to store and retrieve any amount of data at any time, from anywhere on the web.",
                 }
             }

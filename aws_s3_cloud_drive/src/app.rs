@@ -2,12 +2,6 @@ use makepad_widgets::*;
 
 use crate::utils::APP_STATE;
 
-// use crate::{
-//     commands::ls,
-//     components::{main_view::MainViewWidgetRefExt, personal_view::PersonalWidgetRefExt},
-//     state::State,
-// };
-
 live_design! {
     import makepad_widgets::base::*;
     import makepad_widgets::theme_desktop_dark::*;
@@ -15,7 +9,7 @@ live_design! {
     import crate::views::start_page::*;
     import crate::views::sigin_page::*;
     import crate::views::settings_page::*;
-    import crate::views::main_page::*;
+    // import crate::views::main_page::*;
     import crate::views::bucket_page::*;
     import crate::views::upload_page::*;
 
@@ -51,7 +45,7 @@ live_design! {
                     path: (BOLD_FONT)
                 }
             }
-            
+
             fn get_color(self) -> vec4 {
                 return mix(
                     mix(
@@ -114,8 +108,8 @@ live_design! {
                                 margin: 0.0,
                                 padding: 0.0
                                 flow: Overlay
-                                // bucket_frame = <BucketPage>{visible: true}
-                                upload_frame = <UploadPage>{visible: true}
+                                bucket_frame = <BucketPage>{visible: true}
+                                upload_frame = <UploadPage>{visible: false}
                                 setting_frame = <SettingsPage> {visible: false}
                             }
                             menu = <GCard>{
@@ -128,13 +122,13 @@ live_design! {
                                     width: Fill,
                                     align: {x: 0.5, y: 0.5},
                                     spacing: 16.0,
-                                    // tab1 = <AppTab>{
-                                    //     animator: {selected = {default: on}}
-                                    //     text: "Home"
-                                    //     draw_icon: {
-                                    //         svg_file: dep("crate://self/resources/home.svg"),
-                                    //     }
-                                    // }
+                                    tab1 = <AppTab>{
+                                        animator: {selected = {default: on}}
+                                        text: "Home"
+                                        draw_icon: {
+                                            svg_file: dep("crate://self/resources/home.svg"),
+                                        }
+                                    }
                                     tab2 = <AppTab>{
                                         animator: {selected = {default: off}}
                                         text: "Upload"
@@ -152,7 +146,7 @@ live_design! {
                                 }
                             }
                         }
-                        
+
                         start_page = <StackNavigationView> {
                             height: Fill,
                             draw_bg: {
@@ -178,7 +172,7 @@ live_design! {
                             body = {
                                 margin: {top: 32.0},
                                 sigin_screen = <SiginPage>{
-                                    
+
                                 }
                             }
                         }
@@ -189,12 +183,27 @@ live_design! {
     }
 }
 
-#[derive(Live, LiveHook)]
+#[derive(Live)]
 pub struct App {
     #[live]
     root: WidgetRef,
     #[rust]
     pub timer: Timer,
+}
+
+impl LiveHook for App {
+    fn after_apply(
+        &mut self,
+        _cx: &mut Cx,
+        _apply: &mut Apply,
+        _index: usize,
+        _nodes: &[LiveNode],
+    ) {
+        // get configs
+        let mut state = APP_STATE.lock().unwrap();
+        let _ = state.get_confih_credentials();
+        let _ = state.ls();
+    }
 }
 
 impl LiveRegister for App {
@@ -204,47 +213,46 @@ impl LiveRegister for App {
         crate::views::start_page::live_design(cx);
         crate::views::sigin_page::live_design(cx);
         crate::views::settings_page::live_design(cx);
-        crate::views::main_page::live_design(cx);
         crate::views::bucket_page::live_design(cx);
         crate::views::upload_page::live_design(cx);
     }
 }
 
 impl MatchEvent for App {
-    
-    fn handle_timer(&mut self, cx: &mut Cx, _e:&TimerEvent) {
+    fn handle_timer(&mut self, cx: &mut Cx, _e: &TimerEvent) {
         let uid = self.root.widget_uid();
         cx.widget_action(
             uid,
             &Scope::empty().path,
             StackNavigationAction::NavigateTo(live_id!(root_view)),
         );
-        
+
         cx.stop_timer(self.timer);
     }
     fn handle_startup(&mut self, cx: &mut Cx) {
-        self.timer = cx.start_timeout(15.0);
+        dbg!("start up");
+        self.timer = cx.start_timeout(10.0);
         let uid = self.root.widget_uid();
         cx.widget_action(
             uid,
             &Scope::empty().path,
             StackNavigationAction::NavigateTo(live_id!(start_page)),
         );
-        // get configs
-        let mut state = APP_STATE.lock().unwrap();
-        let _ = state.get_confih_credentials();
-        
     }
     fn handle_actions(&mut self, cx: &mut Cx, actions: &Actions) {
-        self.root.radio_button_set(ids!(
-            // modes.tab1,
-            modes.tab2,
-            modes.tab3
-        )).selected_to_visible(cx, &self.root, &actions, ids!(
-            // application_pages.bucket_frame,
-            application_pages.upload_frame,
-            application_pages.setting_frame
-        ));
+        self.root
+            .radio_button_set(ids!(modes.tab1, modes.tab2, modes.tab3))
+            .selected_to_visible(
+                cx,
+                &self.root,
+                &actions,
+                ids!(
+                    application_pages.bucket_frame,
+                    application_pages.upload_frame,
+                    application_pages.setting_frame
+                ),
+            );
+
         let mut navigation = self.root.stack_navigation(id!(navigation));
         navigation.handle_stack_view_actions(cx, &actions);
     }

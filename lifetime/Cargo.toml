@@ -1,0 +1,9 @@
+[package]
+name = "lifetime"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+makepad-widgets = { path = "E:/Rust/try/makepad/makepad/rik/makepad/widgets", version = "0.6.0" }
+gen_components = { path = "E:/Rust/try/makepad/Gen-UI/gen/components" }
+lazy_static = "1.5.0"

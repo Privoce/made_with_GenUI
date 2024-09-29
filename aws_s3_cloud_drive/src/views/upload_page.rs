@@ -1,14 +1,20 @@
-use gen_components::components::{
-    button::GButtonWidgetExt,
-    card::{GCard, GCardWidgetExt, GCardWidgetRefExt},
-    drop_down::GDropDownWidgetExt,
-    icon::GIconWidgetExt,
-    image::GImageWidgetExt,
-    label::{GLabelWidgetExt, GLabelWidgetRefExt}, loading::GLoadingWidgetExt,
+use gen_components::{
+    components::{
+        card::{GCard, GCardWidgetExt, GCardWidgetRefExt},
+        drop_down::GDropDownWidgetExt,
+        icon::GIconWidgetExt,
+        image::GImageWidgetExt,
+        label::{GLabelWidgetExt, GLabelWidgetRefExt},
+    },
+    utils::HeapLiveIdPathExp,
 };
 use makepad_widgets::*;
 
-use crate::utils::{format_size, ls, ls_dir, LsResult, S3Data, APP_STATE};
+use crate::utils::{
+    format_size,
+    lifetime::{Executor, Lifetime},
+    LsResult, APP_STATE,
+};
 
 live_design! {
     import makepad_widgets::base::*;
@@ -25,7 +31,7 @@ live_design! {
         background_color: #161616,
         upload_item: <GHLayout>{
             event_order: Down,
-            height: 32.0,
+            height: 36.0,
             width: Fill,
             align: {
                 y: 0.5
@@ -46,22 +52,33 @@ live_design! {
                 },
                 spacing: 4.0,
                 f_name = <GLabel>{
-                    font_size: 8.0,
+                    font_size: 9.0,
                     font_family: (BOLD_FONT),
                     text: "Personal",
                 }
-                f_size = <GLabel>{
-                    color: #656F7C,
-                    font_size: 6.0,
-                    font_family: (BOLD_FONT2),
-                    text: ""
+                <GHLayout>{
+                    height: Fit,
+                    spacing: 8.0,
+                    f_size = <GLabel>{
+                        color: #656F7C,
+                        font_size: 8.0,
+                        font_family: (BOLD_FONT2),
+                        text: ""
+                    }
+                    f_date = <GLabel>{
+                        color: #656F7C,
+                        font_size: 8.0,
+                        font_family: (BOLD_FONT2),
+                        text: ""
+                    }
                 }
             }
-            <GDropDown>{
+            upload_drop_down = <GDropDown>{
                 mode: Drawer,
                 height: Fit,
                 width: Fit,
                 position: Bottom,
+                proportion: 0.25,
                 trigger_more = <GIcon>{
                     cursor: Hand,
                     theme: Dark,
@@ -91,12 +108,12 @@ live_design! {
                                     src: dep("crate://self/resources/share.png"),
                                 }
                                 <GLabel>{
-                                    font_size: 8.0,
+                                    font_size: 9.0,
                                     font_family: (BOLD_FONT2),
                                     text: "Share"
                                 }
                             }
-                            <GHLayout>{
+                            delete_wrap = <GHLayout>{
                                 height: Fit,
                                 align: {
                                     x: 0.0,
@@ -110,12 +127,12 @@ live_design! {
                                     src: dep("crate://self/resources/delete.png"),
                                 }
                                 <GLabel>{
-                                    font_size: 8.0,
+                                    font_size: 9.0,
                                     font_family: (BOLD_FONT2),
                                     text: "Delete"
                                 }
                             }
-                            <GHLayout>{
+                            download_wrap = <GHLayout>{
                                 height: Fit,
                                 align: {
                                     x: 0.0,
@@ -129,7 +146,7 @@ live_design! {
                                     src: dep("crate://self/resources/download.png"),
                                 }
                                 <GLabel>{
-                                    font_size: 8.0,
+                                    font_size: 9.0,
                                     font_family: (BOLD_FONT2),
                                     text: "Download"
                                 }
@@ -402,71 +419,103 @@ pub struct UploadPage {
     pub upload_item: Option<LivePtr>,
     #[rust(true)]
     pub is_bucket: bool,
+    #[rust]
+    pub lifetime: Lifetime,
 }
 
 impl LiveHook for UploadPage {
-    fn after_apply(&mut self, cx: &mut Cx, _apply: &mut Apply, _index: usize, _nodes: &[LiveNode]) {
-        // get app state and check login is true?
-        let mut state = APP_STATE.lock().unwrap();
-        if !state.check {
-            let _ = state.get_confih_credentials();
-        }
-
-        if state.login {
-            // use ls to check s3 bucket
-            match ls() {
-                Ok(res) => {
-                    // get upload item as ptr and create list in s3_list
-                    self.set_dir_file(cx, res);
-                    self.is_bucket = false;
-                }
-                Err(e) => {
-                    self.set_note(cx, &e);
-                }
-            }
-        } else {
-            self.set_note(cx, "Can not Auto Config, You may need to get S3 Access Key with Secret and Download AWS Cli tool.");
+    fn after_apply(
+        &mut self,
+        _cx: &mut Cx,
+        _apply: &mut Apply,
+        _index: usize,
+        _nodes: &[LiveNode],
+    ) {
+        if !self.visible {
+            return;
         }
     }
 }
 
 impl Widget for UploadPage {
     fn draw_walk(&mut self, cx: &mut Cx2d, scope: &mut Scope, walk: Walk) -> DrawStep {
-        self.super_widget.draw_walk(cx, scope, walk)
+        if self.visible {
+            let _ = self.super_widget.draw_walk(cx, scope, walk);
+            self.lifetime
+                .init()
+                .execute(|| self.init(cx))
+                .map(|lifetime| {
+                    self.lifetime = lifetime;
+                });
+        }
+        DrawStep::done()
     }
     fn handle_event(&mut self, cx: &mut Cx, event: &Event, scope: &mut Scope) {
         let actions = cx.capture_actions(|cx| self.super_widget.handle_event(cx, event, scope));
-        self.to_main_page(cx, scope, &actions).map(|_| {
-            return;
-        });
+
         self.update_list(cx, &actions).map(|_| {
             return;
         });
-        self.gcard(id!(share_wrap)).borrow().map(|x|{
-            if x.finger_down(&actions).is_some(){
-                dbg!("share");
+
+        self.gcard(id!(s3_list)).borrow().map(|list| {
+            let path = list.scope_path.clone();
+            for (index, (_, _child)) in list.children.iter().enumerate() {
+                let mut flag = false;
+                self.gdrop_down(id!(upload_drop_down))
+                    .borrow_mut()
+                    .map(|mut drop_down| {
+                        drop_down.popup(cx, |_cx, popup| {
+                            popup
+                                .container
+                                .gcard(id!(share_wrap))
+                                .borrow()
+                                .map(|share_wrap| {
+                                    if let Some(e) = share_wrap.finger_down(&actions) {
+                                        let mut c_p = path.clone();
+                                        c_p.push(LiveId(index as u64));
+
+                                        if e.path.contains(&c_p) {
+                                            flag = true;
+                                        }
+                                    }
+                                });
+                        });
+                    });
+                if flag {
+                    dbg!(index);
+                    break;
+                }
             }
         });
     }
 }
 
 impl UploadPage {
+    // init bucket
+    pub fn init(&mut self, cx: &mut Cx) {
+        let state = APP_STATE.lock().unwrap();
+
+        state.current.as_ref().map(|res| {
+            self.set_dir_file(cx, res);
+        });
+    }
     pub fn update_list(&mut self, cx: &mut Cx, actions: &Actions) -> Option<()> {
-        let mut target_name = None;
+        let mut state = APP_STATE.lock().unwrap();
+        // let mut target_name: Option<String> = None;
+        let mut flag = false;
         self.gcard(id!(s3_list)).borrow().map(|list| {
             for (_, (_, child)) in list.children.iter().enumerate() {
                 // actions.find
                 child.as_gcard().gcard(id!(item_wrap)).borrow().map(|wrap| {
                     if wrap.finger_up(&actions).is_some() && !wrap.glabel(id!(f_size)).is_visible()
                     {
-                        // if clicked, do ls
-                        if !self.is_bucket {
-                            
-                            target_name.replace(child.as_gcard().glabel(id!(f_name)).text());
-                        }
+                        state
+                            .s3_path
+                            .push(child.as_gcard().glabel(id!(f_name)).text());
+                        flag = true;
                     }
                 });
-                if target_name.is_some(){
+                if flag {
                     self.gcard(id!(update_loading)).borrow_mut().map(|mut x| {
                         x.visible = true;
                         x.redraw(cx);
@@ -475,26 +524,13 @@ impl UploadPage {
                 }
             }
         });
-        
-        if let Some(target) = target_name { 
-            match ls_dir(&target) {
-                Ok(res) => {
-                    res.map(|res| {
-                        dbg!(&res.pre);
-                        let pres = res.pre.iter().map(|x| LsResult {
-                            date: String::new(),
-                            dir: x.to_string(),
-                            size: None,
-                        });
-                        let mut res = res.files.clone();
-                        res.extend(pres);
-                        self.set_dir_file(cx, res);
-                    });
-                }
-                Err(e) => {
-                    self.set_note(cx, &e);
-                }
-            }
+
+        if flag {
+            let _ = state.ls();
+            state.current.as_ref().map(|res| {
+                self.set_dir_file(cx, res);
+            });
+
             self.gcard(id!(update_loading)).borrow_mut().map(|mut x| {
                 x.visible = false;
                 x.redraw(cx);
@@ -505,22 +541,6 @@ impl UploadPage {
         }
     }
 
-    pub fn to_main_page(
-        &mut self,
-        cx: &mut Cx,
-        scope: &mut Scope,
-        actions: &Actions,
-    ) -> Option<()> {
-        self.gbutton(id!(to_main)).borrow().map(|x| {
-            if x.clicked(actions).is_some() {
-                cx.widget_action(
-                    self.widget_uid(),
-                    &scope.path,
-                    StackNavigationAction::NavigateTo(live_id!(application_pages.main_frame)),
-                );
-            }
-        })
-    }
     pub fn set_note(&mut self, cx: &mut Cx, note: &str) -> () {
         self.gdrop_down(id!(notice_popup))
             .borrow_mut()
@@ -534,7 +554,7 @@ impl UploadPage {
                 });
             });
     }
-    pub fn set_dir_file(&mut self, cx: &mut Cx, res: Vec<LsResult>) {
+    pub fn set_dir_file(&mut self, cx: &mut Cx, res: &Vec<LsResult>) {
         self.gcard(id!(s3_list)).borrow_mut().map(|mut s3_list| {
             s3_list.children.clear();
             let mut list: Vec<(LiveId, WidgetRef)> = Vec::new();
@@ -546,7 +566,10 @@ impl UploadPage {
 
                 if let Some((_, target)) = list.last_mut() {
                     target.as_gcard().borrow().map(|t_card| {
-                        t_card.glabel(id!(f_name)).set_text_and_redraw(cx, &f.dir);
+                        t_card.glabel(id!(f_name)).set_text_and_redraw(cx, &f.name);
+                        f.date.as_ref().map(|s| {
+                            t_card.glabel(id!(f_date)).set_text_and_redraw(cx, s);
+                        });
 
                         if f.size.is_some() {
                             // means file

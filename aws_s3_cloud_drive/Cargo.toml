@@ -1,0 +1,12 @@
+[package]
+name = "aws_s3_cloud_drive"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+makepad-widgets = { path = "E:/Rust/try/makepad/makepad/rik/makepad/widgets", version = "0.6.0" }
+gen_components = { path = "E:/Rust/try/makepad/Gen-UI/gen/components" }
+regex = "1.10.6"
+dirs-next = "2.0.0"
+tokio = { version = "1.40.0", features = ["full"] }
+lazy_static = "1.5.0"

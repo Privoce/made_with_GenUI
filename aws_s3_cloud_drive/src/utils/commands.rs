@@ -9,30 +9,18 @@ use std::{
 
 use tokio::io::{AsyncBufReadExt, BufReader};
 
-use crate::utils::{CpState, TODO_LIST};
+use crate::utils::CpState;
 
-use super::{CpId, LsResult, LsResultDir, VIRTUAL_FILE};
+use super::{CpId, LsResult, VIRTUAL_FILE};
 
-pub fn ls() -> Result<Vec<LsResult>, String> {
-    let command = Command::new("aws").arg("s3").arg("ls").output();
-
-    match command {
-        Ok(out) => {
-            if out.status.success() {
-                let msg_str = String::from_utf8_lossy(&out.stdout.as_slice());
-                return Ok(format_str_bucket(&msg_str));
-            } else {
-                return Err(String::from_utf8_lossy(&out.stderr.as_slice()).to_string());
-            }
-        }
-        Err(e) => {
-            return Err(format!("Can not list the bucket: {}", e.to_string()));
-        }
-    }
-}
-
-pub fn ls_dir(target: &str) -> Result<Option<LsResultDir>, String> {
-    let dir = format!("s3://{}/", target);
+pub fn ls_dir(target: &str) -> Result<Option<Vec<LsResult>>, String> {
+    let mut is_bucket = false;
+    let dir = if target.is_empty() {
+        is_bucket = true;
+        "".to_string()
+    } else {
+        format!("s3://{}/", target)
+    };
     let command = Command::new("aws").args(["s3", "ls", &dir]).output();
     match command {
         Ok(out) => {
@@ -41,7 +29,7 @@ pub fn ls_dir(target: &str) -> Result<Option<LsResultDir>, String> {
                 if msg_str.is_empty() {
                     return Ok(None);
                 }
-                return Ok(Some(format_str_dir(&msg_str)));
+                return Ok(Some(format_str_dir(&msg_str, is_bucket)));
             } else {
                 return Err(String::from_utf8_lossy(&out.stderr.as_slice()).to_string());
             }
@@ -52,7 +40,7 @@ pub fn ls_dir(target: &str) -> Result<Option<LsResultDir>, String> {
     }
 }
 
-pub fn rm(dir: &str, target: &str) -> Result<Option<LsResultDir>, String> {
+pub fn rm(dir: &str, target: &str) -> Result<Option<Vec<LsResult>>, String> {
     let target_rm = format!("s3://{}/{}", dir, target);
     let command = Command::new("aws").args(["s3", "rm", &target_rm]).output();
     match command {
@@ -124,55 +112,60 @@ fn format_str_bucket(s: &str) -> Vec<LsResult> {
         let date = line.next().unwrap();
         let time = line.next().unwrap();
         let dir = line.next().unwrap();
-        res.date = format!("{} {}", date, time);
-        res.dir = dir.to_string();
+        res.date.replace(format!("{} {}", date, time));
+        res.name = dir.to_string();
         results.push(res);
     }
     results
 }
 
-fn format_str_dir(s: &str) -> LsResultDir {
-    let mut res = LsResultDir::default();
-    let lines: Vec<&str> = s.trim().split("\r\n").collect();
+fn format_str_dir(s: &str, is_bucket: bool) -> Vec<LsResult> {
+    let mut res = Vec::new();
+    let lines: Vec<&str> = s.trim().split("\r\n").map(|x| x.trim()).collect();
 
-    for line in lines {
-        if line.starts_with("PRE") {
-            // split white space and get the last one
-            line.split_whitespace()
-                .collect::<Vec<&str>>()
-                .last()
-                .map(|pre| {
-                    res.pre.push(pre.trim().replace("/", "").to_string());
+    if is_bucket {
+        format_str_bucket(s)
+    } else {
+        for line in lines {
+            if line.starts_with("PRE") {
+                // split white space and get the last one
+                line.split_whitespace()
+                    .collect::<Vec<&str>>()
+                    .last()
+                    .map(|pre| {
+                        res.push(LsResult::bucket(&pre.trim().replace("/", "")));
+                    });
+            } else {
+                if line.is_empty() {
+                    continue;
+                }
+                let mut ls_res = LsResult::default();
+                let mut target = line.split_whitespace();
+                let mut date = String::new();
+                target.next().map(|x| {
+                    date.push_str(x);
                 });
-        } else {
-            if line.is_empty() {
-                continue;
+                target.next().map(|x| {
+                    date.push_str(" ");
+                    date.push_str(x);
+                    ls_res.date.replace(date);
+                });
+
+                target.next().map(|target| {
+                    ls_res
+                        .size
+                        .replace(usize::from_str_radix(target, 10).unwrap_or(0));
+                });
+                target.next().map(|target| {
+                    ls_res.name = target.to_string();
+                });
+
+                // ls_res.date = format!("{} {}", date, time);
+                res.push(ls_res);
             }
-            let mut ls_res = LsResult::default();
-            let mut target = line.split_whitespace();
-
-            target.next().map(|x| {
-                ls_res.date.push_str(x);
-            });
-            target.next().map(|x| {
-                ls_res.date.push(' ');
-                ls_res.date.push_str(x);
-            });
-
-            target.next().map(|target| {
-                ls_res
-                    .size
-                    .replace(usize::from_str_radix(target, 10).unwrap_or(0));
-            });
-            target.next().map(|target| {
-                ls_res.dir = target.to_string();
-            });
-
-            // ls_res.date = format!("{} {}", date, time);
-            res.files.push(ls_res);
         }
+        res
     }
-    res
 }
 
 pub fn set_conf(k: &str) -> Result<(), std::io::Error> {
@@ -243,8 +236,8 @@ pub fn read_or_create(target: &str) -> std::io::Result<File> {
 mod t {
     #[test]
     fn test_ls() {
-        let results = super::ls();
-        dbg!(results.unwrap());
+        // let results = super::ls();
+        // dbg!(results.unwrap());
         // assert!(results.is_ok());
     }
     #[test]
