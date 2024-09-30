@@ -1,8 +1,7 @@
 use gen_components::{
     components::{
-        card::{GCard, GCardWidgetExt, GCardWidgetRefExt},
+        view::{GView, GViewWidgetExt, GViewWidgetRefExt},
         drop_down::GDropDownWidgetExt,
-        icon::GIconWidgetExt,
         image::GImageWidgetExt,
         label::{GLabelWidgetExt, GLabelWidgetRefExt},
     },
@@ -414,7 +413,7 @@ live_design! {
 #[derive(Live, Widget)]
 pub struct UploadPage {
     #[deref]
-    pub super_widget: GCard,
+    pub super_widget: GView,
     #[live]
     pub upload_item: Option<LivePtr>,
     #[rust(true)]
@@ -457,7 +456,7 @@ impl Widget for UploadPage {
             return;
         });
 
-        self.gcard(id!(s3_list)).borrow().map(|list| {
+        self.gview(id!(s3_list)).borrow().map(|list| {
             let path = list.scope_path.clone();
             for (index, (_, _child)) in list.children.iter().enumerate() {
                 let mut flag = false;
@@ -467,14 +466,14 @@ impl Widget for UploadPage {
                         drop_down.popup(cx, |_cx, popup| {
                             popup
                                 .container
-                                .gcard(id!(share_wrap))
+                                .gview(id!(share_wrap))
                                 .borrow()
                                 .map(|share_wrap| {
                                     if let Some(e) = share_wrap.finger_down(&actions) {
                                         let mut c_p = path.clone();
                                         c_p.push(LiveId(index as u64));
 
-                                        if e.path.contains(&c_p) {
+                                        if e.path.contains(&c_p).unwrap() {
                                             flag = true;
                                         }
                                     }
@@ -503,20 +502,20 @@ impl UploadPage {
         let mut state = APP_STATE.lock().unwrap();
         // let mut target_name: Option<String> = None;
         let mut flag = false;
-        self.gcard(id!(s3_list)).borrow().map(|list| {
+        self.gview(id!(s3_list)).borrow().map(|list| {
             for (_, (_, child)) in list.children.iter().enumerate() {
                 // actions.find
-                child.as_gcard().gcard(id!(item_wrap)).borrow().map(|wrap| {
+                child.as_gview().gview(id!(item_wrap)).borrow().map(|wrap| {
                     if wrap.finger_up(&actions).is_some() && !wrap.glabel(id!(f_size)).is_visible()
                     {
                         state
                             .s3_path
-                            .push(child.as_gcard().glabel(id!(f_name)).text());
+                            .push(child.as_gview().glabel(id!(f_name)).text());
                         flag = true;
                     }
                 });
                 if flag {
-                    self.gcard(id!(update_loading)).borrow_mut().map(|mut x| {
+                    self.gview(id!(update_loading)).borrow_mut().map(|mut x| {
                         x.visible = true;
                         x.redraw(cx);
                     });
@@ -531,7 +530,7 @@ impl UploadPage {
                 self.set_dir_file(cx, res);
             });
 
-            self.gcard(id!(update_loading)).borrow_mut().map(|mut x| {
+            self.gview(id!(update_loading)).borrow_mut().map(|mut x| {
                 x.visible = false;
                 x.redraw(cx);
             });
@@ -555,7 +554,7 @@ impl UploadPage {
             });
     }
     pub fn set_dir_file(&mut self, cx: &mut Cx, res: &Vec<LsResult>) {
-        self.gcard(id!(s3_list)).borrow_mut().map(|mut s3_list| {
+        self.gview(id!(s3_list)).borrow_mut().map(|mut s3_list| {
             s3_list.children.clear();
             let mut list: Vec<(LiveId, WidgetRef)> = Vec::new();
             for (index, f) in res.iter().enumerate() {
@@ -565,36 +564,36 @@ impl UploadPage {
                 ));
 
                 if let Some((_, target)) = list.last_mut() {
-                    target.as_gcard().borrow().map(|t_card| {
-                        t_card.glabel(id!(f_name)).set_text_and_redraw(cx, &f.name);
+                    target.as_gview().borrow().map(|t_view| {
+                        t_view.glabel(id!(f_name)).set_text_and_redraw(cx, &f.name);
                         f.date.as_ref().map(|s| {
-                            t_card.glabel(id!(f_date)).set_text_and_redraw(cx, s);
+                            t_view.glabel(id!(f_date)).set_text_and_redraw(cx, s);
                         });
 
                         if f.size.is_some() {
                             // means file
-                            t_card.glabel(id!(f_size)).borrow_mut().map(|mut x| {
+                            t_view.glabel(id!(f_size)).borrow_mut().map(|mut x| {
                                 x.set_text(&format_size(f.size.unwrap()));
                                 x.visible = true;
                                 x.redraw(cx);
                             });
 
-                            t_card.gimage(id!(file_icon)).borrow_mut().map(|mut x| {
+                            t_view.gimage(id!(file_icon)).borrow_mut().map(|mut x| {
                                 x.visible = true;
                             });
-                            t_card.gimage(id!(folder_icon)).borrow_mut().map(|mut x| {
+                            t_view.gimage(id!(folder_icon)).borrow_mut().map(|mut x| {
                                 x.visible = false;
                             });
                         } else {
                             // fold
-                            t_card.glabel(id!(f_size)).borrow_mut().map(|mut x| {
+                            t_view.glabel(id!(f_size)).borrow_mut().map(|mut x| {
                                 x.visible = false;
                                 x.redraw(cx);
                             });
-                            t_card.gimage(id!(file_icon)).borrow_mut().map(|mut x| {
+                            t_view.gimage(id!(file_icon)).borrow_mut().map(|mut x| {
                                 x.visible = false;
                             });
-                            t_card.gimage(id!(folder_icon)).borrow_mut().map(|mut x| {
+                            t_view.gimage(id!(folder_icon)).borrow_mut().map(|mut x| {
                                 x.visible = true;
                             });
                         }

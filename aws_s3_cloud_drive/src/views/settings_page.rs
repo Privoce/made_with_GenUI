@@ -1,4 +1,4 @@
-use gen_components::components::{button::GButtonWidgetExt, card::GCard};
+use gen_components::components::{button::GButtonWidgetExt, view::GView};
 use makepad_widgets::*;
 
 live_design! {
@@ -25,7 +25,7 @@ live_design! {
             top: 24.0,
             bottom: 24.0
         }
-        <GCard>{
+        <GView>{
             theme: Dark,
             border_radius: 6.0,
             height: 180.0,
@@ -188,7 +188,7 @@ live_design! {
 #[derive(Live, Widget)]
 pub struct SettingsPage {
     #[deref]
-    pub super_widget: GCard,
+    pub super_widget: GView,
 }
 
 impl LiveHook for SettingsPage {}

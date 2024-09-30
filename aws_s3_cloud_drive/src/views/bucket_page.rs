@@ -1,5 +1,5 @@
 use gen_components::components::{
-    button::GButtonWidgetExt, card::GCard, file_upload::GUploadWidgetExt,
+    button::GButtonWidgetExt, view::GView, file_upload::GUploadWidgetExt,
 };
 use makepad_widgets::*;
 
@@ -68,7 +68,7 @@ live_design! {
                     y: 0.5
                 },
                 spacing: 4.0,
-                <GCard>{
+                <GView>{
                     height: 32.0,
                     width: 32.0,
                     align: {x: 0.5, y: 0.5},
@@ -91,7 +91,7 @@ live_design! {
                 }
             }
         }
-        <GCard>{
+        <GView>{
             background_color: #1E1E1E,
             height: 220.0,
             width: Fill,
@@ -157,7 +157,7 @@ live_design! {
                 }
             }
         }
-        <GCard>{
+        <GView>{
             background_color: #1E1E1E,
             height: 220.0,
             width: Fill,
@@ -271,7 +271,7 @@ live_design! {
 #[derive(Live, Widget)]
 pub struct BucketPage {
     #[deref]
-    pub super_widget: GCard,
+    pub super_widget: GView,
 }
 
 impl LiveHook for BucketPage {}

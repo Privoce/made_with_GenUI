@@ -1,6 +1,6 @@
 use gen_components::components::{
     button::GButtonWidgetExt,
-    card::{GCard, GCardWidgetExt},
+    view::{GView, GViewWidgetExt},
     input::GInputWidgetExt,
     label::GLabelWidgetExt,
     radio::group::GRadioGroupWidgetExt,
@@ -221,7 +221,7 @@ live_design! {
 #[derive(Live, Widget)]
 pub struct SiginPage {
     #[deref]
-    pub super_widget: GCard,
+    pub super_widget: GView,
     #[rust]
     pub lifetime: Lifetime,
 }
@@ -313,7 +313,7 @@ impl SiginPage {
     pub fn check(&mut self, cx: &mut Cx) {
         let mut state = APP_STATE.lock().unwrap();
         if !state.check_toolkit() {
-            let _ = self.gcard(id!(download_btn)).borrow_mut().map(|mut x| {
+            let _ = self.gview(id!(download_btn)).borrow_mut().map(|mut x| {
                 x.visible = true;
             });
             self.redraw(cx);

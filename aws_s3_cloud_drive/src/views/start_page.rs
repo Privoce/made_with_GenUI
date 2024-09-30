@@ -1,4 +1,4 @@
-use gen_components::components::card::GCard;
+use gen_components::components::view::GView;
 use makepad_widgets::*;
 
 live_design! {
@@ -92,7 +92,7 @@ live_design! {
 #[derive(Live, Widget)]
 pub struct StartPage {
     #[deref]
-    pub super_widget: GCard,
+    pub super_widget: GView,
 }
 
 impl LiveHook for StartPage {}
@@ -106,7 +106,7 @@ impl Widget for StartPage {
         // let actions = cx.capture_actions(|cx| self.super_widget.handle_event(cx, event, scope));
         // filter_widget_actions(&actions, self.widget_uid()).map(|actions| {
         //     actions.iter().for_each(|action| {
-        //         if let GCardEvent::FingerUp(_) = action.cast() {
+        //         if let GViewEvent::FingerUp(_) = action.cast() {
         //             let uid = self.widget_uid();
         //             cx.widget_action(
         //                 uid,

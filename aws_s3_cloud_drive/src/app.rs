@@ -112,7 +112,7 @@ live_design! {
                                 upload_frame = <UploadPage>{visible: false}
                                 setting_frame = <SettingsPage> {visible: false}
                             }
-                            menu = <GCard>{
+                            menu = <GView>{
                                 border_radius: 0.0,
                                 theme: Dark,
                                 height: 46.0,
