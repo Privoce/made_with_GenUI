@@ -1,5 +1,5 @@
 use gen_components::components::{
-    button::GButtonWidgetExt, view::GView, file_upload::GUploadWidgetExt,
+    button::GButtonWidgetExt, file_upload::GUploadWidgetExt, router::GRouter, view::GView,
 };
 use makepad_widgets::*;
 
@@ -52,15 +52,6 @@ live_design! {
                 y: 0.5
             },
             spacing: 8.0,
-            // quick_s3_btn = <GButton>{
-            //     theme: Dark,
-            //     height: 32.0,
-            //     slot: {
-            //         font_size: 8.0,
-            //         font_family: (BOLD_FONT2),
-            //         text: "Set Quick S3 Bucket"
-            //     }
-            // }
             u_d_set_btn = <GHLayout>{
                 height: 32.0,
                 width: Fit,
@@ -300,11 +291,7 @@ impl BucketPage {
     ) -> Option<()> {
         self.gbutton(id!(to_main)).borrow().map(|x| {
             if x.clicked(actions).is_some() {
-                cx.widget_action(
-                    self.widget_uid(),
-                    &scope.path,
-                    StackNavigationAction::NavigateTo(live_id!(application_pages.main_frame)),
-                );
+                GRouter::nav_to_path(cx, self.widget_uid(), scope, id!(upload_frame));
             }
         })
     }
@@ -312,17 +299,10 @@ impl BucketPage {
         self.gupload(id!(up)).borrow().map(|up_btn| {
             if let Some(dirs) = up_btn.after_select(actions) {
                 // set conf
-                if !dirs.is_empty(){
+                if !dirs.is_empty() {
                     let _ = set_conf(dirs[0].to_str().unwrap());
                 }
             }
         })
     }
-    // pub fn set_s3_bucket(&mut self,actions: &Actions,)->Option<()>{
-    //     self.gbutton(id!(quick_s3_btn)).borrow().map(|x|{
-    //         if x.clicked(actions).is_some(){
-
-    //         }
-    //     })
-    // }
 }

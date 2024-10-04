@@ -1,4 +1,4 @@
-use gen_components::components::{button::GButtonWidgetExt, view::GView};
+use gen_components::components::{button::GButtonWidgetExt, router::GRouter, view::GView};
 use makepad_widgets::*;
 
 live_design! {
@@ -201,13 +201,7 @@ impl Widget for SettingsPage {
         let actions = cx.capture_actions(|cx| self.super_widget.handle_event(cx, event, scope));
         self.gbutton(id!(change_btn)).borrow().map(|x| {
             if x.clicked(&actions).is_some() {
-                let uid = self.widget_uid();
-                dbg!("change config");
-                cx.widget_action(
-                    uid,
-                    &scope.path,
-                    StackNavigationAction::NavigateTo(live_id!(sigin_page_view)),
-                );
+                GRouter::nav_to_path(cx, self.widget_uid(), scope, id!(sigin_screen));
             }
         });
     }

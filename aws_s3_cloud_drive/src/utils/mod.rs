@@ -1,11 +1,11 @@
 mod aws_structs;
 mod commands;
 mod state;
-// pub mod lifetime;
 
 pub use aws_structs::*;
 pub use commands::*;
 use lazy_static::lazy_static;
+
 pub use state::*;
 use std::sync::Mutex;
 lazy_static! {

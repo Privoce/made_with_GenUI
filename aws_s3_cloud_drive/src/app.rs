@@ -33,11 +33,7 @@ live_design! {
                 body = <GVLayout>{
                     app_main_page = <AppMainPage>{}
                     // <StartPage>{}
-                    // height: Fill,
                     // <SettingsPage>{}
-                    // margin: {
-                    //     top: 32.0
-                    // }
                     // <SiginPage>{}
                     // <MainPage>{}
                     // <BucketPage>{}
@@ -87,7 +83,6 @@ impl LiveRegister for App {
 impl MatchEvent for App {
     fn handle_timer(&mut self, cx: &mut Cx, _e: &TimerEvent) {
         self.nav_to(cx, id!(bucket_frame));
-
         cx.stop_timer(self.timer);
     }
     fn handle_startup(&mut self, cx: &mut Cx) {

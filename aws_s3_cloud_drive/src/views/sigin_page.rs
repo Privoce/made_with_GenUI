@@ -1,12 +1,15 @@
-use gen_components::{components::{
-    button::GButtonWidgetExt,
-    input::GInputWidgetExt,
-    label::GLabelWidgetExt,
-    radio::group::GRadioGroupWidgetExt,
-    router::event::GRouterEvent,
-    select::GSelectWidgetExt,
-    view::{GView, GViewWidgetExt},
-}, utils::lifetime::{Executor, Lifetime}};
+use gen_components::{
+    components::{
+        button::GButtonWidgetExt,
+        input::GInputWidgetExt,
+        label::GLabelWidgetExt,
+        radio::group::GRadioGroupWidgetExt,
+        router::{event::GRouterEvent, GRouter},
+        select::GSelectWidgetExt,
+        view::{GView, GViewWidgetExt},
+    },
+    utils::lifetime::{Executor, Lifetime},
+};
 use makepad_widgets::*;
 
 use crate::utils::APP_STATE;
@@ -263,12 +266,9 @@ impl Widget for SiginPage {
         let _ = self.super_widget.draw_walk(cx, scope, walk);
         // self.get(cx);
         // self.lifetime = Lifetime::InProcess;
-        self.lifetime
-            .init()
-            .execute(|| self.get(cx))
-            .map(|_| {
-                self.lifetime.next();
-            });
+        self.lifetime.init().execute(|| self.get(cx)).map(|_| {
+            self.lifetime.next();
+        });
 
         DrawStep::done()
     }
@@ -294,14 +294,8 @@ impl Widget for SiginPage {
             self.lifetime
                 .destroy()
                 .execute(|| {
-                    // cx.widget_action(
-                    //     self.widget_uid(),
-                    //     &scope.path,
-                    //     StackNavigationAction::NavigateTo(live_id!(root_view)),
-                    // )
-                    let mut path = HeapLiveIdPath::default();
-                    path.push(id!(setting_frame)[0]);
-                    cx.widget_action(self.widget_uid(), &scope.path, GRouterEvent::NavTo(path));
+                    // GRouter::nav_to_path(cx, self.widget_uid(), scope, id!(setting_frame));
+                    GRouter::nav_back(cx, self.widget_uid(), scope);
                 })
                 .map(|_| {
                     self.lifetime.next();

@@ -27,7 +27,7 @@ live_design! {
             bar_pages = {
                 flow: Down,
                 bucket_frame = <GBarPage>{
-                    <BucketPage>{}
+                    page = <BucketPage>{}
                 }
                 upload_frame = <GBarPage>{
                     <UploadPage>{}
@@ -79,6 +79,7 @@ live_design! {
                     header = {
                         title_wrap = {
                             title = {
+                                font_family: (BOLD_FONT2),
                                 text: "Settings"
                             }
                         }
