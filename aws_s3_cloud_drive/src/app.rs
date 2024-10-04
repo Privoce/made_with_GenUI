@@ -1,7 +1,4 @@
-use gen_components::components::{
-    router::{GRouterWidgetExt, GRouterWidgetRefExt},
-    view::GViewWidgetRefExt,
-};
+use gen_components::components::router::GRouterWidgetExt;
 use makepad_widgets::*;
 
 use crate::{utils::APP_STATE, views::main_page::AppMainPageWidgetRefExt};
@@ -45,90 +42,6 @@ live_design! {
                     // <MainPage>{}
                     // <BucketPage>{}
                     // <UploadPage>{}
-
-
-
-                    // navigation = <StackNavigation>{
-                    //     root_view = {
-                    //         width: Fill
-                    //         height: Fill
-                    //         padding: 0
-                    //         flow: Down
-                    //         align: {x: 0.0, y: 0.0}
-                    //         spacing: 0
-                    //         application_pages = <View> {
-                    //             margin: 0.0,
-                    //             padding: 0.0
-                    //             flow: Overlay
-                    //             bucket_frame = <BucketPage>{visible: true}
-                    //             upload_frame = <UploadPage>{visible: false}
-                    //             setting_frame = <SettingsPage> {visible: false}
-                    //         }
-                    //         menu = <GView>{
-                    //             border_radius: 0.0,
-                    //             theme: Dark,
-                    //             height: 46.0,
-                    //             width: Fill,
-                    //             modes = <GHLayout>{
-                    //                 height: Fill,
-                    //                 width: Fill,
-                    //                 align: {x: 0.5, y: 0.5},
-                    //                 spacing: 16.0,
-                    //                 tab1 = <AppTab>{
-                    //                     animator: {selected = {default: on}}
-                    //                     text: "Home"
-                    //                     draw_icon: {
-                    //                         svg_file: dep("crate://self/resources/home.svg"),
-                    //                     }
-                    //                 }
-                    //                 tab2 = <AppTab>{
-                    //                     animator: {selected = {default: off}}
-                    //                     text: "Upload"
-                    //                     draw_icon: {
-                    //                         svg_file: dep("crate://self/resources/upload.svg"),
-                    //                     }
-                    //                 }
-                    //                 tab3 = <AppTab>{
-                    //                     animator: {selected = {default: off}}
-                    //                     text: "Settings"
-                    //                     draw_icon: {
-                    //                         svg_file: dep("crate://self/resources/setting.svg"),
-                    //                     }
-                    //                 }
-                    //             }
-                    //         }
-                    //     }
-
-                    //     start_page = <StackNavigationView> {
-                    //         height: Fill,
-                    //         draw_bg: {
-                    //             color: #F5F5F500,
-                    //         }
-                    //         header = <View>{
-                    //             height: 0.0,
-                    //             visible: false,
-                    //         }
-                    //         body = {
-                    //             margin: {top: 32.0},
-                    //             start_screen = <StartPage>{}
-                    //         }
-                    //     }
-                    //     sigin_page_view = <StackNavigationView> {
-                    //         draw_bg: {
-                    //             color: #F5F5F500,
-                    //         }
-                    //         header = <View>{
-                    //             height: 0.0,
-                    //             visible: false,
-                    //         }
-                    //         body = {
-                    //             margin: {top: 32.0},
-                    //             sigin_screen = <SiginPage>{
-
-                    //             }
-                    //         }
-                    //     }
-                    // }
                 }
             }
         }
@@ -173,42 +86,12 @@ impl LiveRegister for App {
 
 impl MatchEvent for App {
     fn handle_timer(&mut self, cx: &mut Cx, _e: &TimerEvent) {
-        // self.root
-        //     .app_main_page(id!(app_main_page))
-        //     .borrow()
-        //     .map(|page| {
-        //         page.grouter(id!(app_router)).borrow_mut().map(|mut route| {
-        //             route.nav_to(cx, id!(bucket_frame));
-        //         });
-        //     });
-
         self.nav_to(cx, id!(bucket_frame));
 
         cx.stop_timer(self.timer);
     }
     fn handle_startup(&mut self, cx: &mut Cx) {
-        // dbg!("start up");
         self.timer = cx.start_timeout(12.0);
-    }
-    fn handle_actions(&mut self, cx: &mut Cx, actions: &Actions) {
-        // self.root
-        //     .radio_button_set(ids!(modes.tab1, modes.tab2, modes.tab3))
-        //     .selected_to_visible(
-        //         cx,
-        //         &self.root,
-        //         &actions,
-        //         ids!(
-        //             application_pages.bucket_frame,
-        //             application_pages.upload_frame,
-        //             application_pages.setting_frame
-        //         ),
-        //     );
-
-        // let mut navigation = self.root.stack_navigation(id!(navigation));
-        // navigation.handle_stack_view_actions(cx, &actions);
-
-        // self.root.
-        // router.handle_event(cx, event, scope);
     }
 }
 
