@@ -102,6 +102,7 @@ impl Widget for StartPage {
         self.super_widget.draw_walk(cx, scope, walk)
     }
     fn handle_event(&mut self, _cx: &mut Cx, _event: &Event, _scope: &mut Scope) {
+
         // 暂时不需要 -----------------------------------------------------------------------------
         // let actions = cx.capture_actions(|cx| self.super_widget.handle_event(cx, event, scope));
         // filter_widget_actions(&actions, self.widget_uid()).map(|actions| {
@@ -116,5 +117,8 @@ impl Widget for StartPage {
         //         }
         //     });
         // });
+    }
+    fn is_visible(&self) -> bool {
+        self.visible
     }
 }

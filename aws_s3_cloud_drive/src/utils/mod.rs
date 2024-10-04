@@ -1,7 +1,7 @@
 mod aws_structs;
 mod commands;
 mod state;
-pub mod lifetime;
+// pub mod lifetime;
 
 pub use aws_structs::*;
 pub use commands::*;

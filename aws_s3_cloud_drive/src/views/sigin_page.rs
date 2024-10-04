@@ -1,17 +1,15 @@
-use gen_components::components::{
+use gen_components::{components::{
     button::GButtonWidgetExt,
-    view::{GView, GViewWidgetExt},
     input::GInputWidgetExt,
     label::GLabelWidgetExt,
     radio::group::GRadioGroupWidgetExt,
+    router::event::GRouterEvent,
     select::GSelectWidgetExt,
-};
+    view::{GView, GViewWidgetExt},
+}, utils::lifetime::{Executor, Lifetime}};
 use makepad_widgets::*;
 
-use crate::utils::{
-    lifetime::{Executor, Lifetime},
-    APP_STATE,
-};
+use crate::utils::APP_STATE;
 
 live_design! {
     import makepad_widgets::base::*;
@@ -268,8 +266,8 @@ impl Widget for SiginPage {
         self.lifetime
             .init()
             .execute(|| self.get(cx))
-            .map(|lifetime| {
-                self.lifetime = lifetime;
+            .map(|_| {
+                self.lifetime.next();
             });
 
         DrawStep::done()
@@ -296,14 +294,17 @@ impl Widget for SiginPage {
             self.lifetime
                 .destroy()
                 .execute(|| {
-                    cx.widget_action(
-                        self.widget_uid(),
-                        &scope.path,
-                        StackNavigationAction::NavigateTo(live_id!(root_view)),
-                    )
+                    // cx.widget_action(
+                    //     self.widget_uid(),
+                    //     &scope.path,
+                    //     StackNavigationAction::NavigateTo(live_id!(root_view)),
+                    // )
+                    let mut path = HeapLiveIdPath::default();
+                    path.push(id!(setting_frame)[0]);
+                    cx.widget_action(self.widget_uid(), &scope.path, GRouterEvent::NavTo(path));
                 })
-                .map(|lifetime| {
-                    self.lifetime = lifetime;
+                .map(|_| {
+                    self.lifetime.next();
                 });
         }
     }

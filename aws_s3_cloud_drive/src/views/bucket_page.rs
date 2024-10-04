@@ -312,7 +312,9 @@ impl BucketPage {
         self.gupload(id!(up)).borrow().map(|up_btn| {
             if let Some(dirs) = up_btn.after_select(actions) {
                 // set conf
-                let _ = set_conf(dirs[0].to_str().unwrap());
+                if !dirs.is_empty(){
+                    let _ = set_conf(dirs[0].to_str().unwrap());
+                }
             }
         })
     }

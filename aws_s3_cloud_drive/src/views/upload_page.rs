@@ -1,19 +1,18 @@
 use gen_components::{
     components::{
-        view::{GView, GViewWidgetExt, GViewWidgetRefExt},
         drop_down::GDropDownWidgetExt,
         image::GImageWidgetExt,
         label::{GLabelWidgetExt, GLabelWidgetRefExt},
+        view::{GView, GViewWidgetExt, GViewWidgetRefExt},
     },
-    utils::HeapLiveIdPathExp,
+    utils::{
+        lifetime::{Executor, Lifetime},
+        HeapLiveIdPathExp,
+    },
 };
 use makepad_widgets::*;
 
-use crate::utils::{
-    format_size,
-    lifetime::{Executor, Lifetime},
-    LsResult, APP_STATE,
-};
+use crate::utils::{format_size, LsResult, APP_STATE};
 
 live_design! {
     import makepad_widgets::base::*;
@@ -440,12 +439,9 @@ impl Widget for UploadPage {
     fn draw_walk(&mut self, cx: &mut Cx2d, scope: &mut Scope, walk: Walk) -> DrawStep {
         if self.visible {
             let _ = self.super_widget.draw_walk(cx, scope, walk);
-            self.lifetime
-                .init()
-                .execute(|| self.init(cx))
-                .map(|lifetime| {
-                    self.lifetime = lifetime;
-                });
+            self.lifetime.init().execute(|| self.init(cx)).map(|_| {
+                self.lifetime.next();
+            });
         }
         DrawStep::done()
     }
