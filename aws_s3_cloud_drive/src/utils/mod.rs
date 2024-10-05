@@ -1,15 +1,20 @@
 mod aws_structs;
 mod commands;
 mod state;
+mod thread;
 
 pub use aws_structs::*;
 pub use commands::*;
 use lazy_static::lazy_static;
+pub use thread::*;
 
 pub use state::*;
-use std::sync::Mutex;
+use tokio::runtime::Runtime;
+use std::{collections::HashMap, sync::Mutex};
 lazy_static! {
     pub static ref APP_STATE: Mutex<State> = Mutex::new(State::default());
+    pub static ref THREAD_POOL: Runtime = build_thread_pool(4);
+    pub static ref LOAD_LIST: Mutex<HashMap<CpId, CpState>> =  Mutex::new(HashMap::new());
 }
 
 pub const VIRTUAL_FILE: &str = ".virtual";

@@ -30,13 +30,6 @@ live_design! {
                 font_family: (BOLD_FONT),
                 text: "HOME",
             }
-            <GIcon>{
-                cursor: Hand,
-                theme: Dark,
-                icon_type: Upload,
-                height: 16.0,
-                width: 16.0
-            }
         }
         <GDivider>{
             theme: Dark,

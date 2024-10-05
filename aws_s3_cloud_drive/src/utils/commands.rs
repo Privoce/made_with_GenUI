@@ -3,15 +3,13 @@ use std::{
     fs::File,
     io::{Read, Write},
     path::PathBuf,
-    process::{Command, Stdio},
+    process::Command,
     str::FromStr,
 };
 
-use tokio::io::{AsyncBufReadExt, BufReader};
-
 use crate::utils::CpState;
 
-use super::{CpId, LsResult, VIRTUAL_FILE};
+use super::{CpId, LsResult, LOAD_LIST, VIRTUAL_FILE};
 
 pub fn ls_dir(target: &str) -> Result<Option<Vec<LsResult>>, String> {
     let mut is_bucket = false;
@@ -58,49 +56,56 @@ pub fn rm(dir: &str, target: &str) -> Result<Option<Vec<LsResult>>, String> {
 }
 
 // back a special id
-pub async fn cp(from: &str, to: &str, is_upload: bool) -> Result<CpId, Box<dyn std::error::Error>> {
-    let special_id = format!("{}-{}", from, to);
-    let id = CpId {
-        id: special_id.to_string(),
-        is_upload,
-    };
-    // let mut command = Command::new("aws")
-    //     .args(["s3", "cp", from, to])
-    //     .stdout(Stdio::piped())
-    //     .spawn()?;
+pub async fn cp(from: &str, to: &str, id: &CpId) -> Result<CpId, Box<dyn std::error::Error>> {
+    let command = Command::new("aws").args(["s3", "cp", from, to]).output();
 
-    let mut command = tokio::process::Command::new("aws")
-        .args(["s3", "cp", from, to])
-        .stdout(Stdio::piped())
-        .spawn()?;
-
-    // match command {
-    //     Ok(out) => {
-    //         if out.status.success() {
-    //             let stdout = String::from_utf8_lossy(out.stdout.as_slice());
-    //             dbg!(stdout);
-
-    //             let mut list = TODO_LIST.lock().unwrap();
-    //             list.insert(id.clone(), CpState::InProgress(None));
-    //             return Ok(id);
-    //         } else {
-    //             return Err(format!("cp failed! From: {} to {}", from, to));
-    //         }
-    //     }
-    //     Err(e) => {
-    //         return Err(format!("cp failed: {}", e.to_string()));
-    //     }
-    // }
-    if let Some(stdout) = command.stdout.take() {
-        let reader = BufReader::new(stdout);
-        let mut lines = reader.lines();
-        while let Some(line) = lines.next_line().await? {
-            let state = CpState::parse_progress(line.trim());
-            // CpState::InProgress(state)
+    match command {
+        Ok(out) => {
+            if out.status.success() {
+                // 仅在更新状态时获取锁，减小锁的持有时间
+                let mut list = LOAD_LIST.lock().unwrap();
+                list.insert(id.clone(), CpState::Completed);
+                Ok(id.clone())
+            } else {
+                let mut list = LOAD_LIST.lock().unwrap();
+                list.insert(id.clone(), CpState::Failed);
+                Err(Box::new(std::io::Error::new(
+                    std::io::ErrorKind::Other,
+                    String::from_utf8_lossy(&out.stderr),
+                )))
+            }
+        }
+        Err(_) => {
+            let mut list = LOAD_LIST.lock().unwrap();
+            list.insert(id.clone(), CpState::Failed);
+            return Err(Box::new(std::io::Error::new(
+                std::io::ErrorKind::Other,
+                "AWS S3 cp failed",
+            )));
         }
     }
+}
 
-    Ok(id)
+pub fn share(target: &str, time: f32) -> Result<String, String> {
+    let cmd = Command::new("aws")
+        .args([
+            "s3",
+            "presign",
+            target,
+            "--expires-in",
+            time.to_string().as_str(),
+        ])
+        .output();
+    match cmd {
+        Ok(output) => {
+            if output.status.success() {
+                Ok(String::from_utf8_lossy(&output.stdout).to_string())
+            } else {
+                Err(String::from_utf8_lossy(&output.stderr).to_string())
+            }
+        }
+        Err(e) => Err(e.to_string()),
+    }
 }
 
 fn format_str_bucket(s: &str) -> Vec<LsResult> {
@@ -230,6 +235,10 @@ pub fn read_or_create(target: &str) -> std::io::Result<File> {
     } else {
         File::create_new(conf_path.as_path())
     }
+}
+
+pub fn format_s3_path(path: &Vec<String>) -> String {
+    format!("s3://{}/", path.join("/"))
 }
 
 #[cfg(test)]

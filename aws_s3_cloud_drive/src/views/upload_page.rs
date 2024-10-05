@@ -1,6 +1,11 @@
+use std::{path::PathBuf, str::FromStr};
+
 use gen_components::{
     components::{
-        drop_down::GDropDownWidgetExt,
+        breadcrumb::GBreadCrumbWidgetExt,
+        button::GButtonWidgetExt,
+        drop_down::{GDropDownWidgetExt, GDropDownWidgetRefExt},
+        file_upload::event::new_file_dialog,
         image::GImageWidgetExt,
         label::{GLabelWidgetExt, GLabelWidgetRefExt},
         view::{GView, GViewWidgetExt, GViewWidgetRefExt},
@@ -12,7 +17,10 @@ use gen_components::{
 };
 use makepad_widgets::*;
 
-use crate::utils::{format_size, LsResult, APP_STATE};
+use crate::utils::{
+    cp, format_s3_path, format_size, share, CpId, CpState, LsResult, APP_STATE, LOAD_LIST,
+    THREAD_POOL,
+};
 
 live_design! {
     import makepad_widgets::base::*;
@@ -282,12 +290,10 @@ live_design! {
                     }
                 }
             }
-
             notice_popup = <GDropDown>{
-                mode: ToolTip,
+                mode: Dialog,
                 height: Fit,
                 width: Fit,
-                position: BottomRight,
                 notice_icon = <GIcon>{
                     cursor: Hand,
                     theme: Dark,
@@ -295,24 +301,82 @@ live_design! {
                     height: 16.0,
                     width: 16.0
                 },
-                popup :<GToolTip> {
-                    height: 120.0,
-                    width: 160.0,
-                    background_color: #1E1E1E,
+                popup :<GDialog> {
                     container: {
-                        height: Fill,
-                        width: Fill,
+                        height: 200.0,
+                        width: 300.0,
                         flow: Down,
-                        align: {
-                            x: 0.5,
-                            y: 0.5
-                        },
-                        note_label = <GLabel>{
-                            margin: 6.0,
+                        <GView>{
+                            height: Fill,
                             width: Fill,
-                            text:"",
-                            font_family: (BOLD_FONT2),
-                            font_size: 8.0,
+                            padding: 12.0,
+                            clip_x: true,
+                            clip_y: true,
+                            flow: Down,
+                            align: {
+                                x: 0.5,
+                                y: 0.5
+                            },
+                            spacing: 8.0,
+                            <GLabel>{
+                                text: "[ Note ]",
+                                color: #FF7043,
+                                font_family: (BOLD_FONT2),
+                                font_size: 12.0,
+                            }
+                            note_label = <GLabel>{
+                                margin: 6.0,
+                                width: Fill,
+                                text:"",
+                                font_family: (BOLD_FONT2),
+                                font_size: 9.0,
+                            }
+                        }
+                    }
+                }
+            }
+            notice_dialog = <GDropDown>{
+                mode: Dialog,
+                height: Fit,
+                width: Fit,
+                notice_icon = <GIcon>{
+                    visible: false,
+                    cursor: Hand,
+                    theme: Dark,
+                    icon_type: Notice,
+                    height: 16.0,
+                    width: 16.0
+                },
+                popup :<GDialog> {
+                    container: {
+                        height: 200.0,
+                        width: 300.0,
+                        flow: Down,
+                        <GView>{
+                            height: Fill,
+                            width: Fill,
+                            padding: 12.0,
+                            clip_x: true,
+                            clip_y: true,
+                            flow: Down,
+                            align: {
+                                x: 0.5,
+                                y: 0.5
+                            },
+                            spacing: 8.0,
+                            <GLabel>{
+                                text: "[ Note ]",
+                                color: #FF7043,
+                                font_family: (BOLD_FONT2),
+                                font_size: 12.0,
+                            }
+                            note_label = <GLabel>{
+                                margin: 6.0,
+                                width: Fill,
+                                text:"",
+                                font_family: (BOLD_FONT2),
+                                font_size: 9.0,
+                            }
                         }
                     }
                 }
@@ -322,7 +386,7 @@ live_design! {
             height: Fit,
             padding: 8.0,
             spacing: 12.0,
-            <GButton>{
+            upload_file_btn = <GButton>{
                 theme: Dark,
                 slot: <GHLayout>{
                     height: Fit,
@@ -385,6 +449,10 @@ live_design! {
                     bottom: 2.0,
                 }
             }
+            path_header = <GBreadCrumb>{
+                theme: Dark,
+                labels: []
+            }
             s3_list = <GVLayout>{
                 height: 400.0,
                 width: Fill,
@@ -419,6 +487,8 @@ pub struct UploadPage {
     pub is_bucket: bool,
     #[rust]
     pub lifetime: Lifetime,
+    #[rust]
+    select_target: Option<(usize, String)>,
 }
 
 impl LiveHook for UploadPage {
@@ -451,41 +521,143 @@ impl Widget for UploadPage {
         self.update_list(cx, &actions).map(|_| {
             return;
         });
+        self.handle_path_header(cx, &actions);
+        self.click_upload_file_btn(cx, &actions);
+
+        if let Event::Signal = event {
+            let mut state = APP_STATE.lock().unwrap();
+            let _ = state.ls();
+            state.current.as_ref().map(|res| {
+                self.set_dir_file(cx, res);
+            });
+        }
 
         self.gview(id!(s3_list)).borrow().map(|list| {
-            let path = list.scope_path.clone();
-            for (index, (_, _child)) in list.children.iter().enumerate() {
-                let mut flag = false;
+            let mut flag = false;
+            for (index, (_, child)) in list.children.iter().enumerate() {
+                child
+                    .gdrop_down(id!(upload_drop_down))
+                    .borrow_mut()
+                    .map(|mut dropdown| {
+                        if let Some(e) = dropdown.toggled(&actions) {
+                            if e.opened {
+                                flag = true;
+                                // check item is file/dir, is dir do not show share
+                                let state = APP_STATE.lock().unwrap();
+                                if let Some(list) = state.current.as_ref() {
+                                    if list[index].size.is_some() {
+                                        self.select_target.replace((
+                                            index,
+                                            format!(
+                                                "s3://{}/{}",
+                                                state.s3_path.join("/"),
+                                                list[index].name
+                                            ),
+                                        ));
+                                        dbg!(self.select_target.as_ref());
+                                        dropdown.popup(cx, |_cx, popup| {
+                                            popup
+                                                .container
+                                                .gview(id!(share_wrap))
+                                                .borrow_mut()
+                                                .map(|mut wrap| {
+                                                    wrap.visible = true;
+                                                });
+                                        });
+                                    }
+                                } else {
+                                    dropdown.popup(cx, |_cx, popup| {
+                                        popup
+                                            .container
+                                            .gview(id!(share_wrap))
+                                            .borrow_mut()
+                                            .map(|mut wrap| {
+                                                wrap.visible = false;
+                                            });
+                                    });
+                                    self.select_target = None;
+                                }
+                            }
+                        }
+                    });
+                if flag {
+                    break;
+                }
+            }
+            if let Some((index, target)) = self.select_target.as_ref() {
                 self.gdrop_down(id!(upload_drop_down))
                     .borrow_mut()
-                    .map(|mut drop_down| {
-                        drop_down.popup(cx, |_cx, popup| {
+                    .map(|mut dropdown| {
+                        // check container share wrap
+                        dropdown.popup(cx, |_cx, popup| {
                             popup
                                 .container
                                 .gview(id!(share_wrap))
                                 .borrow()
                                 .map(|share_wrap| {
-                                    if let Some(e) = share_wrap.finger_down(&actions) {
-                                        let mut c_p = path.clone();
-                                        c_p.push(LiveId(index as u64));
-
-                                        if e.path.contains(&c_p).unwrap() {
-                                            flag = true;
-                                        }
+                                    if share_wrap.finger_down(&actions).is_some() {
+                                        // do share fn
+                                        // share(target, time)
+                                        dbg!(index, target);
                                     }
                                 });
                         });
                     });
-                if flag {
-                    dbg!(index);
-                    break;
-                }
             }
         });
     }
 }
 
 impl UploadPage {
+    pub fn click_upload_file_btn(&mut self, cx: &mut Cx, actions: &Actions) {
+        if self
+            .gbutton(id!(upload_file_btn))
+            .clicked(actions)
+            .is_some()
+        {
+            let state = APP_STATE.lock().unwrap();
+            if state.s3_path.is_empty() {
+                self.set_note(cx, "Currently, you have not selected any buckets. Please select a bucket from the bucket list before uploading!");
+            } else {
+                // open fs system
+                let f = new_file_dialog()
+                    .add_filter("allows", &["zip", "png", "jpg", "svg", "txt", "md"])
+                    .set_directory(PathBuf::from_str("/").unwrap());
+                let (sender, recv) = std::sync::mpsc::channel();
+                f.pick_file().map(|p| {
+                    let from_path = p.to_str().unwrap().to_string();
+                    let to_path = format_s3_path(&state.s3_path);
+                    let id = CpId::new(&from_path, &to_path, true);
+                    {
+                        let mut list = LOAD_LIST.lock().unwrap();
+                        list.insert(id.clone(), CpState::default());
+                    }
+                    self.set_load_note(cx, &format!("{} is uploading", &from_path));
+
+                    // do cp
+                    THREAD_POOL.spawn(async move {
+                        match cp(&from_path, &to_path, &id).await {
+                            Ok(id) => {
+                                let _ = sender.send(id);
+                            }
+                            Err(_) => {
+                                let mut list = LOAD_LIST.lock().unwrap();
+                                list.insert(id.clone(), CpState::Failed);
+                            }
+                        }
+                    });
+                });
+
+                // let uid = self.widget_uid();
+                std::thread::spawn(move || {
+                    if let Ok(_) = recv.recv() {
+                        SignalToUI::set_ui_signal();
+                    }
+                });
+            }
+        }
+    }
+
     // init bucket
     pub fn init(&mut self, cx: &mut Cx) {
         let state = APP_STATE.lock().unwrap();
@@ -493,6 +665,40 @@ impl UploadPage {
         state.current.as_ref().map(|res| {
             self.set_dir_file(cx, res);
         });
+    }
+    pub fn update_path_header(&mut self, labels: Vec<String>) {
+        self.gbread_crumb(id!(path_header))
+            .borrow_mut()
+            .map(|mut x| {
+                x.labels = labels;
+            });
+    }
+    pub fn handle_path_header(&mut self, cx: &mut Cx, actions: &Actions) {
+        self.gbread_crumb(id!(path_header))
+            .borrow_mut()
+            .map(|mut x| {
+                let mut flag = true;
+                let mut state = APP_STATE.lock().unwrap();
+                if let Some(e) = x.clicked(actions) {
+                    if e.index < state.s3_path.len() - 1 {
+                        state.s3_path.truncate(e.index + 1);
+                    } else {
+                        flag = false;
+                    }
+                } else if x.to_home(actions) {
+                    state.s3_path.clear();
+                } else {
+                    flag = false;
+                }
+                if flag {
+                    x.labels = state.s3_path.clone();
+                    // update list
+                    let _ = state.ls();
+                    state.current.as_ref().map(|res| {
+                        self.set_dir_file(cx, res);
+                    });
+                }
+            });
     }
     pub fn update_list(&mut self, cx: &mut Cx, actions: &Actions) -> Option<()> {
         let mut state = APP_STATE.lock().unwrap();
@@ -507,14 +713,15 @@ impl UploadPage {
                         state
                             .s3_path
                             .push(child.as_gview().glabel(id!(f_name)).text());
+                        self.update_path_header(state.s3_path.clone());
                         flag = true;
                     }
                 });
                 if flag {
-                    self.gview(id!(update_loading)).borrow_mut().map(|mut x| {
-                        x.visible = true;
-                        x.redraw(cx);
-                    });
+                    // self.gview(id!(update_loading)).borrow_mut().map(|mut x| {
+                    //     x.visible = true;
+                    //     x.redraw(cx);
+                    // });
                     break;
                 }
             }
@@ -526,18 +733,30 @@ impl UploadPage {
                 self.set_dir_file(cx, res);
             });
 
-            self.gview(id!(update_loading)).borrow_mut().map(|mut x| {
-                x.visible = false;
-                x.redraw(cx);
-            });
+            // self.gview(id!(update_loading)).borrow_mut().map(|mut x| {
+            //     x.visible = false;
+            //     x.redraw(cx);
+            // });
             Some(())
         } else {
             None
         }
     }
-
-    pub fn set_note(&mut self, cx: &mut Cx, note: &str) -> () {
+    pub fn set_load_note(&mut self, cx: &mut Cx, note: &str) {
         self.gdrop_down(id!(notice_popup))
+            .borrow_mut()
+            .map(|mut x| {
+                x.open(cx);
+                x.popup(cx, |cx, popup| {
+                    popup
+                        .container
+                        .glabel(id!(note_label))
+                        .set_text_and_redraw(cx, note);
+                });
+            });
+    }
+    pub fn set_note(&mut self, cx: &mut Cx, note: &str) -> () {
+        self.gdrop_down(id!(notice_dialog))
             .borrow_mut()
             .map(|mut x| {
                 x.open(cx);

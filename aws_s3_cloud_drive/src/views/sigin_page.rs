@@ -4,7 +4,7 @@ use gen_components::{
         input::GInputWidgetExt,
         label::GLabelWidgetExt,
         radio::group::GRadioGroupWidgetExt,
-        router::{event::GRouterEvent, GRouter},
+        router::GRouter,
         select::GSelectWidgetExt,
         view::{GView, GViewWidgetExt},
     },
@@ -148,6 +148,11 @@ live_design! {
                 font_size: 8.0,
                 text: "Connect Result:",
                 wrap: Word,
+                width: Fill,
+                margin: {
+                    left: 8.0,
+                    right: 8.0
+                }
             }
 
             <GVLayout>{

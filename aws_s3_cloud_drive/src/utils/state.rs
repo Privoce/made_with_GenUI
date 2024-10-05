@@ -16,6 +16,16 @@ pub struct State {
     pub virtual_dirs: Vec<String>,
     pub current: Option<Vec<LsResult>>,
     pub s3_path: Vec<String>,
+    pub notify_page: Option<Pages>
+}
+
+#[derive(Debug, Clone, Copy)]
+pub enum Pages{
+    Upload,
+    Sigin,
+    Start,
+    Bucket,
+    Setting
 }
 
 impl Default for State {
@@ -32,6 +42,7 @@ impl Default for State {
             virtual_dirs: Default::default(),
             current: None,
             s3_path: vec![],
+            notify_page: None
         }
     }
 }

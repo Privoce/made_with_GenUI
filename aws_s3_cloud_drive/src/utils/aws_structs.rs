@@ -73,12 +73,29 @@ pub struct CpId {
     pub is_upload: bool,
 }
 
+impl CpId {
+    pub fn new(from: &str, to: &str, is_upload: bool) -> Self{
+        let special_id = format!("{}-{}", from, to);
+        CpId {
+            id: special_id.to_string(),
+            is_upload,
+        }
+    }
+}
+
 #[derive(Debug, Clone)]
 pub enum CpState {
     InProgress(Option<ProgressIn>),
     Completed,
     Failed,
 }
+
+impl Default for CpState {
+    fn default() -> Self {
+        CpState::InProgress(None)
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct ProgressIn {
     pub total: String,
