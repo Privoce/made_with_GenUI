@@ -1,7 +1,7 @@
 use gen_components::components::router::GRouterWidgetExt;
 use makepad_widgets::*;
 
-use crate::{utils::APP_STATE, views::main_page::AppMainPageWidgetRefExt};
+use crate::{utils::{State, APP_STATE}, views::main_page::AppMainPageWidgetRefExt};
 
 live_design! {
     import makepad_widgets::base::*;
@@ -86,6 +86,7 @@ impl MatchEvent for App {
         cx.stop_timer(self.timer);
     }
     fn handle_startup(&mut self, cx: &mut Cx) {
+        let _ = State::sync_shares(true);
         self.timer = cx.start_timeout(12.0);
     }
 }

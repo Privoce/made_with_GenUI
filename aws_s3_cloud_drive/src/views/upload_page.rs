@@ -1,5 +1,6 @@
 use std::{path::PathBuf, str::FromStr};
 
+use chrono::{Datelike, Local};
 use gen_components::{
     components::{
         breadcrumb::GBreadCrumbWidgetExt,
@@ -7,19 +8,20 @@ use gen_components::{
         drop_down::{GDropDownWidgetExt, GDropDownWidgetRefExt},
         file_upload::event::new_file_dialog,
         image::GImageWidgetExt,
+        input::GInputWidgetExt,
         label::{GLabelWidgetExt, GLabelWidgetRefExt},
         view::{GView, GViewWidgetExt, GViewWidgetRefExt},
     },
     utils::{
+        copy_to_clipboard,
         lifetime::{Executor, Lifetime},
-        HeapLiveIdPathExp,
     },
 };
 use makepad_widgets::*;
 
 use crate::utils::{
-    cp, format_s3_path, format_size, share, CpId, CpState, LsResult, APP_STATE, LOAD_LIST,
-    THREAD_POOL,
+    cp, format_s3_path, format_size, share, CpId, CpState, LsResult, ShareItem, State, APP_STATE,
+    LOAD_LIST, THREAD_POOL,
 };
 
 live_design! {
@@ -290,6 +292,50 @@ live_design! {
                     }
                 }
             }
+            url_popup = <GDropDown>{
+                mode: Dialog,
+                height: Fit,
+                width: Fit,
+                popup :<GDialog> {
+                    container: {
+                        height: 380.0,
+                        width: 300.0,
+                        flow: Down,
+                        <GView>{
+                            height: Fill,
+                            width: Fill,
+                            padding: 8.0,
+                            clip_x: true,
+                            clip_y: true,
+                            flow: Down,
+                            align: {
+                                x: 0.5,
+                                y: 0.5
+                            },
+                            spacing: 8.0,
+                            <GLabel>{
+                                text: "[ DOWNLOAD URL ]",
+                                color: #FF7043,
+                                font_family: (BOLD_FONT2),
+                                font_size: 12.0,
+                            }
+                            url_input = <GInput>{
+                                theme: Dark,
+                                width: Fill,
+                                text:"",
+                                font_family: (BOLD_FONT2),
+                                font_size: 9.0,
+                                height: 260.0,
+                            }
+                            url_copy_btn = <GButton>{
+                                slot: {
+                                    text: "Copy Download URL"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
             notice_popup = <GDropDown>{
                 mode: Dialog,
                 height: Fit,
@@ -331,6 +377,7 @@ live_design! {
                                 font_family: (BOLD_FONT2),
                                 font_size: 9.0,
                             }
+                            <GButton>{}
                         }
                     }
                 }
@@ -489,6 +536,8 @@ pub struct UploadPage {
     pub lifetime: Lifetime,
     #[rust]
     select_target: Option<(usize, String)>,
+    #[rust]
+    share_url: String,
 }
 
 impl LiveHook for UploadPage {
@@ -554,7 +603,7 @@ impl Widget for UploadPage {
                                                 list[index].name
                                             ),
                                         ));
-                                        dbg!(self.select_target.as_ref());
+
                                         dropdown.popup(cx, |_cx, popup| {
                                             popup
                                                 .container
@@ -567,13 +616,11 @@ impl Widget for UploadPage {
                                     }
                                 } else {
                                     dropdown.popup(cx, |_cx, popup| {
-                                        popup
-                                            .container
-                                            .gview(id!(share_wrap))
-                                            .borrow_mut()
-                                            .map(|mut wrap| {
+                                        popup.container.gview(id!(share_wrap)).borrow_mut().map(
+                                            |mut wrap| {
                                                 wrap.visible = false;
-                                            });
+                                            },
+                                        );
                                     });
                                     self.select_target = None;
                                 }
@@ -584,27 +631,60 @@ impl Widget for UploadPage {
                     break;
                 }
             }
-            if let Some((index, target)) = self.select_target.as_ref() {
-                self.gdrop_down(id!(upload_drop_down))
+            if let Some((index, target)) = self.select_target.clone().as_ref() {
+                let mut flag = false;
+                if list.child_count() < *index || list.child_count() == 0 {
+                    return;
+                }
+
+                let _ = &list.children[*index]
+                    .1
+                    .gdrop_down(id!(upload_drop_down))
                     .borrow_mut()
                     .map(|mut dropdown| {
                         // check container share wrap
-                        dropdown.popup(cx, |_cx, popup| {
+                        dropdown.popup(cx, |_, popup| {
                             popup
                                 .container
                                 .gview(id!(share_wrap))
                                 .borrow()
                                 .map(|share_wrap| {
                                     if share_wrap.finger_down(&actions).is_some() {
-                                        // do share fn
-                                        // share(target, time)
-                                        dbg!(index, target);
+                                        flag = true;
                                     }
                                 });
                         });
+                        if flag {
+                            dropdown.close(cx);
+                        }
                     });
+                if flag {
+                    match share(target, 3600.0) {
+                        Ok(url) => {
+                            self.set_url_note(cx, &url, target);
+                        }
+                        Err(e) => {
+                            self.set_load_note(cx, &e);
+                        }
+                    }
+                }
             }
         });
+        self.gdrop_down(id!(url_popup))
+            .borrow_mut()
+            .map(|mut popup| {
+                popup.popup(cx, |_, popup| {
+                    popup
+                        .container
+                        .gbutton(id!(url_copy_btn))
+                        .borrow()
+                        .map(|btn| {
+                            if btn.clicked(&actions).is_some() {
+                                let _ = copy_to_clipboard(&self.share_url);
+                            }
+                        });
+                });
+            });
     }
 }
 
@@ -754,6 +834,31 @@ impl UploadPage {
                         .set_text_and_redraw(cx, note);
                 });
             });
+    }
+    pub fn set_url_note(&mut self, cx: &mut Cx, url: &str, name: &str) {
+        self.share_url = url.to_string();
+        let mut state = APP_STATE.lock().unwrap();
+        let date = Local::now().date_naive();
+        state.push_share(ShareItem {
+            url: url.trim().to_string(),
+            name: name.to_string(),
+            date: (
+                date.year() as usize,
+                (date.month0() + 1) as u8,
+                (date.day0() + 1) as u8,
+            ),
+            during: 3600.0,
+        });
+        State::sync_shares(false);
+        self.gdrop_down(id!(url_popup)).borrow_mut().map(|mut x| {
+            x.open(cx);
+            x.popup(cx, |cx, popup| {
+                popup
+                    .container
+                    .ginput(id!(url_input))
+                    .set_text_and_redraw(cx, url);
+            });
+        });
     }
     pub fn set_note(&mut self, cx: &mut Cx, note: &str) -> () {
         self.gdrop_down(id!(notice_dialog))
