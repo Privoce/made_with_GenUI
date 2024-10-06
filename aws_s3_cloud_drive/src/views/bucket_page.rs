@@ -1,9 +1,16 @@
-use gen_components::components::{
-    button::GButtonWidgetExt, file_upload::GUploadWidgetExt, router::GRouter, view::GView,
+use gen_components::{
+    components::{
+        button::GButtonWidgetExt,
+        file_upload::GUploadWidgetExt,
+        link::GLinkWidgetRefExt,
+        router::GRouter,
+        view::{GView, GViewWidgetExt},
+    },
+    utils::lifetime::{Executor, Lifetime},
 };
 use makepad_widgets::*;
 
-use crate::utils::set_conf;
+use crate::utils::{set_conf, APP_STATE};
 
 live_design! {
     import makepad_widgets::base::*;
@@ -18,6 +25,13 @@ live_design! {
         flow: Down,
         border_radius: 0.0,
         background_color: #161616,
+        link_template: <GLink>{
+            font_size: 8.0,
+            font_family: (BOLD_FONT),
+            text: "",
+            href: "",
+            width: Fill,
+        }
         <GHLayout>{
             height: Fit,
             width: Fill,
@@ -114,31 +128,26 @@ live_design! {
                     }
                 }
             }
-            <GVLayout>{
+            share_link_wrap = <GVLayout>{
                 align: {
                     x: 0.0,
                     y: 0.0
                 },
                 padding: 8.0,
                 spacing: 12.0,
-                <GLink>{
-                    font_size: 8.0,
-                    font_family: (BOLD_FONT),
-                    text: "IMG_20240905_225067.png 4.5MB",
-                    href: "https://docs.aws.amazon.com/s3/?icmpid=docs_homepage_featuredsvcs"
-                }
-                <GLink>{
-                    font_size: 8.0,
-                    font_family: (BOLD_FONT),
-                    text: "Video_0_20240912.mp4 864KB",
-                    href: "https://docs.aws.amazon.com/pdfs/AmazonS3/latest/userguide/s3-userguide.pdf"
-                }
-                <GLink>{
-                    font_size: 8.0,
-                    font_family: (BOLD_FONT),
-                    text: "IMG_20240916_225067.png 10.2MB",
-                    href: "https://docs.aws.amazon.com/zh_cn/general/latest/gr/Welcome.html"
-                }
+
+                // <GLink>{
+                //     font_size: 8.0,
+                //     font_family: (BOLD_FONT),
+                //     text: "Video_0_20240912.mp4 864KB",
+                //     href: "https://docs.aws.amazon.com/pdfs/AmazonS3/latest/userguide/s3-userguide.pdf"
+                // }
+                // <GLink>{
+                //     font_size: 8.0,
+                //     font_family: (BOLD_FONT),
+                //     text: "IMG_20240916_225067.png 10.2MB",
+                //     href: "https://docs.aws.amazon.com/zh_cn/general/latest/gr/Welcome.html"
+                // }
             }
         }
         <GView>{
@@ -256,13 +265,22 @@ live_design! {
 pub struct BucketPage {
     #[deref]
     pub super_widget: GView,
+    #[live]
+    pub link_template: Option<LivePtr>,
+    #[rust]
+    lifetime: Lifetime,
 }
 
 impl LiveHook for BucketPage {}
 
 impl Widget for BucketPage {
     fn draw_walk(&mut self, cx: &mut Cx2d, scope: &mut Scope, walk: Walk) -> DrawStep {
-        self.super_widget.draw_walk(cx, scope, walk)
+        let _ = self.super_widget.draw_walk(cx, scope, walk);
+
+        self.lifetime.init().execute(|| self.init(cx)).map(|_| {
+            self.lifetime.next();
+        });
+        DrawStep::done()
     }
     fn handle_event(&mut self, cx: &mut Cx, event: &Event, scope: &mut Scope) {
         let actions = cx.capture_actions(|cx| self.super_widget.handle_event(cx, event, scope));
@@ -276,6 +294,30 @@ impl Widget for BucketPage {
 }
 
 impl BucketPage {
+    pub fn init(&mut self, cx: &mut Cx) {
+        self.gview(id!(share_link_wrap))
+            .borrow_mut()
+            .map(|mut wrap| {
+                let state = APP_STATE.lock().unwrap();
+                state.shares.as_ref().map(|shares| {
+                    let mut children = vec![];
+                    for (index, share) in shares.iter().enumerate() {
+                        children.push((
+                            LiveId(index as u64),
+                            WidgetRef::new_from_ptr(cx, self.link_template),
+                        ));
+                        children.last_mut().map(|(_, child)| {
+                            child.as_glink().borrow_mut().map(|mut link| {
+                                link.set_text_and_redraw(cx, &share.gen_url_success());
+                                link.href.replace(share.url.to_string());
+                            });
+                        });
+                    }
+                    wrap.children = children;
+                    wrap.redraw(cx);
+                });
+            });
+    }
     pub fn to_main_page(
         &mut self,
         cx: &mut Cx,

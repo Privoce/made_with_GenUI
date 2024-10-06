@@ -42,7 +42,7 @@ impl ShareItem {
         let date = format!("{}-{}-{}", self.date.0, self.date.1, self.date.2);
         format!(
             "{} generate download url success.\nDuring: {}s\nStart Date: {}",
-            self.url, self.during, date
+            self.name, self.during, date
         )
     }
 }
@@ -141,11 +141,6 @@ impl State {
             // new a new thread to set into file
             thread::spawn(move || {
                 let path = current_dir().unwrap().join("share.cache");
-                // let mut f = if !path.exists() {
-                //     File::create_new(path.as_path()).unwrap()
-                // } else {
-                //     File::open(path.as_path()).unwrap()
-                // };
                 let mut f = OpenOptions::new()
                 .create(true)
                 .write(true)

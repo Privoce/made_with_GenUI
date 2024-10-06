@@ -377,7 +377,6 @@ live_design! {
                                 font_family: (BOLD_FONT2),
                                 font_size: 9.0,
                             }
-                            <GButton>{}
                         }
                     }
                 }
