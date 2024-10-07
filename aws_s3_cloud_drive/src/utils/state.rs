@@ -3,13 +3,16 @@ use std::{
     fmt::Display,
     fs::{read_to_string, File, OpenOptions},
     io::Write,
-    path::Path,
+    path::{Path, PathBuf},
     process::Command,
+    str::FromStr,
     sync::mpsc::channel,
     thread,
 };
 
-use super::{ls_dir, LsResult, APP_STATE};
+use chrono::{Local, NaiveDate, NaiveDateTime, NaiveTime, TimeZone};
+
+use super::{ls_dir, read_conf, set_conf, LsResult, APP_STATE};
 
 #[derive(Debug, Clone)]
 pub struct State {
@@ -27,21 +30,25 @@ pub struct State {
     pub s3_path: Vec<String>,
     pub notify_page: Option<Pages>,
     pub shares: Option<Vec<ShareItem>>,
+    pub download_dir: Option<PathBuf>,
 }
 
 #[derive(Debug, Clone)]
 pub struct ShareItem {
     pub url: String,
     pub name: String,
-    pub date: (usize, u8, u8),
+    pub date: (usize, u8, u8, u8, u8),
     pub during: f32,
 }
 
 impl ShareItem {
     pub fn gen_url_success(&self) -> String {
-        let date = format!("{}-{}-{}", self.date.0, self.date.1, self.date.2);
+        let date = format!(
+            "{}-{}-{}-{}-{}",
+            self.date.0, self.date.1, self.date.2, self.date.3, self.date.4
+        );
         format!(
-            "{} generate download url success.\nDuring: {}s\nStart Date: {}",
+            "{} generate download url success. During: {}s. Start Date: {}",
             self.name, self.during, date
         )
     }
@@ -50,28 +57,55 @@ impl ShareItem {
 impl Display for ShareItem {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.write_fmt(format_args!(
-            "{}|{}|{}-{}-{}|{}",
-            self.url, self.name, self.date.0, self.date.1, self.date.2, self.during
+            "{}|{}|{}-{}-{}-{}-{}|{}",
+            self.url,
+            self.name,
+            self.date.0,
+            self.date.1,
+            self.date.2,
+            self.date.3,
+            self.date.4,
+            self.during
         ))
     }
 }
 
-impl From<&str> for ShareItem {
-    fn from(value: &str) -> Self {
-        let mut s = value.trim().split("|");
-        let url = s.next().unwrap().to_string();
-        let name = s.next().unwrap().to_string();
-        let date = s.next().unwrap().split("-").collect::<Vec<&str>>();
-        let during = s.next().unwrap().to_string().parse().unwrap();
-        ShareItem {
-            url,
-            name,
-            date: (
+impl TryFrom<&str> for ShareItem {
+    type Error = String;
+
+    fn try_from(value: &str) -> Result<Self, Self::Error> {
+        if value.is_empty() {
+            Err("Empty!".to_string())
+        } else {
+            let mut s = value.trim().split("|");
+            let url = s.next().unwrap().to_string();
+            let name = s.next().unwrap().to_string();
+            let date = s.next().unwrap().split("-").collect::<Vec<&str>>();
+            let during: f32 = s.next().unwrap().to_string().parse().unwrap();
+            let date: (usize, u8, u8, u8, u8) = (
                 date[0].parse::<usize>().unwrap(),
                 date[1].parse().unwrap(),
                 date[2].parse().unwrap(),
-            ),
-            during,
+                date[3].parse().unwrap(),
+                date[4].parse().unwrap(),
+            );
+
+            let nd = NaiveDate::from_ymd_opt(date.0 as i32, date.1 as u32, date.2 as u32).unwrap();
+            let nt = NaiveTime::from_hms_opt(date.3 as u32, date.4 as u32, 1).unwrap();
+            let ndt = NaiveDateTime::new(nd, nt);
+            let start = Local.from_local_datetime(&ndt).unwrap();
+            let end_ts = start.timestamp() + during as i64;
+            let now_ts = Local::now().timestamp();
+            if now_ts >= end_ts {
+                Err("overtime".to_string())
+            } else {
+                Ok(ShareItem {
+                    url,
+                    name,
+                    date,
+                    during,
+                })
+            }
         }
     }
 }
@@ -101,6 +135,7 @@ impl Default for State {
             s3_path: vec![],
             notify_page: None,
             shares: None,
+            download_dir: None,
         }
     }
 }
@@ -113,6 +148,27 @@ impl State {
             self.shares.replace(vec![item]);
         }
     }
+    pub fn sync_download_conf(init: bool) {
+        if init {
+            // do read conf
+            thread::spawn(move || {
+                if let Ok(content) = read_conf() {
+                    let mut state = APP_STATE.lock().unwrap();
+                    state
+                        .download_dir
+                        .replace(PathBuf::from_str(&content).unwrap());
+                }
+            });
+        } else {
+            thread::spawn(move || {
+                let state = APP_STATE.lock().unwrap();
+                state
+                    .download_dir
+                    .as_ref()
+                    .map(|content| set_conf(content.to_str().unwrap()));
+            });
+        }
+    }
     pub fn sync_shares(init: bool) {
         if init {
             let (sender, receiver) = channel();
@@ -123,10 +179,13 @@ impl State {
                 }
                 let content = read_to_string(path.as_path()).unwrap();
                 if !content.is_empty() {
-                    let res = content
-                        .split("\n")
-                        .map(|s| ShareItem::from(s))
-                        .collect::<Vec<ShareItem>>();
+                    let mut res = vec![];
+                    content.split("\n").for_each(|s| {
+                        if let Ok(item) = ShareItem::try_from(s) {
+                            res.push(item);
+                        }
+                    });
+
                     let _ = sender.send(res);
                 }
             });
@@ -135,6 +194,8 @@ impl State {
                 let mut state = APP_STATE.lock().unwrap();
                 if let Ok(res) = receiver.recv() {
                     state.shares.replace(res);
+                    // do sync again
+                    State::sync_shares(false);
                 }
             });
         } else {
@@ -142,11 +203,11 @@ impl State {
             thread::spawn(move || {
                 let path = current_dir().unwrap().join("share.cache");
                 let mut f = OpenOptions::new()
-                .create(true)
-                .write(true)
-                .truncate(true)
-                .open(path.as_path())
-                .unwrap();
+                    .create(true)
+                    .write(true)
+                    .truncate(true)
+                    .open(path.as_path())
+                    .unwrap();
 
                 let content = {
                     let state = APP_STATE.lock().unwrap();

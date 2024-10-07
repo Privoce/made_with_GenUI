@@ -7,6 +7,8 @@ use gen_components::{
 };
 use makepad_widgets::*;
 
+use super::bucket_page::BucketPageEvent;
+
 live_design! {
     import makepad_widgets::base::*;
     import makepad_widgets::theme_desktop_dark::*;
@@ -121,6 +123,16 @@ impl Widget for AppMainPage {
                             None,
                         )
                         .active(id!(start_screen))
+                        .nav_actions(|router, cx| {
+                            // do when nav to
+                            if router.eq_active_page(id!(bucket_frame)) {
+                                cx.widget_action(
+                                    router.widget_uid(),
+                                    &Scope::empty().path,
+                                    BucketPageEvent::Update,
+                                );
+                            }
+                        })
                         .build(cx);
                 });
             })

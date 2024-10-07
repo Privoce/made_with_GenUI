@@ -10,7 +10,7 @@ use gen_components::{
 };
 use makepad_widgets::*;
 
-use crate::utils::{set_conf, APP_STATE};
+use crate::utils::{State, APP_STATE};
 
 live_design! {
     import makepad_widgets::base::*;
@@ -24,13 +24,12 @@ live_design! {
         width: Fill,
         flow: Down,
         border_radius: 0.0,
-        background_color: #161616,
+        background_color: #16191F,
         link_template: <GLink>{
             font_size: 8.0,
             font_family: (BOLD_FONT),
             text: "",
             href: "",
-            width: Fill,
         }
         <GHLayout>{
             height: Fit,
@@ -90,7 +89,7 @@ live_design! {
             }
         }
         <GView>{
-            background_color: #1E1E1E,
+            background_color: #21252C,
             height: 220.0,
             width: Fill,
             border_radius: 0.0,
@@ -135,23 +134,10 @@ live_design! {
                 },
                 padding: 8.0,
                 spacing: 12.0,
-
-                // <GLink>{
-                //     font_size: 8.0,
-                //     font_family: (BOLD_FONT),
-                //     text: "Video_0_20240912.mp4 864KB",
-                //     href: "https://docs.aws.amazon.com/pdfs/AmazonS3/latest/userguide/s3-userguide.pdf"
-                // }
-                // <GLink>{
-                //     font_size: 8.0,
-                //     font_family: (BOLD_FONT),
-                //     text: "IMG_20240916_225067.png 10.2MB",
-                //     href: "https://docs.aws.amazon.com/zh_cn/general/latest/gr/Welcome.html"
-                // }
             }
         }
         <GView>{
-            background_color: #1E1E1E,
+            background_color: #21252C,
             height: 220.0,
             width: Fill,
             border_radius: 0.0,
@@ -275,21 +261,46 @@ impl LiveHook for BucketPage {}
 
 impl Widget for BucketPage {
     fn draw_walk(&mut self, cx: &mut Cx2d, scope: &mut Scope, walk: Walk) -> DrawStep {
-        let _ = self.super_widget.draw_walk(cx, scope, walk);
+        if self.visible {
+            let _ = self.super_widget.draw_walk(cx, scope, walk);
 
-        self.lifetime.init().execute(|| self.init(cx)).map(|_| {
-            self.lifetime.next();
-        });
+            self.lifetime.init().execute(|| self.init(cx)).map(|_| {
+                self.lifetime.next();
+            });
+        } else {
+            self.lifetime = Lifetime::Init;
+        }
         DrawStep::done()
     }
     fn handle_event(&mut self, cx: &mut Cx, event: &Event, scope: &mut Scope) {
-        let actions = cx.capture_actions(|cx| self.super_widget.handle_event(cx, event, scope));
-        self.to_main_page(cx, scope, &actions).map(|_| {
-            return;
-        });
-        self.set_u_d_dir(&actions).map(|_| {
-            return;
-        });
+        self.lifetime
+            .in_process()
+            .execute(|| {
+                if let Event::Actions(actions) = event {
+                    for action in actions {
+                        if let Some(action) = action.as_widget_action() {
+                            if let BucketPageEvent::Update = action.cast() {
+                                self.init(cx);
+                            }
+                        }
+                    }
+                }
+
+                let actions =
+                    cx.capture_actions(|cx| self.super_widget.handle_event(cx, event, scope));
+                self.to_main_page(cx, scope, &actions).map(|_| {
+                    return;
+                });
+                self.set_u_d_dir(&actions).map(|_| {
+                    return;
+                });
+            })
+            .map(|_| {
+                return;
+            });
+    }
+    fn is_visible(&self) -> bool {
+        self.visible
     }
 }
 
@@ -308,7 +319,7 @@ impl BucketPage {
                         ));
                         children.last_mut().map(|(_, child)| {
                             child.as_glink().borrow_mut().map(|mut link| {
-                                link.set_text_and_redraw(cx, &share.gen_url_success());
+                                link.set_text_and_redraw(cx, &share.name);
                                 link.href.replace(share.url.to_string());
                             });
                         });
@@ -317,6 +328,9 @@ impl BucketPage {
                     wrap.redraw(cx);
                 });
             });
+    }
+    pub fn redraw(&mut self, cx: &mut Cx) {
+        self.super_widget.redraw(cx);
     }
     pub fn to_main_page(
         &mut self,
@@ -335,9 +349,17 @@ impl BucketPage {
             if let Some(dirs) = up_btn.after_select(actions) {
                 // set conf
                 if !dirs.is_empty() {
-                    let _ = set_conf(dirs[0].to_str().unwrap());
+                    let mut state = APP_STATE.lock().unwrap();
+                    state.download_dir.replace(dirs[0].clone());
+                    let _ = State::sync_download_conf(false);
                 }
             }
         })
     }
+}
+
+#[derive(DefaultNone, Debug, Clone)]
+pub enum BucketPageEvent {
+    Update,
+    None,
 }

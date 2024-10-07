@@ -60,6 +60,9 @@
 - loading中自动连接获取配置跳转到Bucket首页
 - 英文 ✅
 - lazy_static 会导致页面速度变慢，尝试传输 (分析后发现不是) ✅
+- 切换Bucket图标
+- 文件夹share去除
+- more图标分割间距
 
 file_editor
 

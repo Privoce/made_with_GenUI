@@ -13,7 +13,7 @@ live_design! {
         width: Fill,
         flow: Down,
         border_radius: 0.0,
-        background_color: #161616,
+        background_color: #16191F,
         align: {
             x: 0.5,
             y: 0.0
@@ -28,24 +28,77 @@ live_design! {
         <GView>{
             theme: Dark,
             border_radius: 6.0,
-            height: 180.0,
+            height: 280.0,
             width: Fill,
             spacing: 24.0,
-            padding: 16.0
+            padding: {
+                left: 16.0,
+                right: 16.0,
+                top: 32.0,
+                bottom: 32.0
+            },
+            align: {x: 0.5, y: 0.5},
             flow: Down,
-            <GHLayout>{
+            spread_radius: 8.6,
+            blur_radius: 5.2,
+            shadow_color: #111,
+            animation_open: true,
+            draw_view: {
+                fn get_color(self) -> vec4 {
+                    // let gradient_angle = 30.0;
+                    // let direction = vec2(cos(radians(gradient_angle)), sin(radians(gradient_angle)));
+                    // let factor = dot(self.pos, direction);
+
+                    // let color0 = #21252C;   // #00FF00
+                    // let stop0 = 0.72;
+
+                    // let color1 = #C26014B6;   // #FF00FF
+                    // let stop1 = 0.86;
+
+                    // // let color2 = #ff9900;   // #121212
+                    // let color2 = #C26014;
+                    // let stop2 = 0.96;
+
+                    // return mix(
+                    //     color0,
+                    //     mix(
+                    //         color1,
+                    //         mix(color2, color2, smoothstep(stop2, stop2, factor)),
+                    //         smoothstep(stop1, stop2, factor)
+                    //     ),
+                    //     // color1,
+                    //     smoothstep(stop0, stop1, factor)
+                    // );
+                    let center = mix(
+                        vec2(0.96 , 0.96),
+                        vec2(0.5 , 0.5),
+                        self.hover
+                    );
+                    let distance = distance (self.pos , center) ;
+                    let factor = clamp (distance , 0.0 , 1.0) ;
+                    let color0 = #2E2514;
+                    let stop0 = 0.0 ; 
+                    let color1 = #212215;
+                    let stop1 = 0.3; 
+                    let color2 = #16191F;
+                    let stop2 = 1.0 ;
+                    return mix (color0 , mix (color1 , color2 , smoothstep (stop1 , stop2 , factor)) , smoothstep (stop0 , stop1 , factor)) ;
+                }
+
+            }
+            <GVLayout>{
                 height: Fit,
-                width: Fill,
-                align: {x: 0.0, y: 0.5},
+                width: Fit,
+                align: {x: 0.5, y: 0.5},
                 spacing: 16.0,
                 <GImage>{
-                    height: 36.0,
-                    width: 36.0,
+                    height: 52.0,
+                    width: 52.0,
                     src: dep("crate://self/resources/aws.png"),
                 }
                 <GLabel>{
                     font_size: 12.0,
-                    font_family: (BOLD_FONT),
+                    font_family: (BOLD_FONT2),
                     text: "AWS S3 User",
                 }
 
@@ -53,7 +106,7 @@ live_design! {
             <GVLayout>{
                 height: Fill,
                 width: Fill,
-                spacing: 12.0,
+                spacing: 16.0,
                 <GLabel>{
                     font_size: 10.0,
                     font_family: (BOLD_FONT2),
@@ -63,7 +116,7 @@ live_design! {
                     height: Fit,
                     align: {x: 1.0, y: 0.5},
                     size_total = <GLabel>{
-                        font_size: 8.0,
+                        font_size: 9.0,
                         font_family: (BOLD_FONT2),
                         text: "621GB",
                         color: #E36741,
@@ -73,9 +126,10 @@ live_design! {
                     theme: Dark,
                     value: 0.4,
                     width: Fill,
+                    margin: {bottom: 8.0},
                 }
                 <GLabel>{
-                    font_size: 8.0,
+                    font_size: 9.0,
                     font_family: (BOLD_FONT2),
                     text: "Availible: 1436GB",
                 }
@@ -116,72 +170,143 @@ live_design! {
                 }
             }
         }
+        <GButton>{
+            height: 42.0,
+            width: Fill,
+            theme: Error,
+            spread_radius: 2.0,
+            shadow_color: #431412,
+            draw_button: {
+                fn get_color(self) -> vec4 {
+                    let gradient_angle = 0.0;
+                    let direction = vec2(cos(radians(gradient_angle)), sin(radians(gradient_angle)));
+                    let factor = dot(self.pos, direction);
 
-        <GVLayout>{
-            height: Fit,
-            spacing: 8.0,
-            <GDivider>{
-                theme: Dark,
-                height: Fit,
+                    let color0 = #F04438;   // #00FF00
+                    let stop0 = 0.4;
+
+                    let color1 = #4F1311;   // #FF00FF
+                    let stop1 = 0.8;
+
+                    // let color2 = #ff9900;   // #121212
+                    let color2 = #431412;
+                    let stop2 = 0.96;
+
+                    let hover_color = mix(
+                        color0,
+                        mix(
+                            color1,
+                            mix(color2, color2, smoothstep(stop2, stop2, factor)),
+                            smoothstep(stop1, stop2, factor)
+                        ),
+                        // color1,
+                        smoothstep(stop0, stop1, factor)
+                    );
+
+                    let pressed_color = mix(
+                        color2,
+                        mix(
+                            color1,
+                            mix(color0, color0, smoothstep(stop2, stop2, factor)),
+                            smoothstep(stop1, stop2, factor)
+                        ),
+                        // color1,
+                        smoothstep(stop0, stop1, factor)
+                    );
+
+                    return mix(
+                        mix(
+                            #16191F,
+                            hover_color,
+                            self.hover
+                        ),
+                        pressed_color,
+                        self.pressed
+                    );
+                }
+            }
+            slot: <GHLayout>{
+                spacing: 12.0,
+                align: {x: 0.5, y: 0.5},
+                <GIcon>{
+                    icon_type: Exit,
+                    theme: Dark,
+                    height: 18.0,
+                    width: 18.0,
+                    stroke_width: 1.5,
+                }
                 <GLabel>{
-                    text: "Aws Doc",
-                    font_size: 12.0,
+                    text: "Quit AWS S3 App",
+                    font_size: 10.0,
                     font_family: (BOLD_FONT2),
                 }
             }
-            <GLink>{
-                href: "https://docs.aws.amazon.com/zh_cn/general/latest/gr/Welcome.html",
-                text: "AWS General Reference",
-                font_size: 10.0,
-                font_family: (BOLD_FONT2),
-            }
-            <GLabel>{
-                width: Fill,
-                font_family: (BOLD_FONT2),
-                text: "The AWS General Reference provides AWS service endpoint and quota information for Amazon Web Services. Additionally, you can find links to other common topics.",
-                font_size: 9.0,
-
-            }
-            <GVLayout>{
-                height: Fit,
-                padding: {
-                    left: 8.0,
-                    right: 8.0,
-                }
-                spacing: 8.0,
-                <GLink>{
-                    font_family: (BOLD_FONT2),
-                    text: "1. AWS security credentials",
-                    font_size: 9.0,
-                    href: "https://docs.aws.amazon.com/general/latest/gr/Welcome.html#aws-ip-ranges"
-                }
-                <GLink>{
-                    font_family: (BOLD_FONT2),
-                    text: "2. AWS IP address ranges",
-                    font_size: 9.0,
-                    href: "https://docs.aws.amazon.com/general/latest/gr/Welcome.html#aws-ip-ranges"
-                }
-                <GLink>{
-                    font_family: (BOLD_FONT2),
-                    text: "3. AWS APIs",
-                    font_size: 9.0,
-                    href: "https://docs.aws.amazon.com/general/latest/gr/Welcome.html#aws-apis"
-                }
-                <GLink>{
-                    font_family: (BOLD_FONT2),
-                    text: "4. AWS services endpoints and quotas",
-                    font_size: 9.0,
-                    href: "https://docs.aws.amazon.com/general/latest/gr/Welcome.html#endpoints-quotas"
-                }
-                <GLink>{
-                    font_family: (BOLD_FONT2),
-                    text: "4. AWS Glossary",
-                    font_size: 9.0,
-                    href: "https://docs.aws.amazon.com/general/latest/gr/Welcome.html#aws-glossary"
-                }
-            }
-
         }
+        // <GVLayout>{
+        //     height: Fit,
+        //     spacing: 8.0,
+        //     <GDivider>{
+        //         theme: Dark,
+        //         height: Fit,
+        //         <GLabel>{
+        //             text: "Aws Doc",
+        //             font_size: 12.0,
+        //             font_family: (BOLD_FONT2),
+        //         }
+        //     }
+        //     <GLink>{
+        //         href: "https://docs.aws.amazon.com/zh_cn/general/latest/gr/Welcome.html",
+        //         text: "AWS General Reference",
+        //         font_size: 10.0,
+        //         font_family: (BOLD_FONT2),
+        //     }
+        //     <GLabel>{
+        //         width: Fill,
+        //         font_family: (BOLD_FONT2),
+        //         text: "The AWS General Reference provides AWS service endpoint and quota information for Amazon Web Services. Additionally, you can find links to other common topics.",
+        //         font_size: 9.0,
+
+        //     }
+        //     <GVLayout>{
+        //         height: Fit,
+        //         padding: {
+        //             left: 8.0,
+        //             right: 8.0,
+        //         }
+        //         spacing: 8.0,
+        //         <GLink>{
+        //             font_family: (BOLD_FONT2),
+        //             text: "1. AWS security credentials",
+        //             font_size: 9.0,
+        //             href: "https://docs.aws.amazon.com/general/latest/gr/Welcome.html#aws-ip-ranges"
+        //         }
+        //         <GLink>{
+        //             font_family: (BOLD_FONT2),
+        //             text: "2. AWS IP address ranges",
+        //             font_size: 9.0,
+        //             href: "https://docs.aws.amazon.com/general/latest/gr/Welcome.html#aws-ip-ranges"
+        //         }
+        //         <GLink>{
+        //             font_family: (BOLD_FONT2),
+        //             text: "3. AWS APIs",
+        //             font_size: 9.0,
+        //             href: "https://docs.aws.amazon.com/general/latest/gr/Welcome.html#aws-apis"
+        //         }
+        //         <GLink>{
+        //             font_family: (BOLD_FONT2),
+        //             text: "4. AWS services endpoints and quotas",
+        //             font_size: 9.0,
+        //             href: "https://docs.aws.amazon.com/general/latest/gr/Welcome.html#endpoints-quotas"
+        //         }
+        //         <GLink>{
+        //             font_family: (BOLD_FONT2),
+        //             text: "4. AWS Glossary",
+        //             font_size: 9.0,
+        //             href: "https://docs.aws.amazon.com/general/latest/gr/Welcome.html#aws-glossary"
+        //         }
+        //     }
+
+        // }
     }
 }
 

@@ -1,6 +1,6 @@
 use std::{path::PathBuf, str::FromStr};
 
-use chrono::{Datelike, Local};
+use chrono::{Datelike, Local, Timelike};
 use gen_components::{
     components::{
         breadcrumb::GBreadCrumbWidgetExt,
@@ -24,6 +24,8 @@ use crate::utils::{
     LOAD_LIST, THREAD_POOL,
 };
 
+use super::bucket_page::BucketPageEvent;
+
 live_design! {
     import makepad_widgets::base::*;
     import makepad_widgets::theme_desktop_dark::*;
@@ -36,15 +38,20 @@ live_design! {
         width: Fill,
         flow: Down,
         border_radius: 0.0,
-        background_color: #161616,
-        upload_item: <GHLayout>{
+        background_color: #16191F,
+        upload_item: <GView>{
             event_order: Down,
-            height: 36.0,
+            flow: Right,
+            animation_open: true,
+            hover_color: #21252C,
+            background_color: #21252CA0,
+            pressed_color: #21252C,
+            height: 48.0,
             width: Fill,
             align: {
                 y: 0.5
             },
-            padding:{right: 12.0},
+            padding:{left: 4.0, right: 12.0},
             spacing: 8.0,
             file_icon = <GImage>{
                 src: dep("crate://self/resources/file.png"),
@@ -66,7 +73,7 @@ live_design! {
                 }
                 <GHLayout>{
                     height: Fit,
-                    spacing: 8.0,
+                    spacing: 12.0,
                     f_size = <GLabel>{
                         color: #656F7C,
                         font_size: 8.0,
@@ -86,7 +93,7 @@ live_design! {
                 height: Fit,
                 width: Fit,
                 position: Bottom,
-                proportion: 0.25,
+                proportion: 0.2,
                 trigger_more = <GIcon>{
                     cursor: Hand,
                     theme: Dark,
@@ -100,6 +107,7 @@ live_design! {
                         padding: 8.0,
                         spacing: 4.0,
                         background_visible: true,
+                        background_color: #22262F,
                         <GVLayout>{
                             height: Fit,
                             share_wrap = <GHLayout>{
@@ -110,6 +118,11 @@ live_design! {
                                 },
                                 padding: 8.0,
                                 spacing: 12.0,
+                                animation_open: true,
+                                hover_color: #1D2028,
+                                background_color: #22262F,
+                                pressed_color: #1D2028,
+                                background_visible: true,
                                 <GImage>{
                                     height: 16.0,
                                     width: 16.0,
@@ -122,6 +135,11 @@ live_design! {
                                 }
                             }
                             delete_wrap = <GHLayout>{
+                                animation_open: true,
+                                hover_color: #1D2028,
+                                background_color: #22262F,
+                                pressed_color: #1D2028,
+                                background_visible: true,
                                 height: Fit,
                                 align: {
                                     x: 0.0,
@@ -141,6 +159,11 @@ live_design! {
                                 }
                             }
                             download_wrap = <GHLayout>{
+                                animation_open: true,
+                                hover_color: #1D2028,
+                                background_color: #22262F,
+                                pressed_color: #1D2028,
+                                background_visible: true,
                                 height: Fit,
                                 align: {
                                     x: 0.0,
@@ -181,6 +204,7 @@ live_design! {
                 height: Fit,
                 width: Fit,
                 position: Bottom,
+                proportion: 0.32,
                 trigger = <GIcon>{
                     cursor: Hand,
                     theme: Dark,
@@ -194,6 +218,7 @@ live_design! {
                         padding: 8.0,
                         spacing: 4.0,
                         background_visible: true,
+                        background_color: #22262F,
                         <GLabel>{
                             margin: {
                                 top: 4.0,
@@ -206,6 +231,11 @@ live_design! {
                         <GVLayout>{
                             height: Fit,
                             <GHLayout>{
+                                animation_open: true,
+                                hover_color: #1D2028,
+                                background_color: #22262F,
+                                pressed_color: #1D2028,
+                                background_visible: true,
                                 height: Fit,
                                 align: {
                                     x: 0.0,
@@ -225,6 +255,11 @@ live_design! {
                                 }
                             }
                             <GHLayout>{
+                                animation_open: true,
+                                hover_color: #1D2028,
+                                background_color: #22262F,
+                                pressed_color: #1D2028,
+                                background_visible: true,
                                 height: Fit,
                                 align: {
                                     x: 0.0,
@@ -251,6 +286,11 @@ live_design! {
                         <GVLayout>{
                             height: Fit,
                             <GHLayout>{
+                                animation_open: true,
+                                hover_color: #1D2028,
+                                background_color: #22262F,
+                                pressed_color: #1D2028,
+                                background_visible: true,
                                 height: Fit,
                                 align: {
                                     x: 0.0,
@@ -270,6 +310,11 @@ live_design! {
                                 }
                             }
                             <GHLayout>{
+                                animation_open: true,
+                                hover_color: #1D2028,
+                                background_color: #22262F,
+                                pressed_color: #1D2028,
+                                background_visible: true,
                                 height: Fit,
                                 align: {
                                     x: 0.0,
@@ -783,7 +828,7 @@ impl UploadPage {
         let mut state = APP_STATE.lock().unwrap();
         // let mut target_name: Option<String> = None;
         let mut flag = false;
-        self.gview(id!(s3_list)).borrow().map(|list| {
+        self.gview(id!(s3_list)).borrow_mut().map(|list| {
             for (_, (_, child)) in list.children.iter().enumerate() {
                 // actions.find
                 child.as_gview().gview(id!(item_wrap)).borrow().map(|wrap| {
@@ -837,7 +882,7 @@ impl UploadPage {
     pub fn set_url_note(&mut self, cx: &mut Cx, url: &str, name: &str) {
         self.share_url = url.to_string();
         let mut state = APP_STATE.lock().unwrap();
-        let date = Local::now().date_naive();
+        let date = Local::now().naive_local();
         state.push_share(ShareItem {
             url: url.trim().to_string(),
             name: name.to_string(),
@@ -845,6 +890,8 @@ impl UploadPage {
                 date.year() as usize,
                 (date.month0() + 1) as u8,
                 (date.day0() + 1) as u8,
+                (date.hour()) as u8,
+                (date.minute()) as u8,
             ),
             during: 3600.0,
         });

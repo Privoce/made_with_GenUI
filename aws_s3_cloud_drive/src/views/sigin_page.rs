@@ -26,7 +26,7 @@ live_design! {
         width: Fill,
         flow: Down,
         border_radius: 0.0,
-        background_color: #161616,
+        background_color: #16191F,
         align: {
             x: 0.5,
             y: 0.0

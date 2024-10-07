@@ -1,13 +1,13 @@
 use gen_components::components::router::GRouterWidgetExt;
 use makepad_widgets::*;
 
-use crate::{utils::{State, APP_STATE}, views::main_page::AppMainPageWidgetRefExt};
+use crate::{utils::{State, APP_STATE}, views::{bucket_page::BucketPageEvent, main_page::AppMainPageWidgetRefExt}};
 
 live_design! {
     import makepad_widgets::base::*;
     import makepad_widgets::theme_desktop_dark::*;
     import gen_components::components::*;
-
+    import crate::views::settings_page::*;
     import crate::views::main_page::*;
 
 
@@ -26,7 +26,7 @@ live_design! {
                 width: Fill,
                 height: Fill,
                 window: {inner_size: vec2(420, 820)},
-                background_color: #161616,
+                background_color: #16191F,
                 background_visible: true,
                 clip_x: true,
                 clip_y: true,
@@ -87,7 +87,8 @@ impl MatchEvent for App {
     }
     fn handle_startup(&mut self, cx: &mut Cx) {
         let _ = State::sync_shares(true);
-        self.timer = cx.start_timeout(12.0);
+        let _ = State::sync_download_conf(true);
+        self.timer = cx.start_timeout(10.0);
     }
 }
 

@@ -1,6 +1,6 @@
 use std::{
     env::current_dir,
-    fs::File,
+    fs::{File, OpenOptions},
     io::{Read, Write},
     path::PathBuf,
     process::Command,
@@ -230,11 +230,11 @@ pub fn remove_virtual(target: &str) -> Result<Vec<String>, std::io::Error> {
 pub fn read_or_create(target: &str) -> std::io::Result<File> {
     let current_path = current_dir().unwrap();
     let conf_path = current_path.join(target);
-    if conf_path.exists() {
-        File::open(conf_path.as_path())
-    } else {
-        File::create_new(conf_path.as_path())
-    }
+    OpenOptions::new()
+        .create(true)
+        .write(true)
+        .truncate(true)
+        .open(conf_path.as_path())
 }
 
 pub fn format_s3_path(path: &Vec<String>) -> String {
