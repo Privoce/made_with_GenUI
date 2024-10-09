@@ -170,7 +170,7 @@ live_design! {
                         height: 14.0,
                         width: 16.0,
                         icon_type: Download,
-                        theme: Dark,
+                        theme: Info,
                     }
                     <GLink>{
                         theme: Error,
@@ -192,7 +192,7 @@ live_design! {
                             height: 14.0,
                             width: 16.0,
                             icon_type: Connect,
-                            theme: Dark,
+                            theme: Info,
                         }
                         <GLabel>{
                             font_family: (BOLD_FONT2),
@@ -212,7 +212,7 @@ live_design! {
                 }
                 back_setting = <GButton>{
                     width: 260.0,
-                    theme: Dark,
+                    theme: Info,
                     slot: {
                         font_family: (BOLD_FONT2),
                         font_size: 9.0,

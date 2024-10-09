@@ -45,35 +45,31 @@ live_design! {
             animation_open: true,
             draw_view: {
                 fn get_color(self) -> vec4 {
-                    // let gradient_angle = 30.0;
-                    // let direction = vec2(cos(radians(gradient_angle)), sin(radians(gradient_angle)));
-                    // let factor = dot(self.pos, direction);
+                    let gradient_angle = 30.0;
+                    let gdirection = vec2(cos(radians(gradient_angle)), sin(radians(gradient_angle)));
+                    let gfactor = dot(self.pos, gdirection);
 
-                    // let color0 = #21252C;   // #00FF00
-                    // let stop0 = 0.72;
+                    let gcolor0 = #21252C;   // #00FF00
+                    let gstop0 = 0.72;
 
-                    // let color1 = #C26014B6;   // #FF00FF
-                    // let stop1 = 0.86;
+                    let gcolor1 = #C26014B6;   // #FF00FF
+                    let gstop1 = 0.86;
 
-                    // // let color2 = #ff9900;   // #121212
-                    // let color2 = #C26014;
-                    // let stop2 = 0.96;
+                    // let color2 = #ff9900;   // #121212
+                    let gcolor2 = #C26014;
+                    let gstop2 = 0.96;
 
-                    // return mix(
-                    //     color0,
-                    //     mix(
-                    //         color1,
-                    //         mix(color2, color2, smoothstep(stop2, stop2, factor)),
-                    //         smoothstep(stop1, stop2, factor)
-                    //     ),
-                    //     // color1,
-                    //     smoothstep(stop0, stop1, factor)
-                    // );
-                    let center = mix(
-                        vec2(0.96 , 0.96),
-                        vec2(0.5 , 0.5),
-                        self.hover
+                    let g_color =  mix(
+                        gcolor0,
+                        mix(
+                            gcolor1,
+                            mix(gcolor2, gcolor2, smoothstep(gstop2, gstop2, gfactor)),
+                            smoothstep(gstop1, gstop2, gfactor)
+                        ),
+                        // color1,
+                        smoothstep(gstop0, gstop1, gfactor)
                     );
+                    let center = vec2(0.96 , 0.96);
                     let distance = distance (self.pos , center) ;
                     let factor = clamp (distance , 0.0 , 1.0) ;
                     let color0 = #2E2514;
@@ -82,7 +78,12 @@ live_design! {
                     let stop1 = 0.3; 
                     let color2 = #16191F;
                     let stop2 = 1.0 ;
-                    return mix (color0 , mix (color1 , color2 , smoothstep (stop1 , stop2 , factor)) , smoothstep (stop0 , stop1 , factor)) ;
+                    return mix(
+                        mix (color0 , mix (color1 , color2 , smoothstep (stop1 , stop2 , factor)) , smoothstep (stop0 , stop1 , factor)) ,
+                        g_color,
+                        
+                        self.hover
+                    );
                 }
 
             }
@@ -152,13 +153,13 @@ live_design! {
             <GButton>{
                 height: 42.0,
                 width: Fill,
-                theme: Dark,
+                theme: Info,
                 slot: <GHLayout>{
                     spacing: 6.0,
                     align: {x: 0.5, y: 0.5},
                     <GIcon>{
                         icon_type: Help,
-                        theme: Dark,
+                        theme: Info,
                         height: 18.0,
                         width: 18.0,
                     }
@@ -230,7 +231,7 @@ live_design! {
                 align: {x: 0.5, y: 0.5},
                 <GIcon>{
                     icon_type: Exit,
-                    theme: Dark,
+                    theme: Info,
                     height: 18.0,
                     width: 18.0,
                     stroke_width: 1.5,

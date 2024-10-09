@@ -60,6 +60,7 @@ live_design! {
                 src: dep("crate://self/resources/folder.png"),
             }
             item_wrap = <GVLayout>{
+                event_key: false,
                 height: Fill,
                 width: Fill,
                 align: {
@@ -96,7 +97,7 @@ live_design! {
                 proportion: 0.2,
                 trigger_more = <GIcon>{
                     cursor: Hand,
-                    theme: Dark,
+                    theme: Info,
                     icon_type: More,
                     height: 16.0,
                     width: 16.0
@@ -207,7 +208,7 @@ live_design! {
                 proportion: 0.32,
                 trigger = <GIcon>{
                     cursor: Hand,
-                    theme: Dark,
+                    theme: Info,
                     icon_type: Add,
                     height: 16.0,
                     width: 16.0
@@ -387,7 +388,7 @@ live_design! {
                 width: Fit,
                 notice_icon = <GIcon>{
                     cursor: Hand,
-                    theme: Dark,
+                    theme: Info,
                     icon_type: Notice,
                     height: 16.0,
                     width: 16.0
@@ -433,7 +434,7 @@ live_design! {
                 notice_icon = <GIcon>{
                     visible: false,
                     cursor: Hand,
-                    theme: Dark,
+                    theme: Info,
                     icon_type: Notice,
                     height: 16.0,
                     width: 16.0
@@ -478,7 +479,7 @@ live_design! {
             padding: 8.0,
             spacing: 12.0,
             upload_file_btn = <GButton>{
-                theme: Dark,
+                theme: Info,
                 slot: <GHLayout>{
                     height: Fit,
                     align: {
@@ -499,7 +500,7 @@ live_design! {
                 }
             }
             <GButton>{
-                theme: Dark,
+                theme: Info,
                 slot: <GHLayout>{
                     height: Fit,
                     align: {
@@ -541,7 +542,7 @@ live_design! {
                 }
             }
             path_header = <GBreadCrumb>{
-                theme: Dark,
+                theme: Info,
                 labels: []
             }
             s3_list = <GVLayout>{
@@ -825,19 +826,19 @@ impl UploadPage {
             });
     }
     pub fn update_list(&mut self, cx: &mut Cx, actions: &Actions) -> Option<()> {
-        let mut state = APP_STATE.lock().unwrap();
         // let mut target_name: Option<String> = None;
         let mut flag = false;
-        self.gview(id!(s3_list)).borrow_mut().map(|list| {
+        self.gview(id!(s3_list)).borrow().map(|list| {
             for (_, (_, child)) in list.children.iter().enumerate() {
                 // actions.find
-                child.as_gview().gview(id!(item_wrap)).borrow().map(|wrap| {
-                    if wrap.finger_up(&actions).is_some() && !wrap.glabel(id!(f_size)).is_visible()
+                child.as_gview().borrow().map(|wrap| {
+                    if wrap.finger_up(&actions).is_some() && !wrap.glabel(id!(item_wrap)).glabel(id!(f_size)).is_visible()
                     {
+                        let mut state = APP_STATE.lock().unwrap();
                         state
                             .s3_path
-                            .push(child.as_gview().glabel(id!(f_name)).text());
-                        self.update_path_header(state.s3_path.clone());
+                            .push(wrap.glabel(id!(item_wrap)).glabel(id!(f_name)).text());
+                       
                         flag = true;
                     }
                 });
@@ -852,15 +853,17 @@ impl UploadPage {
         });
 
         if flag {
+            let mut state = APP_STATE.lock().unwrap();
+            self.update_path_header(state.s3_path.clone());
             let _ = state.ls();
             state.current.as_ref().map(|res| {
                 self.set_dir_file(cx, res);
             });
 
-            // self.gview(id!(update_loading)).borrow_mut().map(|mut x| {
-            //     x.visible = false;
-            //     x.redraw(cx);
-            // });
+            self.gview(id!(update_loading)).borrow_mut().map(|mut x| {
+                x.visible = false;
+                x.redraw(cx);
+            });
             Some(())
         } else {
             None

@@ -41,9 +41,11 @@ live_design! {
                     tab1 = <GTabbarItem>{
                         width: Fill
                         icon_slot: {
+                            color: #FFF,
                             src: dep("crate://self/resources/home.svg"),
                         }
                         text_slot: {
+                            color: #FFF,
                             font_family: (BOLD_FONT),
                             text: "Home"
                         }
@@ -51,9 +53,11 @@ live_design! {
                     tab2 = <GTabbarItem>{
                         width: Fill
                         icon_slot: {
+                            color: #FFF,
                             src: dep("crate://self/resources/upload.svg"),
                         }
                         text_slot: {
+                            color: #FFF,
                             font_family: (BOLD_FONT),
                             text: "Upload"
                         }
@@ -61,9 +65,11 @@ live_design! {
                     tab3 = <GTabbarItem>{
                         width: Fill
                         icon_slot: {
+                            color: #FFF,
                             src: dep("crate://self/resources/setting.svg"),
                         }
                         text_slot: {
+                            color: #FFF,
                             font_family: (BOLD_FONT),
                             text: "Settings"
                         }
