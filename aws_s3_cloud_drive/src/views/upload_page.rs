@@ -42,7 +42,7 @@ live_design! {
         upload_item: <GView>{
             event_order: Down,
             flow: Right,
-            animation_open: true,
+            animation_key: true,
             hover_color: #21252C,
             background_color: #21252CA0,
             pressed_color: #21252C,
@@ -119,7 +119,7 @@ live_design! {
                                 },
                                 padding: 8.0,
                                 spacing: 12.0,
-                                animation_open: true,
+                                animation_key: true,
                                 hover_color: #1D2028,
                                 background_color: #22262F,
                                 pressed_color: #1D2028,
@@ -136,7 +136,7 @@ live_design! {
                                 }
                             }
                             delete_wrap = <GHLayout>{
-                                animation_open: true,
+                                animation_key: true,
                                 hover_color: #1D2028,
                                 background_color: #22262F,
                                 pressed_color: #1D2028,
@@ -160,7 +160,7 @@ live_design! {
                                 }
                             }
                             download_wrap = <GHLayout>{
-                                animation_open: true,
+                                animation_key: true,
                                 hover_color: #1D2028,
                                 background_color: #22262F,
                                 pressed_color: #1D2028,
@@ -232,7 +232,7 @@ live_design! {
                         <GVLayout>{
                             height: Fit,
                             <GHLayout>{
-                                animation_open: true,
+                                animation_key: true,
                                 hover_color: #1D2028,
                                 background_color: #22262F,
                                 pressed_color: #1D2028,
@@ -256,7 +256,7 @@ live_design! {
                                 }
                             }
                             <GHLayout>{
-                                animation_open: true,
+                                animation_key: true,
                                 hover_color: #1D2028,
                                 background_color: #22262F,
                                 pressed_color: #1D2028,
@@ -287,7 +287,7 @@ live_design! {
                         <GVLayout>{
                             height: Fit,
                             <GHLayout>{
-                                animation_open: true,
+                                animation_key: true,
                                 hover_color: #1D2028,
                                 background_color: #22262F,
                                 pressed_color: #1D2028,
@@ -311,7 +311,7 @@ live_design! {
                                 }
                             }
                             <GHLayout>{
-                                animation_open: true,
+                                animation_key: true,
                                 hover_color: #1D2028,
                                 background_color: #22262F,
                                 pressed_color: #1D2028,

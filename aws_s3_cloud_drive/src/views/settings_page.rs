@@ -42,7 +42,7 @@ live_design! {
             spread_radius: 8.6,
             blur_radius: 5.2,
             shadow_color: #111,
-            animation_open: true,
+            animation_key: true,
             draw_view: {
                 fn get_color(self) -> vec4 {
                     let gradient_angle = 30.0;
