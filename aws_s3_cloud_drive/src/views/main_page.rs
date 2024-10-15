@@ -1,9 +1,6 @@
 use gen_components::{
     components::{router::GRouterWidgetExt, view::GView},
-    utils::{
-        lifetime::{Executor, Lifetime},
-        HeapLiveIdPathExp,
-    },
+    utils::lifetime::{Executor, Lifetime},
 };
 use makepad_widgets::*;
 
@@ -67,7 +64,7 @@ live_design! {
                         width: Fill
                         icon_slot: {
                             color: #FFF,
-                            src: dep("crate://self/resources/setting.svg"),
+                            src: dep("crate://self/resources/setting_2.svg"),
                         }
                         text_slot: {
                             color: #FFF,

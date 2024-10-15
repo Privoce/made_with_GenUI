@@ -295,7 +295,7 @@ impl Widget for SettingsPage {
             let rect = header_view.borrow().unwrap().area().rect(cx);
             let pos = rect.pos;
             let size = rect.size;
-            /// here center is abs pos, need to calculate relative pos to the view
+            // here center is abs pos, need to calculate relative pos to the view
             let center = e.e.abs;
             // the real center pos is in [0.0, 1.0]
             let x = (center.x - pos.x) / size.x;

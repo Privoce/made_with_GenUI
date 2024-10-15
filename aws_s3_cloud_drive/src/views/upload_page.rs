@@ -24,8 +24,6 @@ use crate::utils::{
     LOAD_LIST, THREAD_POOL,
 };
 
-use super::bucket_page::BucketPageEvent;
-
 live_design! {
     import makepad_widgets::base::*;
     import makepad_widgets::theme_desktop_dark::*;
@@ -42,10 +40,11 @@ live_design! {
             event_order: Down,
             flow: Right,
             animation_key: true,
+            event_key: true,
             hover_color: #37181F,
             background_color: #251619,
             focus_color: #67301B,
-            height: 48.0,
+            height: 54.0,
             width: Fill,
             align: {
                 y: 0.5
@@ -59,13 +58,13 @@ live_design! {
                 src: dep("crate://self/resources/folder.png"),
             }
             item_wrap = <GVLayout>{
-                event_key: false,
+                event_key: true,
                 height: Fill,
                 width: Fill,
                 align: {
                     y: 0.5
                 },
-                spacing: 4.0,
+                spacing: 8.0,
                 f_name = <GLabel>{
                     font_size: 9.0,
                     font_family: (BOLD_FONT2),
@@ -539,13 +538,14 @@ live_design! {
             <GHLayout>{
                 height: Fit,
                 <GLabel>{
-                    font_size: 8.0,
+                    font_size: 10.0,
                     font_family: (BOLD_FONT2),
                     text: "MY AWS"
                 }
             }
             <GDivider>{
                 theme: Dark,
+                background_color: #EC4925,
                 height: 4.0,
                 margin: {
                     top: 2.0,
@@ -554,9 +554,11 @@ live_design! {
             }
             path_header = <GBreadCrumb>{
                 theme: Dark,
-                icon: {
-                    color: #ED4A26, 
-                }
+                // icon: {
+                //     color: #EC4925,
+                // }
+                stroke_color: #EC4925,
+                stroke_hover_color: #FF7043,
                 crumb_item: {
                     color: #ED4A26,
                     text_hover_color: #ED4A26,
@@ -618,6 +620,9 @@ impl LiveHook for UploadPage {
 }
 
 impl Widget for UploadPage {
+    fn is_visible(&self) -> bool {
+        self.visible
+    }
     fn draw_walk(&mut self, cx: &mut Cx2d, scope: &mut Scope, walk: Walk) -> DrawStep {
         if self.visible {
             let _ = self.super_widget.draw_walk(cx, scope, walk);
@@ -850,15 +855,20 @@ impl UploadPage {
             for (_, (_, child)) in list.children.iter().enumerate() {
                 // actions.find
                 child.as_gview().borrow().map(|wrap| {
-                    if wrap.clicked(&actions).is_some() && !wrap.glabel(id!(item_wrap)).glabel(id!(f_size)).is_visible()
+                    if wrap.gview(id!(item_wrap)).clicked(&actions).is_some()
+                        && !wrap.glabel(id!(f_size)).is_visible()
                     {
                         let mut state = APP_STATE.lock().unwrap();
-                        state
-                            .s3_path
-                            .push(wrap.glabel(id!(item_wrap)).glabel(id!(f_name)).text());
-                       
+                        state.s3_path.push(wrap.glabel(id!(f_name)).text());
+
                         flag = true;
                     }
+                    // if wrap.gview(id!(item_wrap)).hover_in(&actions).is_some() {
+                    //     wrap.animate_hover_on(cx);
+                    // }
+                    // if wrap.gview(id!(item_wrap)).hover_out(&actions).is_some() {
+                    //     wrap.animate_hover_off(cx);
+                    // }
                 });
                 if flag {
                     // self.gview(id!(update_loading)).borrow_mut().map(|mut x| {
