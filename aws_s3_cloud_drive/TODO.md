@@ -63,8 +63,3 @@
 - 切换Setting图标 ✅
 - 文件夹share去除
 - more图标分割间距 ✅
-
-file_editor
-
-按钮阴影hover后添加
-增加drawer间距
