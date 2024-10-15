@@ -17,17 +17,22 @@ live_design! {
     import makepad_widgets::theme_desktop_dark::*;
     import gen_components::components::*;
 
-    BOLD_FONT = dep("crate://self/resources/JuliaMono-BlackItalic.ttf");
     BOLD_FONT2 = dep("crate://self/resources/FiraCode-Bold.ttf");
     BucketPage = {{BucketPage}}{
         height: Fill,
         width: Fill,
         flow: Down,
         border_radius: 0.0,
-        background_color: #16191F,
+        background_color: #1F1616,
         link_template: <GLink>{
+            color: #ED4A26,
+            underline_color: #ED4A26,
+            underline_hover_color: #F56241,
+            underline_focus_color: #F56241,
+            text_hover_color: #F56241,
+            text_focus_color: #F56241,
             font_size: 8.0,
-            font_family: (BOLD_FONT),
+            font_family: (BOLD_FONT2),
             text: "",
             href: "",
         }
@@ -40,7 +45,7 @@ live_design! {
             <GLabel>{
                 width: Fill,
                 font_size: 14.0,
-                font_family: (BOLD_FONT),
+                font_family: (BOLD_FONT2),
                 text: "HOME",
             }
         }
@@ -69,6 +74,7 @@ live_design! {
                     height: 32.0,
                     width: 32.0,
                     align: {x: 0.5, y: 0.5},
+                    background_color: #ED4A26,
                     up = <GUpload>{
                         height: 16.0,
                         width: 16.0,
@@ -89,7 +95,7 @@ live_design! {
             }
         }
         <GView>{
-            background_color: #21252C,
+            background_color: #31171B,
             height: 220.0,
             width: Fill,
             border_radius: 0.0,
@@ -121,7 +127,7 @@ live_design! {
                     spread_radius: 0.0,
                     background_visible: false,
                     slot: {
-                        color: #3B82F6,
+                        color: #ED4A26,
                         font_family: (BOLD_FONT2),
                         text: "Get All"
                     }
@@ -137,7 +143,7 @@ live_design! {
             }
         }
         <GView>{
-            background_color: #21252C,
+            background_color: #31171B,
             height: 220.0,
             width: Fill,
             border_radius: 0.0,
@@ -175,7 +181,7 @@ live_design! {
                     background_visible: false,
                     slot: {
                         font_family: (BOLD_FONT2),
-                        color: #3B82F6,
+                        color: #ED4A26,
                         text: "Get All"
                     }
                 }
@@ -184,14 +190,14 @@ live_design! {
                 height: Fit,
                 spacing: 6.0,
                 <GLabel>{
-                    font_family: (BOLD_FONT),
+                    font_family: (BOLD_FONT2),
                     font_size: 9.0,
                     text: "Amazon Simple Storage Service Documentation",
                 }
                 <GLabel>{
                     color: #D5DBDB,
                     width: Fill,
-                    font_family: (BOLD_FONT),
+                    font_family: (BOLD_FONT2),
                     font_size: 8.0,
                     text: "Amazon Simple Storage Service (Amazon S3) is storage for the internet",
                     margin: {left: 4.0}
@@ -199,7 +205,7 @@ live_design! {
                 <GLabel>{
                     color: #D5DBDB,
                     width: Fill,
-                    font_family: (BOLD_FONT),
+                    font_family: (BOLD_FONT2),
                     font_size: 8.0,
                     margin: {left: 4.0}
                     text: "Amazon S3 to store and retrieve any amount of data at any time, from anywhere on the web.",
@@ -215,20 +221,38 @@ live_design! {
                 },
                 spacing: 12.0,
                 <GLink>{
+                    color: #ED4A26,
+                    underline_color: #ED4A26,
+                    underline_hover_color: #F56241,
+                    underline_focus_color: #F56241,
+                    text_hover_color: #F56241,
+                    text_focus_color: #F56241,
                     font_size: 8.0,
-                    font_family: (BOLD_FONT),
+                    font_family: (BOLD_FONT2),
                     text: "AWS S3 Documentation",
                     href: "https://docs.aws.amazon.com/s3/?icmpid=docs_homepage_featuredsvcs"
                 }
                 <GLink>{
+                    color: #ED4A26,
+                    underline_color: #ED4A26,
+                    underline_hover_color: #F56241,
+                    underline_focus_color: #F56241,
+                    text_hover_color: #F56241,
+                    text_focus_color: #F56241,
                     font_size: 8.0,
-                    font_family: (BOLD_FONT),
+                    font_family: (BOLD_FONT2),
                     text: "User Guide Documentation (PDF)",
                     href: "https://docs.aws.amazon.com/pdfs/AmazonS3/latest/userguide/s3-userguide.pdf"
                 }
                 <GLink>{
+                    color: #ED4A26,
+                    underline_color: #ED4A26,
+                    underline_hover_color: #F56241,
+                    underline_focus_color: #F56241,
+                    text_hover_color: #F56241,
+                    text_focus_color: #F56241,
                     font_size: 8.0,
-                    font_family: (BOLD_FONT),
+                    font_family: (BOLD_FONT2),
                     text: "AWS Cli Documentation",
                     href: "https://docs.aws.amazon.com/zh_cn/general/latest/gr/Welcome.html"
                 }
@@ -237,9 +261,13 @@ live_design! {
         <GHLayout>{
             align: {x: 0.5, y: 0.2}
             to_main = <GButton>{
+                theme: Warning,
+                background_color: #EC4925,
+                hover_color: #Fa4319,
+                focus_color: #E36741,
                 slot: {
                     font_size: 10.0,
-                    font_family: (BOLD_FONT),
+                    font_family: (BOLD_FONT2),
                     text: "Let's Upload!"
                 }
             }

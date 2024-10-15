@@ -31,21 +31,20 @@ live_design! {
     import makepad_widgets::theme_desktop_dark::*;
     import gen_components::components::*;
 
-    BOLD_FONT = dep("crate://self/resources/JuliaMono-BlackItalic.ttf");
     BOLD_FONT2 = dep("crate://self/resources/FiraCode-Bold.ttf");
     UploadPage = {{UploadPage}}{
         height: Fill,
         width: Fill,
         flow: Down,
         border_radius: 0.0,
-        background_color: #16191F,
+        background_color: #1F1616,
         upload_item: <GView>{
             event_order: Down,
             flow: Right,
             animation_key: true,
-            hover_color: #21252C,
-            background_color: #21252CA0,
-            pressed_color: #21252C,
+            hover_color: #37181F,
+            background_color: #251619,
+            focus_color: #67301B,
             height: 48.0,
             width: Fill,
             align: {
@@ -69,7 +68,7 @@ live_design! {
                 spacing: 4.0,
                 f_name = <GLabel>{
                     font_size: 9.0,
-                    font_family: (BOLD_FONT),
+                    font_family: (BOLD_FONT2),
                     text: "Personal",
                 }
                 <GHLayout>{
@@ -122,7 +121,7 @@ live_design! {
                                 animation_key: true,
                                 hover_color: #1D2028,
                                 background_color: #22262F,
-                                pressed_color: #1D2028,
+                                focus_color: #1D2028,
                                 background_visible: true,
                                 <GImage>{
                                     height: 16.0,
@@ -139,7 +138,7 @@ live_design! {
                                 animation_key: true,
                                 hover_color: #1D2028,
                                 background_color: #22262F,
-                                pressed_color: #1D2028,
+                                focus_color: #1D2028,
                                 background_visible: true,
                                 height: Fit,
                                 align: {
@@ -163,7 +162,7 @@ live_design! {
                                 animation_key: true,
                                 hover_color: #1D2028,
                                 background_color: #22262F,
-                                pressed_color: #1D2028,
+                                focus_color: #1D2028,
                                 background_visible: true,
                                 height: Fit,
                                 align: {
@@ -197,7 +196,7 @@ live_design! {
             <GLabel>{
                 width: Fill,
                 font_size: 12.0,
-                font_family: (BOLD_FONT),
+                font_family: (BOLD_FONT2),
                 text: "AWS S3",
             }
             <GDropDown>{
@@ -235,7 +234,7 @@ live_design! {
                                 animation_key: true,
                                 hover_color: #1D2028,
                                 background_color: #22262F,
-                                pressed_color: #1D2028,
+                                focus_color: #1D2028,
                                 background_visible: true,
                                 height: Fit,
                                 align: {
@@ -259,7 +258,7 @@ live_design! {
                                 animation_key: true,
                                 hover_color: #1D2028,
                                 background_color: #22262F,
-                                pressed_color: #1D2028,
+                                focus_color: #1D2028,
                                 background_visible: true,
                                 height: Fit,
                                 align: {
@@ -290,7 +289,7 @@ live_design! {
                                 animation_key: true,
                                 hover_color: #1D2028,
                                 background_color: #22262F,
-                                pressed_color: #1D2028,
+                                focus_color: #1D2028,
                                 background_visible: true,
                                 height: Fit,
                                 align: {
@@ -314,7 +313,7 @@ live_design! {
                                 animation_key: true,
                                 hover_color: #1D2028,
                                 background_color: #22262F,
-                                pressed_color: #1D2028,
+                                focus_color: #1D2028,
                                 background_visible: true,
                                 height: Fit,
                                 align: {
@@ -359,6 +358,7 @@ live_design! {
                                 y: 0.5
                             },
                             spacing: 8.0,
+                            background_color: #191111,
                             <GLabel>{
                                 text: "[ DOWNLOAD URL ]",
                                 color: #FF7043,
@@ -410,11 +410,15 @@ live_design! {
                                 y: 0.5
                             },
                             spacing: 8.0,
-                            <GLabel>{
-                                text: "[ Note ]",
-                                color: #FF7043,
-                                font_family: (BOLD_FONT2),
-                                font_size: 12.0,
+                            background_color: #191111,
+                            // <GLabel>{
+                            //     text: "[ Note ]",
+                            //     color: #FF7043,
+                            //     font_family: (BOLD_FONT2),
+                            //     font_size: 12.0,
+                            // }
+                            <GLoading>{
+                                theme: Info,
                             }
                             note_label = <GLabel>{
                                 margin: 6.0,
@@ -456,6 +460,7 @@ live_design! {
                                 y: 0.5
                             },
                             spacing: 8.0,
+                            background_color: #191111,
                             <GLabel>{
                                 text: "[ Note ]",
                                 color: #FF7043,
@@ -479,7 +484,10 @@ live_design! {
             padding: 8.0,
             spacing: 12.0,
             upload_file_btn = <GButton>{
-                theme: Info,
+                theme: Warning,
+                background_color: #EC4925,
+                hover_color: #Fa4319,
+                focus_color: #E36741,
                 slot: <GHLayout>{
                     height: Fit,
                     align: {
@@ -490,7 +498,7 @@ live_design! {
                     <GImage>{
                         height: 16.0,
                         width: 16.0,
-                        src: dep("crate://self/resources/upload_file.png"),
+                        src: dep("crate://self/resources/upload_file2.png"),
                     }
                     <GLabel>{
                         font_size: 8.0,
@@ -500,7 +508,10 @@ live_design! {
                 }
             }
             <GButton>{
-                theme: Info,
+                theme: Warning,
+                background_color: #EC4925,
+                hover_color: #Fa4319,
+                focus_color: #E36741,
                 slot: <GHLayout>{
                     height: Fit,
                     align: {
@@ -511,7 +522,7 @@ live_design! {
                     <GImage>{
                         height: 16.0,
                         width: 16.0,
-                        src: dep("crate://self/resources/add_file.png"),
+                        src: dep("crate://self/resources/add_file2.png"),
                     }
                     <GLabel>{
                         font_size: 8.0,
@@ -542,7 +553,14 @@ live_design! {
                 }
             }
             path_header = <GBreadCrumb>{
-                theme: Info,
+                theme: Dark,
+                icon: {
+                    color: #ED4A26, 
+                }
+                crumb_item: {
+                    color: #ED4A26,
+                    text_hover_color: #ED4A26,
+                }
                 labels: []
             }
             s3_list = <GVLayout>{
@@ -694,7 +712,7 @@ impl Widget for UploadPage {
                                 .gview(id!(share_wrap))
                                 .borrow()
                                 .map(|share_wrap| {
-                                    if share_wrap.finger_down(&actions).is_some() {
+                                    if share_wrap.focus(&actions).is_some() {
                                         flag = true;
                                     }
                                 });
@@ -832,7 +850,7 @@ impl UploadPage {
             for (_, (_, child)) in list.children.iter().enumerate() {
                 // actions.find
                 child.as_gview().borrow().map(|wrap| {
-                    if wrap.finger_up(&actions).is_some() && !wrap.glabel(id!(item_wrap)).glabel(id!(f_size)).is_visible()
+                    if wrap.clicked(&actions).is_some() && !wrap.glabel(id!(item_wrap)).glabel(id!(f_size)).is_visible()
                     {
                         let mut state = APP_STATE.lock().unwrap();
                         state

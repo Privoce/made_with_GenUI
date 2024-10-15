@@ -13,7 +13,7 @@ live_design! {
         width: Fill,
         flow: Down,
         border_radius: 0.0,
-        background_color: #16191F,
+        background_color: #1F1616,
         align: {
             x: 0.5,
             y: 0.0
@@ -39,12 +39,14 @@ live_design! {
             },
             align: {x: 0.5, y: 0.5},
             flow: Down,
-            spread_radius: 8.6,
+            spread_radius: 5.6,
             blur_radius: 5.2,
-            shadow_color: #111,
+            shadow_color: #2B1719,
             animation_key: true,
+            clip_x: false,
+            clip_y: false,
             draw_view: {
-                fn get_color(self) -> vec4 {
+                fn get_background_color(self) -> vec4 {
                     let gradient_angle = 30.0;
                     let gdirection = vec2(cos(radians(gradient_angle)), sin(radians(gradient_angle)));
                     let gfactor = dot(self.pos, gdirection);
@@ -52,11 +54,11 @@ live_design! {
                     let gcolor0 = #21252C;   // #00FF00
                     let gstop0 = 0.72;
 
-                    let gcolor1 = #C26014B6;   // #FF00FF
+                    let gcolor1 = #52241C;   // #FF00FF
                     let gstop1 = 0.86;
 
                     // let color2 = #ff9900;   // #121212
-                    let gcolor2 = #C26014;
+                    let gcolor2 = #82440F;
                     let gstop2 = 0.96;
 
                     let g_color =  mix(
@@ -72,18 +74,19 @@ live_design! {
                     let center = vec2(0.96 , 0.96);
                     let distance = distance (self.pos , center) ;
                     let factor = clamp (distance , 0.0 , 1.0) ;
-                    let color0 = #2E2514;
+                    let color0 = #82440F;
                     let stop0 = 0.0 ; 
-                    let color1 = #212215;
+                    let color1 = #52241C;
                     let stop1 = 0.3; 
-                    let color2 = #16191F;
+                    let color2 = #1F1616;
                     let stop2 = 1.0 ;
-                    return mix(
-                        mix (color0 , mix (color1 , color2 , smoothstep (stop1 , stop2 , factor)) , smoothstep (stop0 , stop1 , factor)) ,
-                        g_color,
+                    // return mix(
+                    //     mix (color0 , mix (color1 , color2 , smoothstep (stop1 , stop2 , factor)) , smoothstep (stop0 , stop1 , factor)) ,
+                    //     g_color,
                         
-                        self.hover
-                    );
+                    //     self.hover
+                    // );
+                    return mix (color0 , mix (color1 , color2 , smoothstep (stop1 , stop2 , factor)) , smoothstep (stop0 , stop1 , factor));
                 }
 
             }
@@ -144,6 +147,9 @@ live_design! {
                 height: 42.0,
                 width: Fill,
                 theme: Warning,
+                background_color: #EC4925,
+                hover_color: #Fa4319,
+                focus_color: #E36741,
                 slot: {
                     text: "Change Config",
                     font_size: 10.0,
@@ -204,7 +210,7 @@ live_design! {
                         smoothstep(stop0, stop1, factor)
                     );
 
-                    let pressed_color = mix(
+                    let focus_color = mix(
                         color2,
                         mix(
                             color1,
@@ -217,12 +223,12 @@ live_design! {
 
                     return mix(
                         mix(
-                            #16191F,
+                            #1F1616,
                             hover_color,
                             self.hover
                         ),
-                        pressed_color,
-                        self.pressed
+                        focus_color,
+                        self.focus
                     );
                 }
             }

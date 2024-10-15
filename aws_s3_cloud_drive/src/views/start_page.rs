@@ -44,43 +44,19 @@ live_design! {
             }
         }
 
-        <GDropDown>{
-            mode: Popup,
+        enter_btn = <GButton>{
+            margin: {top: 60.0},
             height: Fit,
             width: Fit,
-            trigger_mode: Hover,
-            position: Bottom,
-            clip_x: false,
-            clip_y: false,
-            enter_btn = <GButton>{
-                margin: {top: 60.0},
-                height: Fit,
-                width: Fit,
-                padding: 0.0,
-                background_visible: false,
-                border_radius: 3.0,
-                theme: Error,
-                slot: <GImage>{
-                    height: 36.0,
-                    width: 36.0,
-                    src: dep("crate://self/resources/aws.png"),
-                }
-            }
-            popup :<GPopup> {
-                theme: Dark,
-                height: 60.0,
-                width: 60.0,
-                padding: {
-                    top: 12.0,
-                },
-                background_visible: false,
-                container: {
-                    align: {x: 0.5, y: 0.5},
-                    <GLabel>{
-                        text:"Go!",
-                        font_family: (BOLD_FONT2),
-                    }
-                }
+            padding: 0.0,
+            background_visible: false,
+            spread_radius: 5.2,
+            border_radius: 3.0,
+            theme: Error,
+            slot: <GImage>{
+                height: 36.0,
+                width: 36.0,
+                src: dep("crate://self/resources/aws.png"),
             }
         }
         loading = <GLoading>{

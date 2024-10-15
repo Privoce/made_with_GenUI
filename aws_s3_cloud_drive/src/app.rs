@@ -9,6 +9,7 @@ live_design! {
     import gen_components::components::*;
     import crate::views::settings_page::*;
     import crate::views::main_page::*;
+    import crate::views::start_page::*;
 
 
     BOLD_FONT = dep("crate://self/resources/JuliaMono-BlackItalic.ttf");
@@ -26,13 +27,13 @@ live_design! {
                 width: Fill,
                 height: Fill,
                 window: {inner_size: vec2(420, 820)},
-                background_color: #16191F,
+                background_color: #1F1616,
                 background_visible: true,
                 clip_x: true,
                 clip_y: true,
                 body = <GVLayout>{
-                    app_main_page = <AppMainPage>{}
-                    // <StartPage>{}
+                    // app_main_page = <AppMainPage>{}
+                    <StartPage>{}
                     // <SettingsPage>{}
                     // <SiginPage>{}
                     // <MainPage>{}
@@ -61,9 +62,9 @@ impl LiveHook for App {
         _nodes: &[LiveNode],
     ) {
         // get configs
-        let mut state = APP_STATE.lock().unwrap();
-        let _ = state.get_confih_credentials();
-        let _ = state.ls();
+        // let mut state = APP_STATE.lock().unwrap();
+        // let _ = state.get_confih_credentials();
+        // let _ = state.ls();
     }
 }
 
@@ -82,13 +83,13 @@ impl LiveRegister for App {
 
 impl MatchEvent for App {
     fn handle_timer(&mut self, cx: &mut Cx, _e: &TimerEvent) {
-        self.nav_to(cx, id!(bucket_frame));
-        cx.stop_timer(self.timer);
+        // self.nav_to(cx, id!(bucket_frame));
+        // cx.stop_timer(self.timer);
     }
     fn handle_startup(&mut self, cx: &mut Cx) {
-        let _ = State::sync_shares(true);
-        let _ = State::sync_download_conf(true);
-        self.timer = cx.start_timeout(10.0);
+        // let _ = State::sync_shares(true);
+        // let _ = State::sync_download_conf(true);
+        // self.timer = cx.start_timeout(10.0);
     }
 }
 

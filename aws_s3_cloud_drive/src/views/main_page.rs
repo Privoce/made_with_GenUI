@@ -38,6 +38,7 @@ live_design! {
                     <SettingsPage> {}
                 }
                 tabbar = <GTabbar>{
+                    background_color: #191111,
                     tab1 = <GTabbarItem>{
                         width: Fill
                         icon_slot: {
@@ -46,7 +47,7 @@ live_design! {
                         }
                         text_slot: {
                             color: #FFF,
-                            font_family: (BOLD_FONT),
+                            font_family: (BOLD_FONT2),
                             text: "Home"
                         }
                     }
@@ -58,7 +59,7 @@ live_design! {
                         }
                         text_slot: {
                             color: #FFF,
-                            font_family: (BOLD_FONT),
+                            font_family: (BOLD_FONT2),
                             text: "Upload"
                         }
                     }
@@ -70,7 +71,7 @@ live_design! {
                         }
                         text_slot: {
                             color: #FFF,
-                            font_family: (BOLD_FONT),
+                            font_family: (BOLD_FONT2),
                             text: "Settings"
                         }
                     }
@@ -145,7 +146,7 @@ impl Widget for AppMainPage {
             .map(|_| {
                 let router = self.grouter(id!(app_router));
                 router.borrow().map(|router| {
-                    if !router.scope_path.is_empty() {
+                    if router.scope_path.is_some() {
                         // if is empty do not do next
                         self.lifetime.next();
                     }

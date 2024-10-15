@@ -19,14 +19,13 @@ live_design! {
     import makepad_widgets::theme_desktop_dark::*;
     import gen_components::components::*;
 
-    BOLD_FONT = dep("crate://self/resources/JuliaMono-BlackItalic.ttf");
     BOLD_FONT2 = dep("crate://self/resources/FiraCode-Bold.ttf");
     SiginPage = {{SiginPage}}{
         height: Fill,
         width: Fill,
         flow: Down,
         border_radius: 0.0,
-        background_color: #16191F,
+        background_color: #1F1616,
         align: {
             x: 0.5,
             y: 0.0
@@ -59,7 +58,7 @@ live_design! {
                 align: {x: 0.0, y: 0.5},
                 padding: {left: 16.0, right: 16.0},
                 <GLabel>{
-                    font_family: (BOLD_FONT),
+                    font_family: (BOLD_FONT2),
                     font_size: 10.0,
                     text: "AWS Access Key ID:",
                 }
@@ -76,7 +75,7 @@ live_design! {
                 align: {x: 0.0, y: 0.5},
                 padding: {left: 16.0, right: 16.0},
                 <GLabel>{
-                    font_family: (BOLD_FONT),
+                    font_family: (BOLD_FONT2),
                     font_size: 10.0,
                     text: "AWS Access Secret:",
                 }
@@ -93,7 +92,7 @@ live_design! {
                 align: {x: 0.0, y: 0.5},
                 padding: {left: 16.0, right: 16.0},
                 <GLabel>{
-                    font_family: (BOLD_FONT),
+                    font_family: (BOLD_FONT2),
                     font_size: 10.0,
                     text: "Region:",
                 }
@@ -114,7 +113,7 @@ live_design! {
                 align: {x: 0.0, y: 0.5},
                 padding: {left: 16.0, right: 16.0},
                 <GLabel>{
-                    font_family: (BOLD_FONT),
+                    font_family: (BOLD_FONT2),
                     font_size: 10.0,
                     text: "Output Format:",
                 }
@@ -124,19 +123,19 @@ live_design! {
                     selected: 0,
                     <GRadio>{
                         theme: Dark,
-                        font_family: (BOLD_FONT),
+                        font_family: (BOLD_FONT2),
                         color: #FFF,
                         text: "json"
                     }
                     <GRadio>{
                         theme: Dark,
-                        font_family: (BOLD_FONT),
+                        font_family: (BOLD_FONT2),
                         color: #FFF,
                         text: "yaml"
                     }
                     <GRadio>{
                         theme: Dark,
-                        font_family: (BOLD_FONT),
+                        font_family: (BOLD_FONT2),
                         color: #FFF,
                         text: "text"
                     }
@@ -174,7 +173,7 @@ live_design! {
                     }
                     <GLink>{
                         theme: Error,
-                        font_family: (BOLD_FONT),
+                        font_family: (BOLD_FONT2),
                         font_size: 9.0,
                         text: "Download!",
                         href: "https://aws.amazon.com/cli/"
