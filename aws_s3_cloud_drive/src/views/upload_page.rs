@@ -9,7 +9,7 @@ use gen_components::{
         file_upload::event::new_file_dialog,
         image::GImageWidgetExt,
         input::GInputWidgetExt,
-        label::{GLabelWidgetExt, GLabelWidgetRefExt},
+        label::GLabelWidgetExt,
         view::{GView, GViewWidgetExt, GViewWidgetRefExt},
     },
     utils::{
@@ -52,10 +52,10 @@ live_design! {
             padding:{left: 4.0, right: 12.0},
             spacing: 8.0,
             file_icon = <GImage>{
-                src: dep("crate://self/resources/file.png"),
+                src: dep("crate://self/resources/file2.png"),
             }
             folder_icon = <GImage>{
-                src: dep("crate://self/resources/folder.png"),
+                src: dep("crate://self/resources/folder2.png"),
             }
             item_wrap = <GVLayout>{
                 event_key: true,
@@ -66,7 +66,7 @@ live_design! {
                 },
                 spacing: 8.0,
                 f_name = <GLabel>{
-                    font_size: 9.0,
+                    font_size: 9.33,
                     font_family: (BOLD_FONT2),
                     text: "Personal",
                 }
@@ -92,7 +92,7 @@ live_design! {
                 height: Fit,
                 width: Fit,
                 position: Bottom,
-                proportion: 0.2,
+                proportion: 0.18,
                 trigger_more = <GIcon>{
                     cursor: Hand,
                     theme: Info,
@@ -115,7 +115,7 @@ live_design! {
                                     x: 0.0,
                                     y: 0.5,
                                 },
-                                padding: 8.0,
+                                padding: 10.0,
                                 spacing: 12.0,
                                 animation_key: true,
                                 hover_color: #1D2028,
@@ -128,7 +128,7 @@ live_design! {
                                     src: dep("crate://self/resources/share.png"),
                                 }
                                 <GLabel>{
-                                    font_size: 9.0,
+                                    font_size: 9.33,
                                     font_family: (BOLD_FONT2),
                                     text: "Share"
                                 }
@@ -144,7 +144,7 @@ live_design! {
                                     x: 0.0,
                                     y: 0.5,
                                 },
-                                padding: 8.0,
+                                padding: 10.0,
                                 spacing: 12.0,
                                 <GImage>{
                                     height: 16.0,
@@ -152,7 +152,7 @@ live_design! {
                                     src: dep("crate://self/resources/delete.png"),
                                 }
                                 <GLabel>{
-                                    font_size: 9.0,
+                                    font_size: 9.33,
                                     font_family: (BOLD_FONT2),
                                     text: "Delete"
                                 }
@@ -168,7 +168,7 @@ live_design! {
                                     x: 0.0,
                                     y: 0.5,
                                 },
-                                padding: 8.0,
+                                padding: 10.0,
                                 spacing: 12.0,
                                 <GImage>{
                                     height: 16.0,
@@ -176,7 +176,7 @@ live_design! {
                                     src: dep("crate://self/resources/download.png"),
                                 }
                                 <GLabel>{
-                                    font_size: 9.0,
+                                    font_size: 9.33,
                                     font_family: (BOLD_FONT2),
                                     text: "Download"
                                 }
@@ -196,7 +196,7 @@ live_design! {
                 width: Fill,
                 font_size: 12.0,
                 font_family: (BOLD_FONT2),
-                text: "AWS S3",
+                text: "GenUI Cloud Drive",
             }
             <GDropDown>{
                 mode: Drawer,
@@ -223,7 +223,7 @@ live_design! {
                                 top: 4.0,
                                 bottom: 4.0,
                             },
-                            font_size: 9.0,
+                            font_size: 10.67,
                             font_family: (BOLD_FONT2),
                             text: "Add To AWS S3"
                         }
@@ -240,7 +240,7 @@ live_design! {
                                     x: 0.0,
                                     y: 0.5,
                                 },
-                                padding: 8.0,
+                                padding: 10.0,
                                 spacing: 12.0,
                                 <GImage>{
                                     height: 16.0,
@@ -248,7 +248,7 @@ live_design! {
                                     src: dep("crate://self/resources/upload_file.png"),
                                 }
                                 <GLabel>{
-                                    font_size: 8.0,
+                                    font_size: 9.33,
                                     font_family: (BOLD_FONT2),
                                     text: "Upload File"
                                 }
@@ -264,7 +264,7 @@ live_design! {
                                     x: 0.0,
                                     y: 0.5,
                                 },
-                                padding: 8.0,
+                                padding: 10.0,
                                 spacing: 12.0,
                                 <GImage>{
                                     height: 16.0,
@@ -272,7 +272,7 @@ live_design! {
                                     src: dep("crate://self/resources/upload_folder.png"),
                                 }
                                 <GLabel>{
-                                    font_size: 8.0,
+                                    font_size: 9.33,
                                     font_family: (BOLD_FONT2),
                                     text: "Upload Folder"
                                 }
@@ -295,7 +295,7 @@ live_design! {
                                     x: 0.0,
                                     y: 0.5,
                                 },
-                                padding: 8.0,
+                                padding: 10.0,
                                 spacing: 12.0,
                                 <GImage>{
                                     height: 16.0,
@@ -303,7 +303,7 @@ live_design! {
                                     src: dep("crate://self/resources/add_file.png"),
                                 }
                                 <GLabel>{
-                                    font_size: 8.0,
+                                    font_size: 9.33,
                                     font_family: (BOLD_FONT2),
                                     text: "Add File"
                                 }
@@ -319,7 +319,7 @@ live_design! {
                                     x: 0.0,
                                     y: 0.5,
                                 },
-                                padding: 8.0,
+                                padding: 10.0,
                                 spacing: 12.0,
                                 <GImage>{
                                     height: 16.0,
@@ -327,7 +327,7 @@ live_design! {
                                     src: dep("crate://self/resources/add_folder.png"),
                                 }
                                 <GLabel>{
-                                    font_size: 8.0,
+                                    font_size: 9.33,
                                     font_family: (BOLD_FONT2),
                                     text: "Add Folder"
                                 }
@@ -356,10 +356,10 @@ live_design! {
                                 x: 0.5,
                                 y: 0.5
                             },
-                            spacing: 8.0,
+                            spacing: 16.0,
                             background_color: #191111,
                             <GLabel>{
-                                text: "[ DOWNLOAD URL ]",
+                                text: " Shareable Link ",
                                 color: #FF7043,
                                 font_family: (BOLD_FONT2),
                                 font_size: 12.0,
@@ -369,12 +369,15 @@ live_design! {
                                 width: Fill,
                                 text:"",
                                 font_family: (BOLD_FONT2),
-                                font_size: 9.0,
+                                font_size: 9.33,
                                 height: 260.0,
                             }
                             url_copy_btn = <GButton>{
+                                background_color: #EC4925,
+                                hover_color: #Fa4319,
+                                focus_color: #E36741,
                                 slot: {
-                                    text: "Copy Download URL"
+                                    text: "Copy Link"
                                 }
                             }
                         }
@@ -424,7 +427,7 @@ live_design! {
                                 width: Fill,
                                 text:"",
                                 font_family: (BOLD_FONT2),
-                                font_size: 9.0,
+                                font_size: 9.33,
                             }
                         }
                     }
@@ -471,7 +474,7 @@ live_design! {
                                 width: Fill,
                                 text:"",
                                 font_family: (BOLD_FONT2),
-                                font_size: 9.0,
+                                font_size: 9.33,
                             }
                         }
                     }
@@ -485,8 +488,8 @@ live_design! {
             upload_file_btn = <GButton>{
                 theme: Warning,
                 background_color: #EC4925,
-                hover_color: #Fa4319,
-                focus_color: #E36741,
+                hover_color: #E97056,
+                focus_color: #C73514,
                 slot: <GHLayout>{
                     height: Fit,
                     align: {
@@ -494,13 +497,16 @@ live_design! {
                         y: 0.5
                     },
                     spacing: 6.0,
+                    background_color: #EC4925,
+                    hover_color: #E97056,
+                    focus_color: #C73514,
                     <GImage>{
                         height: 16.0,
                         width: 16.0,
                         src: dep("crate://self/resources/upload_file2.png"),
                     }
                     <GLabel>{
-                        font_size: 8.0,
+                        font_size: 9.33,
                         font_family: (BOLD_FONT2),
                         text: "Upload"
                     }
@@ -509,8 +515,8 @@ live_design! {
             <GButton>{
                 theme: Warning,
                 background_color: #EC4925,
-                hover_color: #Fa4319,
-                focus_color: #E36741,
+                hover_color: #E97056,
+                focus_color: #C73514,
                 slot: <GHLayout>{
                     height: Fit,
                     align: {
@@ -524,7 +530,7 @@ live_design! {
                         src: dep("crate://self/resources/add_file2.png"),
                     }
                     <GLabel>{
-                        font_size: 8.0,
+                        font_size: 9.33,
                         font_family: (BOLD_FONT2),
                         text: "Add"
                     }
@@ -538,9 +544,9 @@ live_design! {
             <GHLayout>{
                 height: Fit,
                 <GLabel>{
-                    font_size: 10.0,
+                    font_size: 10.67,
                     font_family: (BOLD_FONT2),
-                    text: "MY AWS"
+                    text: "MY AWS S3"
                 }
             }
             <GDivider>{
@@ -560,13 +566,14 @@ live_design! {
                 stroke_color: #EC4925,
                 stroke_hover_color: #FF7043,
                 crumb_item: {
+                    font_family: (BOLD_FONT2),
                     color: #ED4A26,
                     text_hover_color: #ED4A26,
                 }
                 labels: []
             }
             s3_list = <GVLayout>{
-                height: 400.0,
+                height: 600.0,
                 width: Fill,
                 clip_x: true,
                 clip_y: true,

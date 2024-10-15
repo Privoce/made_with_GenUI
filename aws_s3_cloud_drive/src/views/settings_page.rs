@@ -162,8 +162,8 @@ live_design! {
                 width: Fill,
                 theme: Warning,
                 background_color: #EC4925,
-                hover_color: #Fa4319,
-                focus_color: #E36741,
+                hover_color: #E97056,
+                focus_color: #C73514,
                 slot: {
                     text: "Change Config",
                     font_size: 10.0,
@@ -195,8 +195,9 @@ live_design! {
             height: 42.0,
             width: Fill,
             theme: Error,
-            spread_radius: 2.0,
-            shadow_color: #431412,
+            background_color: #EC4925,
+            hover_color: #E97056,
+            focus_color: #C73514,
             // draw_button: {
             //     fn get_color(self) -> vec4 {
             //         let gradient_angle = 0.0;

@@ -14,9 +14,6 @@ live_design! {
     import crate::views::main_page::*;
     // import crate::views::upload_page::*;
 
-
-    BOLD_FONT = dep("crate://self/resources/JuliaMono-BlackItalic.ttf");
-
     App = {{App}}{
         root: <Root>{
             main_window = <GWindow>{
@@ -86,7 +83,7 @@ impl LiveRegister for App {
 
 impl MatchEvent for App {
     fn handle_timer(&mut self, cx: &mut Cx, _e: &TimerEvent) {
-        self.nav_to(cx, id!(upload_frame));
+        self.nav_to(cx, id!(setting_frame));
         cx.stop_timer(self.timer);
     }
     fn handle_startup(&mut self, cx: &mut Cx) {
