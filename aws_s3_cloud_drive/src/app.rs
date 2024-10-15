@@ -9,7 +9,7 @@ live_design! {
     import gen_components::components::*;
     import crate::views::settings_page::*;
     import crate::views::main_page::*;
-    import crate::views::start_page::*;
+    import crate::views::sigin_page::*;
 
 
     BOLD_FONT = dep("crate://self/resources/JuliaMono-BlackItalic.ttf");
@@ -33,9 +33,9 @@ live_design! {
                 clip_y: true,
                 body = <GVLayout>{
                     // app_main_page = <AppMainPage>{}
-                    <StartPage>{}
+                    // <StartPage>{}
                     // <SettingsPage>{}
-                    // <SiginPage>{}
+                    <SiginPage>{}
                     // <MainPage>{}
                     // <BucketPage>{}
                     // <UploadPage>{}
