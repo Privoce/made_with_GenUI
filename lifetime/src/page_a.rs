@@ -1,4 +1,4 @@
-use gen_components::components::{card::GCard, label::GLabelWidgetExt};
+use gen_components::components::{label::GLabelWidgetExt, view::GView};
 use makepad_widgets::*;
 
 use crate::state::DATA;
@@ -47,7 +47,7 @@ live_design! {
 #[derive(Live, Widget)]
 pub struct StartPage {
     #[deref]
-    pub super_widget: GCard,
+    pub super_widget: GView,
 }
 
 impl LiveHook for StartPage {
@@ -61,7 +61,8 @@ impl LiveHook for StartPage {
         dbg!("before");
         let data = DATA.lock().unwrap();
         self.glabel(id!(a)).set_text_and_redraw(cx, &data.data1);
-        self.glabel(id!(b)).set_text_and_redraw(cx, &data.data2.to_string());
+        self.glabel(id!(b))
+            .set_text_and_redraw(cx, &data.data2.to_string());
     }
 
     fn after_apply(

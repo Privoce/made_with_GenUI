@@ -6,7 +6,6 @@ live_design! {
     import makepad_widgets::theme_desktop_dark::*;
     import gen_components::components::*;
 
-    BOLD_FONT = dep("crate://self/resources/JuliaMono-BlackItalic.ttf");
     BOLD_FONT2 = dep("crate://self/resources/FiraCode-Bold.ttf");
     StartPage = {{StartPage}}{
         height: Fill,
@@ -35,7 +34,7 @@ live_design! {
             },
             <GLabel>{
                 font_size: 18.0,
-                font_family: (BOLD_FONT),
+                font_family: (BOLD_FONT2),
                 text: "AWS CloudS3Drive",
             }
             <GLabel>{
