@@ -374,11 +374,11 @@ impl BucketPage {
     }
     pub fn set_u_d_dir(&mut self, actions: &Actions) -> Option<()> {
         self.gupload(id!(up)).borrow().map(|up_btn| {
-            if let Some(dirs) = up_btn.after_select(actions) {
+            if let Some(e) = up_btn.selected(actions) {
                 // set conf
-                if !dirs.is_empty() {
+                if !e.paths.is_empty() {
                     let mut state = APP_STATE.lock().unwrap();
-                    state.download_dir.replace(dirs[0].clone());
+                    state.download_dir.replace(e.paths[0].clone());
                     let _ = State::sync_download_conf(false);
                 }
             }

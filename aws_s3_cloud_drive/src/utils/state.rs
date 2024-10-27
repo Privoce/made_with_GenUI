@@ -31,6 +31,19 @@ pub struct State {
     pub notify_page: Option<Pages>,
     pub shares: Option<Vec<ShareItem>>,
     pub download_dir: Option<PathBuf>,
+    pub req: Req,
+}
+
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
+pub enum Req{
+    #[default]
+    None,
+    Upload,
+    Rm,
+    Cp,
+    Mv,
+    Share,
+    Error(String)
 }
 
 #[derive(Debug, Clone)]
@@ -136,6 +149,7 @@ impl Default for State {
             notify_page: None,
             shares: None,
             download_dir: None,
+            req: Req::None,
         }
     }
 }

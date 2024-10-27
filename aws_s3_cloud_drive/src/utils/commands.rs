@@ -9,7 +9,7 @@ use std::{
 
 use crate::utils::CpState;
 
-use super::{CpId, LsResult, LOAD_LIST, VIRTUAL_FILE};
+use super::{CpId, LsResult, Req, APP_STATE, LOAD_LIST, VIRTUAL_FILE};
 
 pub fn ls_dir(target: &str) -> Result<Option<Vec<LsResult>>, String> {
     let mut is_bucket = false;
@@ -38,15 +38,17 @@ pub fn ls_dir(target: &str) -> Result<Option<Vec<LsResult>>, String> {
     }
 }
 
-pub fn rm(dir: &str, target: &str) -> Result<Option<Vec<LsResult>>, String> {
-    let target_rm = format!("s3://{}/{}", dir, target);
-    let command = Command::new("aws").args(["s3", "rm", &target_rm]).output();
+pub async fn rm(target: &str) -> Result<(), String> {
+    // let target_rm = format!("s3://{}/{}", dir, target);
+    let command = Command::new("aws").args(["s3", "rm", &target]).output();
     match command {
         Ok(out) => {
             if out.status.success() {
-                return ls_dir(dir);
+                let mut state = APP_STATE.lock().unwrap();
+                state.req = Req::Rm;
+                return Ok(());
             } else {
-                return Err(format!("rm :{} failed", target_rm));
+                return Err(format!("rm :{} failed", target));
             }
         }
         Err(e) => {
@@ -126,7 +128,11 @@ fn format_str_bucket(s: &str) -> Vec<LsResult> {
 
 fn format_str_dir(s: &str, is_bucket: bool) -> Vec<LsResult> {
     let mut res = Vec::new();
-    let lines: Vec<&str> = s.trim().split("\r\n").map(|x| x.trim()).collect();
+    let lines: Vec<&str> = if s.trim().contains("\r\n") {
+        s.trim().split("\r\n").map(|x| x.trim()).collect()
+    } else {
+        s.trim().split("\n").map(|x| x.trim()).collect()
+    };
 
     if is_bucket {
         format_str_bucket(s)

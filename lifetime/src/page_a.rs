@@ -1,7 +1,5 @@
-use gen_components::components::{label::GLabelWidgetExt, view::GView};
+use gen_components::components::view::GView;
 use makepad_widgets::*;
-
-use crate::state::DATA;
 
 live_design! {
     import makepad_widgets::base::*;
@@ -9,48 +7,28 @@ live_design! {
     import gen_components::components::*;
 
 
-    StartPage = {{StartPage}}{
+    Tw = {{Tw}}{
         height: Fill,
         width: Fill,
         flow: Down,
         border_radius: 0.0,
-        background_color: #161616,
+        background_visible: true,
+        background_color: #FFFFFF,
         align: {
             x: 0.5,
             y: 0.4
         },
         spacing: 24.0,
-
-        <GVLayout>{
-            height: Fit,
-            width: Fill,
-            spacing: 16.0,
-            align: {
-                x: 0.5,
-                y: 0.5
-            },
-            a = <GLabel>{
-                font_size: 18.0,
-
-                text: "AWS CloudS3Drive",
-            }
-            b = <GLabel>{
-
-                text: "Productivity Tool",
-            }
-        }
-
-
     }
 }
 
 #[derive(Live, Widget)]
-pub struct StartPage {
+pub struct Tw {
     #[deref]
-    pub super_widget: GView,
+    pub super_widget: GView
 }
 
-impl LiveHook for StartPage {
+impl LiveHook for Tw {
     fn before_apply(
         &mut self,
         cx: &mut Cx,
@@ -59,10 +37,6 @@ impl LiveHook for StartPage {
         _nodes: &[LiveNode],
     ) {
         dbg!("before");
-        let data = DATA.lock().unwrap();
-        self.glabel(id!(a)).set_text_and_redraw(cx, &data.data1);
-        self.glabel(id!(b))
-            .set_text_and_redraw(cx, &data.data2.to_string());
     }
 
     fn after_apply(
@@ -89,11 +63,25 @@ impl LiveHook for StartPage {
     fn after_new_before_apply(&mut self, _cx: &mut Cx) {
         dbg!("new before apply");
     }
+    
 }
 
-impl Widget for StartPage {
+impl Widget for Tw {
     fn draw_walk(&mut self, cx: &mut Cx2d, scope: &mut Scope, walk: Walk) -> DrawStep {
+        dbg!("draw walk");
         self.super_widget.draw_walk(cx, scope, walk)
     }
-    fn handle_event(&mut self, _cx: &mut Cx, _event: &Event, _scope: &mut Scope) {}
+    fn handle_event(&mut self, cx: &mut Cx, event: &Event, _scope: &mut Scope) {
+        match event.hits(cx, self.area()){
+            Hit::FingerUp(_) =>{
+                dbg!("finger up, do apply over");
+                self.apply_over(cx, live!{
+                    background_color: #FF0000
+                });
+            }
+            _ =>{
+
+            }
+        }
+    }
 }

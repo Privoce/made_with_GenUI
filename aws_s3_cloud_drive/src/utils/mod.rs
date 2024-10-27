@@ -38,7 +38,7 @@ pub fn format_size(size: usize) -> String {
 
     let (level, size) = handle((0, size as f32));
     let levels = ["B", "KB", "MB", "GB", "TB"];
-    format!("{} {}", size, levels[level as usize])
+    format!("{:.2} {}", size, levels[level as usize])
 }
 
 #[cfg(test)]

@@ -2,12 +2,7 @@
 name = "lifetime"
 version = "0.1.0"
 edition = "2021"
-build = "build.rs"
 
 [dependencies]
-makepad-widgets = { path = "E:/Rust/try/makepad/makepad/rik/makepad/widgets", version = "0.6.0" }
-gen_components = { path = "E:/Rust/try/makepad/Gen-UI/gen/components" }
-lazy_static = "1.5.0"
-
-[build-dependencies]
-embed-resource = "2.5"
+makepad-widgets = { path = "/Users/shengyifei/projects/makepad/makepad/widgets", version = "0.6.0" }
+gen_components ={ path="/Users/shengyifei/projects/gen_ui/components" }

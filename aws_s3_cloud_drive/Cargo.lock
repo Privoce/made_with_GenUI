@@ -269,6 +269,7 @@ checksum = "ace50bade8e6234aa140d9a2f552bbee1db4d353f69b8217bc503490fc1a9f26"
 name = "aws_s3_cloud_drive"
 version = "0.1.0"
 dependencies = [
+ "arboard",
  "chrono",
  "dirs-next",
  "gen_components",
@@ -800,7 +801,6 @@ dependencies = [
 name = "gen_components"
 version = "0.1.0"
 dependencies = [
- "arboard",
  "makepad-widgets",
  "open",
  "rfd",

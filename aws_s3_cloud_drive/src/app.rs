@@ -89,7 +89,7 @@ impl MatchEvent for App {
     fn handle_startup(&mut self, cx: &mut Cx) {
         let _ = State::sync_shares(true);
         let _ = State::sync_download_conf(true);
-        self.timer = cx.start_timeout(10.0);
+        self.timer = cx.start_timeout(8.0);
     }
 }
 
