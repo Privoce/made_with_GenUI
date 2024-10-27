@@ -2,6 +2,9 @@
 
 A simple AWS S3 cloud storage client written using Rust Makepad framework
 
+> [!IMPORTANT]
+> **Chinese Mainland needs to ensure access to AWS services**
+
 ## Prepare
 
 For installation instructions, expand the section for your operating system.

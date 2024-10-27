@@ -1,5 +1,5 @@
 use std::{
-    env::current_dir,
+    env::current_exe,
     fs::{File, OpenOptions},
     io::{Read, Write},
     path::PathBuf,
@@ -234,7 +234,7 @@ pub fn remove_virtual(target: &str) -> Result<Vec<String>, std::io::Error> {
 }
 
 pub fn read_or_create(target: &str) -> std::io::Result<File> {
-    let current_path = current_dir().unwrap();
+    let current_path = current_exe().unwrap();
     let conf_path = current_path.join(target);
     OpenOptions::new()
         .create(true)
@@ -245,28 +245,4 @@ pub fn read_or_create(target: &str) -> std::io::Result<File> {
 
 pub fn format_s3_path(path: &Vec<String>) -> String {
     format!("s3://{}/", path.join("/"))
-}
-
-#[cfg(test)]
-mod t {
-    #[test]
-    fn test_ls() {
-        // let results = super::ls();
-        // dbg!(results.unwrap());
-        // assert!(results.is_ok());
-    }
-    #[test]
-    fn test_ls_dir() {
-        let results = super::ls_dir("yarddesign");
-        dbg!(results.unwrap());
-    }
-    // #[test]
-    // fn test_cp() {
-    //     let results = super::cp(
-    //         r#"E:\pratice_imgs\makepad_taobao-main.zip"#,
-    //         "s3://yarddesign/pratice_imgs/",
-    //         true,
-    //     ).await?;
-    //     dbg!(results);
-    // }
 }

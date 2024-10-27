@@ -24,7 +24,7 @@ before-packaging-command = "cargo build --release"
 name = "GenUI Cloud Drive"
 authors = ["Will Sheng <syf20020816@outlook.com>"]
 identifier = "com.privoce"
-icon = ["./resources/32x32.jpg", "./resources/128x128.jpg"]
+icons = ["./resources/32x32.jpg", "./resources/128x128.jpg"]
 version = "0.0.1"
 resources = [
     { src = "./dist/resources/makepad_widgets", target = "makepad_widgets" },

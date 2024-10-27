@@ -35,7 +35,7 @@ pub struct State {
 }
 
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
-pub enum Req{
+pub enum Req {
     #[default]
     None,
     Upload,
@@ -43,10 +43,10 @@ pub enum Req{
     Cp,
     Mv,
     Share,
-    Error(String)
+    Error(String),
 }
 
-impl Req{
+impl Req {
     pub fn is_none(&self) -> bool {
         matches!(self, Req::None)
     }
@@ -297,7 +297,12 @@ impl State {
                         self.msg = String::from_utf8_lossy(&out.stderr.as_slice()).to_string();
                     }
                 }
-                Err(e) => self.msg = e.to_string(),
+                Err(e) => {
+                    // write to ./log
+                    // let mut f = read_or_create("log").expect("Can not create log file!");
+                    // let _ = f.write(format!("{}\n", e).as_bytes());
+                    self.msg = e.to_string();
+                }
             }
             return None;
         };
