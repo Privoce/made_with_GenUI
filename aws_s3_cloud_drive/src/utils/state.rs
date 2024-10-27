@@ -46,6 +46,12 @@ pub enum Req{
     Error(String)
 }
 
+impl Req{
+    pub fn is_none(&self) -> bool {
+        matches!(self, Req::None)
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct ShareItem {
     pub url: String,

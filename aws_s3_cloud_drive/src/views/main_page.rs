@@ -4,7 +4,7 @@ use gen_components::{
 };
 use makepad_widgets::*;
 
-use super::bucket_page::BucketPageEvent;
+use super::{bucket_page::BucketPageEvent, upload_page::UploadPageWidgetExt};
 
 live_design! {
     import makepad_widgets::base::*;
@@ -29,7 +29,7 @@ live_design! {
                     page = <BucketPage>{}
                 }
                 upload_frame = <GBarPage>{
-                    <UploadPage>{}
+                    upload_page = <UploadPage>{}
                 }
                 setting_frame = <GBarPage>{
                     <SettingsPage> {}
@@ -135,6 +135,11 @@ impl Widget for AppMainPage {
                                     &Scope::empty().path,
                                     BucketPageEvent::Update,
                                 );
+                            }
+                            if router.eq_active_page(id!(upload_frame)){
+                                router.upload_page(id!(upload_page)).borrow_mut().map(|mut page|{
+                                    page.lifetime = Lifetime::Init;
+                                });
                             }
                         })
                         .build(cx);

@@ -195,7 +195,7 @@ live_design! {
                 font_family: (BOLD_FONT2),
                 text: "GenUI Cloud Drive",
             }
-            <GDropDown>{
+            tool_drop = <GDropDown>{
                 height: Fit,
                 width: Fit,
                 position: Bottom,
@@ -225,7 +225,7 @@ live_design! {
                         }
                         <GVLayout>{
                             height: Fit,
-                            <GHLayout>{
+                            upload_file_view = <GHLayout>{
                                 animation_key: true,
                                 hover_color: #1D2028,
                                 background_color: #22262F,
@@ -641,20 +641,25 @@ impl Widget for UploadPage {
         });
         self.handle_path_header(cx, &actions);
         self.click_upload_file_btn(cx, &actions);
+        self.click_upload_file_view(cx, &actions);
         self.handle_req(cx, &actions);
 
         if let Event::Signal = event {
+            let mut update = false;
             let mut state = APP_STATE.lock().unwrap();
             match &state.req {
                 Req::None => (),
                 Req::Upload => {
                     self.close_load_note(cx);
+                    update = true;
                 }
                 Req::Rm => {
                     self.set_note(cx, "Delete success!");
+                    update = true;
                 }
                 Req::Cp => {
                     self.set_note(cx, "Download success!");
+                    update = true;
                 }
                 Req::Mv => (),
                 Req::Share => {
@@ -664,10 +669,13 @@ impl Widget for UploadPage {
                     self.set_note(cx, e);
                 }
             }
-            let _ = state.ls();
-            state.current.as_ref().map(|res| {
-                self.set_dir_file(cx, res);
-            });
+            state.req = Req::None;
+            if update {
+                let _ = state.ls();
+                state.current.as_ref().map(|res| {
+                    self.set_dir_file(cx, res);
+                });
+            }
         }
         self.gdrop_down(id!(url_popup))
             .borrow_mut()
@@ -805,72 +813,91 @@ impl UploadPage {
             }
         });
     }
-
+    pub fn click_upload_file_view(&mut self, cx: &mut Cx, actions: &Actions) {
+        self.gdrop_down(id!(tool_drop))
+            .get_mut(cx, |cx, drop, container| {
+                if container
+                    .gview(id!(upload_file_view))
+                    .clicked(actions)
+                    .is_some()
+                {
+                    self.upload_file(cx);
+                    drop.close(cx);
+                }
+            });
+    }
     pub fn click_upload_file_btn(&mut self, cx: &mut Cx, actions: &Actions) {
         if self
             .gbutton(id!(upload_file_btn))
             .clicked(actions)
             .is_some()
         {
-            let state = APP_STATE.lock().unwrap();
-            if state.s3_path.is_empty() {
-                self.set_note(cx, "Currently, you have not selected any buckets. Please select a bucket from the bucket list before uploading!");
-            } else {
-                // open fs system
-                let f = new_file_dialog()
-                    .add_filter("allows", &["zip", "png", "jpg", "svg", "txt", "md"])
-                    .set_directory(PathBuf::from_str("/").unwrap());
-                let (sender, recv) = std::sync::mpsc::channel();
-                f.pick_file().map(|p| {
-                    let from_path = p.to_str().unwrap().to_string();
-                    // has space or not
-                    if from_path.contains(' ') {
-                        self.set_load_note(
-                            cx,
-                            "The file path contains spaces, please rename the file and try again!",
-                        );
-                        return;
-                    }
-                    let to_path = format_s3_path(&state.s3_path);
-                    let id = CpId::new(&from_path, &to_path, true);
-                    {
-                        let mut list = LOAD_LIST.lock().unwrap();
-                        list.insert(id.clone(), CpState::default());
-                    }
-                    self.set_load_note(cx, &format!("{} is uploading", &from_path));
-
-                    // do cp
-                    THREAD_POOL.spawn(async move {
-                        match cp(&from_path, &to_path, &id).await {
-                            Ok(id) => {
-                                let _ = sender.send(id);
-                            }
-                            Err(_) => {
-                                let mut list = LOAD_LIST.lock().unwrap();
-                                list.insert(id.clone(), CpState::Failed);
-                            }
-                        }
-                    });
-                });
-
-                // let uid = self.widget_uid();
-                std::thread::spawn(move || {
-                    if let Ok(_) = recv.recv() {
-                        // close load note
-                        SignalToUI::set_ui_signal();
-                    }
-                });
-            }
+            self.upload_file(cx);
         }
     }
+    fn upload_file(&mut self, cx: &mut Cx) {
+        let mut state = APP_STATE.lock().unwrap();
+        if state.s3_path.is_empty() {
+            self.set_note(cx, "Currently, you have not selected any buckets. Please select a bucket from the bucket list before uploading!");
+        } else {
+            // open fs system
+            let f = new_file_dialog()
+                .add_filter("allows", &["zip", "png", "jpg", "svg", "txt", "md"])
+                .set_directory(PathBuf::from_str("/").unwrap());
+            let (sender, recv) = std::sync::mpsc::channel();
+            f.pick_file().map(|p| {
+                let from_path = p.to_str().unwrap().to_string();
+                // has space or not
+                if from_path.contains(' ') {
+                    self.set_note(
+                        cx,
+                        "The file path contains spaces, please rename the file and try again!",
+                    );
+                    return;
+                }
+                let to_path = format_s3_path(&state.s3_path);
+                let id = CpId::new(&from_path, &to_path, true);
+                {
+                    let mut list = LOAD_LIST.lock().unwrap();
+                    list.insert(id.clone(), CpState::default());
+                }
+                self.set_load_note(cx, &format!("{} is uploading.", &from_path));
+                state.req = Req::Upload;
+                // do cp
+                THREAD_POOL.spawn(async move {
+                    match cp(&from_path, &to_path, &id).await {
+                        Ok(id) => {
+                            let _ = sender.send(id);
+                        }
+                        Err(_) => {
+                            let mut list = LOAD_LIST.lock().unwrap();
+                            list.insert(id.clone(), CpState::Failed);
+                        }
+                    }
+                });
+            });
 
+            // let uid = self.widget_uid();
+            std::thread::spawn(move || {
+                if let Ok(_) = recv.recv() {
+                    // close load note
+                    SignalToUI::set_ui_signal();
+                }
+            });
+        }
+    }
     // init bucket
     pub fn init(&mut self, cx: &mut Cx) {
-        let state = APP_STATE.lock().unwrap();
-
+        let mut state = APP_STATE.lock().unwrap();
+        if !state.req.is_none() {
+            state.ls();
+            state.req = Req::None;
+        }
         state.current.as_ref().map(|res| {
             self.set_dir_file(cx, res);
         });
+        self.gbread_crumb(id!(path_header))
+            .set_path(state.s3_path.clone());
     }
     pub fn update_path_header(&mut self, labels: Vec<String>) {
         self.gbread_crumb(id!(path_header))
