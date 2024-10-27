@@ -603,8 +603,6 @@ pub struct UploadPage {
     #[rust]
     pub lifetime: Lifetime,
     #[rust]
-    select_target: Option<(usize, String)>,
-    #[rust]
     share_url: String,
 }
 
@@ -654,12 +652,14 @@ impl Widget for UploadPage {
                 }
                 Req::Rm => {
                     self.set_note(cx, "Delete success!");
-                },
-                Req::Cp => todo!(),
-                Req::Mv => todo!(),
+                }
+                Req::Cp => {
+                    self.set_note(cx, "Download success!");
+                }
+                Req::Mv => (),
                 Req::Share => {
                     dbg!("share");
-                },
+                }
                 Req::Error(e) => {
                     self.set_note(cx, e);
                 }
@@ -687,6 +687,7 @@ impl UploadPage {
     pub fn handle_req(&mut self, cx: &mut Cx, actions: &Actions) {
         let mut flag = Req::None;
         let mut target = String::new();
+        let mut download_path = None;
         self.gview(id!(s3_list)).borrow_mut().map(|list| {
             for (index, (_, child)) in list.children.iter().enumerate() {
                 child
@@ -725,7 +726,15 @@ impl UploadPage {
                                     .is_some()
                                 {
                                     flag = Req::Cp;
-                                    dbg!("download");
+                                    let mut state = APP_STATE.lock().unwrap();
+                                    target = format!(
+                                        "s3://{}/{}",
+                                        state.s3_path.join("/"),
+                                        state.current.as_ref().unwrap()[index].name
+                                    );
+                                    state.req = Req::Cp;
+                                    let f = new_file_dialog();
+                                    download_path = f.pick_folder();
                                     dp.close(cx);
                                 }
                             }
@@ -752,7 +761,25 @@ impl UploadPage {
                     }
                 });
             }
-            Req::Cp => {}
+            Req::Cp => {
+                download_path.map(|to| {
+                    THREAD_POOL.spawn(async move {
+                        let to = to.to_str().unwrap().to_string();
+                        let id = CpId::new(&target, &to, false);
+                        match cp(&target, &to, &id).await {
+                            Ok(_) => {
+                                let _ = sender.send(Req::Cp);
+                            }
+                            Err(_) => {
+                                let _ = sender.send(Req::Error(format!(
+                                    "Download {} to {} fail",
+                                    target, to
+                                )));
+                            }
+                        }
+                    });
+                });
+            }
             Req::Share => match share(&target, 3600.0) {
                 Ok(url) => {
                     self.set_url_note(cx, &url, &target);
