@@ -1,3 +1,8 @@
 /target
 **/target
 /aws_p_cloud_drive/
+**/dist
+**/*.dmg
+**/*.exe
+**/*.DS_Store
+.DS_Store
