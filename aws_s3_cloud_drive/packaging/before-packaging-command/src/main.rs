@@ -98,7 +98,7 @@ fn main() -> std::io::Result<()> {
     let main_binary_name = main_binary_name.expect("Missing required argument '--binary-name'");
     let path_to_binary = path_to_binary.expect("Missing required argument '--path-to-binary'");
     let host_os = host_os_opt.as_deref().unwrap_or(std::env::consts::OS);
-
+    dbg!(is_before_packaging, is_before_each_package);
     match (is_before_packaging, is_before_each_package) {
         (true, false) => {
             let _ = before_packaging(host_os, &main_binary_name);
@@ -217,6 +217,8 @@ fn before_packaging2(_host_os: &str, main_binary_name: &str) -> std::io::Result<
 
     Ok(())
 }
+
+
 
 /// The function that is run by cargo-packager's `before-each-package-command`.
 ///

@@ -10,8 +10,10 @@ repository = "https://github.com/Privoce/made_with_GenUI/tree/main/aws_s3_cloud_
 keywords = ["aws", "s3", "cloud", "client", "makepad"]
 
 [dependencies]
-makepad-widgets = { path = "/Users/shengyifei/projects/makepad/makepad/widgets", version = "0.6.0" }
-gen_components ={ path="/Users/shengyifei/projects/gen_ui/components" }
+makepad-widgets = { path = "E:/Rust/try/makepad/makepad/rik/makepad/widgets", version = "0.6.0" }
+gen_components = { path = "E:/Rust/try/makepad/GenUI-Builtin-Component" }
+# makepad-widgets = { path = "/Users/shengyifei/projects/makepad/makepad/widgets", version = "0.6.0" }
+# gen_components ={ path="/Users/shengyifei/projects/gen_ui/components" }
 regex = "1.10.6"
 dirs-next = "2.0.0"
 tokio = { version = "1.40.0", features = ["full"] }
@@ -20,7 +22,18 @@ chrono = "0.4.38"
 arboard = "3.4.1"
 
 [package.metadata.packager]
-before-packaging-command = "cargo build --release"
+before-packaging-command = """
+cargo run --manifest-path packaging/before-packaging-command/Cargo.toml \
+    before-packaging \
+    --binary-name aws_s3_cloud_drive \
+    --path-to-binary ./target/release/aws_s3_cloud_drive
+"""
+before-each-package-command = """
+cargo run --manifest-path packaging/before-packaging-command/Cargo.toml \
+    before-each-package \
+    --binary-name aws_s3_cloud_drive \
+    --path-to-binary ./target/release/aws_s3_cloud_drive
+"""
 name = "GenUI Cloud Drive"
 authors = ["Will Sheng <syf20020816@outlook.com>"]
 identifier = "com.privoce"
@@ -29,38 +42,32 @@ version = "0.0.1"
 resources = [
     { src = "./dist/resources/makepad_widgets", target = "makepad_widgets" },
     { src = "./dist/resources/gen_components", target = "gen_components" },
-    { src = "./dist/resources/aws_s3", target = "aws_s3" },
+    { src = "./dist/resources/aws_s3_cloud_drive", target = "aws_s3_cloud_drive" },
 ]
 copyright = "Copyright 2023-2024, Privoce.Inc"
 category = "Productivity"
 license_file = "LICENSE"
 out_dir = "./dist"
-before-each-package-command = """
-cargo run --manifest-path packaging/before-packaging-command/Cargo.toml \
-    before-each-package \
-    --binary-name aws_s3_cloud_drive \
-    --path-to-binary ./target/release/aws_s3_cloud_drive
-"""
 
-[package.metadata.packager.deb]
-depends = "./dist/depends_deb.txt"
-desktop_template = "./packaging/robrix.desktop"
-section = "utils"
+# [package.metadata.packager.deb]
+# depends = "./dist/depends_deb.txt"
+# desktop_template = "./packaging/robrix.desktop"
+# section = "utils"
 
-[package.metadata.packager.macos]
-minimum_system_version = "11.0"
-frameworks = [ ]
-# info_plist_path = "./packaging/Info.plist"
-# entitlements = "./packaging/Entitlements.plist"
-# signing_identity = "Developer ID Application: AppChef Inc. (SFVQ5V48GD)"
+# [package.metadata.packager.macos]
+# minimum_system_version = "11.0"
+# frameworks = [ ]
+# # info_plist_path = "./packaging/Info.plist"
+# # entitlements = "./packaging/Entitlements.plist"
+# # signing_identity = "Developer ID Application: AppChef Inc. (SFVQ5V48GD)"
 
 
-## Configuration for `cargo packager`'s generation of a macOS `.dmg`.
-[package.metadata.packager.dmg]
-background = "./packaging/Robrix macOS dmg background.png"
-window_size = { width = 960, height = 540 }
-app_position = { x = 200, y = 250 }
-application_folder_position = { x = 760, y = 250 }
+# ## Configuration for `cargo packager`'s generation of a macOS `.dmg`.
+# [package.metadata.packager.dmg]
+# background = "./packaging/Robrix macOS dmg background.png"
+# window_size = { width = 960, height = 540 }
+# app_position = { x = 200, y = 250 }
+# application_folder_position = { x = 760, y = 250 }
 
 
 ## Configuration for `cargo packager`'s generation of a Windows `.exe` setup installer.
