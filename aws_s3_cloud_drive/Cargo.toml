@@ -24,17 +24,49 @@ before-packaging-command = "cargo build --release"
 name = "GenUI Cloud Drive"
 authors = ["Will Sheng <syf20020816@outlook.com>"]
 identifier = "com.privoce"
-icons = ["./resources/32x32.jpg", "./resources/128x128.jpg"]
+icons = ["./packaging/app_icon128x128.png"]
 version = "0.0.1"
 resources = [
     { src = "./dist/resources/makepad_widgets", target = "makepad_widgets" },
     { src = "./dist/resources/gen_components", target = "gen_components" },
-    "resources"
+    { src = "./dist/resources/aws_s3", target = "aws_s3" },
 ]
 copyright = "Copyright 2023-2024, Privoce.Inc"
 category = "Productivity"
 license_file = "LICENSE"
 out_dir = "./dist"
+before-each-package-command = """
+cargo run --manifest-path packaging/before-packaging-command/Cargo.toml \
+    before-each-package \
+    --binary-name aws_s3_cloud_drive \
+    --path-to-binary ./target/release/aws_s3_cloud_drive
+"""
+
+[package.metadata.packager.deb]
+depends = "./dist/depends_deb.txt"
+desktop_template = "./packaging/robrix.desktop"
+section = "utils"
 
 [package.metadata.packager.macos]
-minimum_system_version = "11.0" 
+minimum_system_version = "11.0"
+frameworks = [ ]
+# info_plist_path = "./packaging/Info.plist"
+# entitlements = "./packaging/Entitlements.plist"
+# signing_identity = "Developer ID Application: AppChef Inc. (SFVQ5V48GD)"
+
+
+## Configuration for `cargo packager`'s generation of a macOS `.dmg`.
+[package.metadata.packager.dmg]
+background = "./packaging/Robrix macOS dmg background.png"
+window_size = { width = 960, height = 540 }
+app_position = { x = 200, y = 250 }
+application_folder_position = { x = 760, y = 250 }
+
+
+## Configuration for `cargo packager`'s generation of a Windows `.exe` setup installer.
+[package.metadata.packager.nsis]
+## See this: <https://nsis.sourceforge.io/Docs/Chapter4.html#varconstant>
+appdata_paths = [
+    "$APPDATA/$PUBLISHER/$PRODUCTNAME",
+    "$LOCALAPPDATA/$PRODUCTNAME",
+]
