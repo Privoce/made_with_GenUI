@@ -1,4 +1,4 @@
-use gen_components::components::view::GView;
+use gen_components::*;
 use makepad_widgets::*;
 
 live_design! {

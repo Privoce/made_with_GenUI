@@ -1,4 +1,4 @@
-use gen_components::components::router::GRouterWidgetExt;
+use gen_components::*;
 use makepad_widgets::*;
 
 use crate::{
@@ -71,7 +71,7 @@ impl LiveHook for App {
 impl LiveRegister for App {
     fn live_register(cx: &mut Cx) {
         crate::makepad_widgets::live_design(cx);
-        crate::gen_components::live_design(cx);
+        crate::gen_components::live_design(cx, None);
         crate::views::start_page::live_design(cx);
         crate::views::sigin_page::live_design(cx);
         crate::views::settings_page::live_design(cx);

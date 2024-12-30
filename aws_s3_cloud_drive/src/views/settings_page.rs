@@ -1,8 +1,4 @@
-use gen_components::components::{
-    button::GButtonWidgetExt,
-    router::GRouter,
-    view::{GView, GViewWidgetExt},
-};
+use gen_components::*;
 use makepad_widgets::*;
 
 live_design! {

@@ -1,5 +1,5 @@
 use gen_components::{
-    components::{router::GRouterWidgetExt, view::GView},
+    *,
     utils::lifetime::{Executor, Lifetime},
 };
 use makepad_widgets::*;

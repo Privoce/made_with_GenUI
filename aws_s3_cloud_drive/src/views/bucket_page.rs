@@ -1,11 +1,5 @@
 use gen_components::{
-    components::{
-        button::GButtonWidgetExt,
-        file_upload::GUploadWidgetExt,
-        link::GLinkWidgetRefExt,
-        router::GRouter,
-        view::{GView, GViewWidgetExt},
-    },
+    *,
     utils::lifetime::{Executor, Lifetime},
 };
 use makepad_widgets::*;

@@ -1,16 +1,6 @@
-use gen_components::{
-    components::{
-        button::GButtonWidgetExt,
-        input::GInputWidgetExt,
-        label::GLabelWidgetExt,
-        radio::group::GRadioGroupWidgetExt,
-        router::GRouter,
-        select::GSelectWidgetExt,
-        view::{GView, GViewWidgetExt},
-    },
-    utils::lifetime::{Executor, Lifetime},
-};
+use gen_components::*;
 use makepad_widgets::*;
+use utils::lifetime::{Executor, Lifetime};
 
 use crate::utils::APP_STATE;
 

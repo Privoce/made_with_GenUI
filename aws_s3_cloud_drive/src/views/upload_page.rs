@@ -2,16 +2,7 @@ use std::{path::PathBuf, str::FromStr};
 
 use chrono::{Datelike, Local, Timelike};
 use gen_components::{
-    components::{
-        breadcrumb::GBreadCrumbWidgetExt,
-        button::GButtonWidgetExt,
-        drop_down::{GDropDownWidgetExt, GDropDownWidgetRefExt},
-        file_upload::new_file_dialog,
-        image::GImageWidgetExt,
-        input::GInputWidgetExt,
-        label::GLabelWidgetExt,
-        view::{GView, GViewWidgetExt, GViewWidgetRefExt},
-    },
+    *,
     utils::lifetime::{Executor, Lifetime},
 };
 use makepad_widgets::*;
