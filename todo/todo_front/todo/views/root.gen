@@ -1,0 +1,14 @@
+// default template for root.gen
+<template>
+  <component name="UiRoot">
+    <view theme="Dark" height="Fill" width="Fill" align="0.5" spacing="12.0" flow="Down" padding="6.0">
+      <TodoList></TodoList>
+    </view>
+  </component>
+</template>
+
+<script>
+import!{
+  crate::views::todo_list::*;
+}
+</script>

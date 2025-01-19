@@ -1,0 +1,29 @@
+<template>
+    <component name="Header" spacing="6.0">
+        <image class="common_img" src="dep('crate://self/resources/share.png')"></image>
+        <svg id="add_svg" class="common_img" src="dep('crate://self/resources/add.svg')" color="#bfbfbf" @clicked="click_add()"></svg>
+    </component>
+</template>
+
+<script>
+#[event]
+#[derive(Clone, Debug)]
+pub enum HeaderEvent{
+    Add,
+    Share
+}
+
+let mut click_add = ||{
+    dbg!("clicked add svg");
+    // active!(HeaderEvent::Add);
+    let _ = active!(HeaderEvent::Add);
+};
+</script>
+
+<style>
+.common_img{
+    height: 16.0;
+    width: 16.0;
+    cursor: Hand;
+}
+</style>

@@ -1,0 +1,158 @@
+<template>
+    <component name="TodoList" class="todo_view">
+        <Header height="Fit" padding="4.0" id="header" @add="call_add()"></Header>
+        <view height="Fit" padding="6.0">
+            <label class="common_title" text="'提醒'"></label>
+            <view align="{x: 1.0, y: 0.5}">
+                <label id="todo_num" class="common_title" :text="num"></label>
+            </view>
+        </view>
+        <input id="my_input" placeholder="'输入一条todo~~~'" height="32.0" width="Fill" :text="input_txt" @changed="change_input()"></input>
+        <label id="info_lb" :text="info"></label>
+        <view id="check_list" padding="4.0">
+            <label text="'这是个模仿mac todo的简单例子, 用作GenUI早期测试:'"></label>
+            <label text="'1. 基础组件 2. for循环控制 3. 网络请求 4. 绑定属性和事件'"></label>
+            <label text="'发送todo可能会导致400 Bad Request但这不是GenUI的问题，而是Makepad和GenUI进行的序列化选择不同'"></label>
+            <view id="check_item" :for="(index, item) in todo_list" height="Fit" flow="Down">
+                <checkbox id="item_check" :selected="item.done" :text="item.text" theme="Info" height="36.0" font_size="14.0"></checkbox>
+                <divider theme="Info"></divider>
+            </view>
+        </view>
+    </component>
+</template>
+
+<script>
+use serde_json::Value;
+import!{
+    crate::views::header::*;
+}
+
+#[prop]
+pub struct TodoList{
+    // todo_list: Vec<(bool, String)>,
+    todo_list: Vec<TodoItem>,
+    num: String,
+    input_txt: String,
+    info: String
+}
+
+let mut prop = default_prop!{
+    // todo_list: vec![(false, "提醒事项1".to_string()), (false, "测试事项2".to_string())],
+    TodoList{
+        todo_list: vec![],
+        info: "在输入框中添加todo后请点击右上角添加按钮".to_string()
+    }
+};
+
+fn change_input(param: impl EventParam){
+    if let InputEventType::KeyDown(code) = param.ty{
+        if let KeyCode::Enter = code{
+            dbg!(prop.get_input_txt());
+        }
+    }
+}
+
+fn call_add(){
+    dbg!("call add");
+
+    if prop.get_input_txt().is_empty(){
+        let lb = c_ref!(info_lb);
+        lb.set_color("#FF0000".to_string());
+        prop.set_info("请输入todo，当前为空".to_string());
+    }else{
+        let txt = prop.get_input_txt();
+        let body = format!(r#"{{
+            "todo": {{
+                "text": "{}",
+                "done": false
+            }}
+        }}"#, txt);
+        dbg!("send post!");
+        let _ = http_post!(save_todo, "", body);
+    }
+}
+
+#[before_create]
+fn before_create(){
+    // get todos from http
+    let _ = http_get!(http_response1);
+    //let todos = prop.get_todo_list();
+    //prop.set_num(todos.len().to_string());
+}
+
+#[http_response]
+fn http_response1(response: &HttpResponse){
+    dbg!("response");
+    if response.status_code == 200 {
+        let todos = response.get_string_body().unwrap();
+        let todos: Value = serde_json::from_str(&todos).unwrap();
+        let todo_items: Vec<TodoItem> = todos["data"]
+            .as_array()
+            .unwrap()
+            .iter().take(5).map({ |todo|
+                TodoItem {
+                    id: todo["id"].as_u64().unwrap() as u64,
+                    text: todo["text"].as_str().unwrap().to_string(),
+                    done: todo["done"].as_bool().unwrap()
+                }
+            }).collect();
+
+        prop.set_todo_list(todo_items);
+    }
+}
+
+#[http_response]
+fn save_todo(response: &HttpResponse){
+    if response.status_code == 201 {
+        dbg!("save");
+        let todo_response = response.get_string_body().unwrap();
+        let todo: Value = serde_json::from_str(&todo_response).unwrap();
+        let new_todo = TodoItem {
+            id: todo["data"]["id"].as_u64().unwrap() as u64,
+            text: todo["data"]["text"].as_str().unwrap().to_string(),
+            done: todo["data"]["done"].as_bool().unwrap()
+        };
+        let mut todos = prop.get_todo_list();
+        todos.push(new_todo);
+        prop.set_todo_list(todos);
+        prop.set_info("添加todo成功!".to_string());
+    }else{
+        println!("{:?}", response);
+    }
+}
+
+#[derive(Clone, Debug)]
+pub struct TodoItem {
+    pub id: u64,
+    pub text: String,
+    pub done: bool,
+}
+</script>
+
+<style>
+.todo_view{
+    background_visible: false;
+    padding: 0.0;
+    flow: Down;
+    spacing: 12.0;
+    #header{
+        align: {x: 1.0, y: 0.5};
+    }
+    .common_title{
+        font_size: 24.0;
+        color: #FE9500;
+    }
+    #title{
+        font_size: 18.0;
+        color: #FFF;
+    }
+    #todo_input{
+        height: 36.0;
+        width: Fill;
+    }
+    #check_list{
+        spacing: 16.0;
+        flow: Down;
+    }
+}
+</style>
