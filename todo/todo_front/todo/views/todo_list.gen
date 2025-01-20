@@ -46,8 +46,9 @@ let mut prop = default_prop!{
 
 fn change_input(param: impl EventParam){
     if let InputEventType::KeyDown(code) = param.ty{
-        if let KeyCode::Enter = code{
-            dbg!(prop.get_input_txt());
+        if let KeyCode::ReturnKey = code{
+            let txt = prop.get_input_txt();
+            dbg!(txt);
         }
     }
 }

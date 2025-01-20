@@ -1,10 +1,10 @@
 version = "0.0.2"
 
 [values]
-"/Users/shengyifei/projects/gen_ui/made_with_GenUI/todo/todo_front/todo/views/todo_list.gen" = "3d1ed5f4b40420ff5d94fd2c173cb5618bc5707249071672bb0aebcd7a04378c"
+"/Users/shengyifei/projects/gen_ui/made_with_GenUI/todo/todo_front/todo/views/root.gen" = "51685690dc85f96ca24b1e8b6689346b76c80ba512b092907c1c30c30d0c17ee"
+"/Users/shengyifei/projects/gen_ui/made_with_GenUI/todo/todo_front/todo/views/todo_list.gen" = "1e6cc6d712ec6fe097d92fa20b887b19c2cbf3536a1248c3eb803ce0adb6ff87"
 "/Users/shengyifei/projects/gen_ui/made_with_GenUI/todo/todo_front/todo/src/main.rs" = "b8afc6ac9cc80e614bd8524f218d92369249100886055c6951deb4adb3689ece"
-"/Users/shengyifei/projects/gen_ui/made_with_GenUI/todo/todo_front/todo/resources/add.svg" = "7db4d8f99bb90c0c32a6d0e613521643acf67e5b9d83e4968ef9f8a3804cbef3"
 "/Users/shengyifei/projects/gen_ui/made_with_GenUI/todo/todo_front/todo/views/mod.gen" = "e7abb62311c142f244b93b2f4ec994d4047994ba30b1fdc09c343ba8d187ec63"
+"/Users/shengyifei/projects/gen_ui/made_with_GenUI/todo/todo_front/todo/resources/add.svg" = "7db4d8f99bb90c0c32a6d0e613521643acf67e5b9d83e4968ef9f8a3804cbef3"
 "/Users/shengyifei/projects/gen_ui/made_with_GenUI/todo/todo_front/todo/resources/share.png" = "eb6ced99dcc6cfe3446a1076db6eb49218cc9b65c34bd196f702200359a73757"
 "/Users/shengyifei/projects/gen_ui/made_with_GenUI/todo/todo_front/todo/views/header.gen" = "b0930c09b677ffab839ac1d23eed3bfc2ae3f65328a1fb37fc9a6e5f29f9f554"
-"/Users/shengyifei/projects/gen_ui/made_with_GenUI/todo/todo_front/todo/views/root.gen" = "51685690dc85f96ca24b1e8b6689346b76c80ba512b092907c1c30c30d0c17ee"
