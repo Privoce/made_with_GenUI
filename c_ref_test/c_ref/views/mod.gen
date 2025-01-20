@@ -1,3 +1,5 @@
 <script>
 pub mod root;
+pub mod hello;
+pub mod define;
 </script>

@@ -1,2 +1,3 @@
 [workspace]
-members = ["c_ref"]
+members = ["c_ref", "src_gen_0"]
+resolver = "2"

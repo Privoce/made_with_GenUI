@@ -4,6 +4,15 @@
     <view theme="Dark" height="Fill" width="Fill" align="0.5" spacing="12.0" flow="Down">
       <label text="'This is an easy GenUI template'" font_size="36.0"></label>
       <label text="'You now using Makepad + GenUI + GenUI Components'" font_size="16.0" color="#FF7043"></label>
+      <Hello></Hello>
+      <Df></Df>
     </view>
   </component>
 </template>
+
+<script>
+import!{
+  crate::views::hello::*;
+  crate::views::define::*;
+}
+</script>
