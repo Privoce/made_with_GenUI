@@ -1,20 +1,37 @@
 <template>
-    <component name="Hello" class="hello_view">
-        <label id="my_lb" :text="my_text" font_size="16.0"></label>
+    <component name="Hello" class="hello_view" spacing="12.0">
+        <view id="lb_views" :for="(index, item) in list" height="Fit" width="Fit">
+            <label id="my_lb" :text="item" font_size="16.0"></label>
+        </view>
+        <button id="add_btn" @clicked="add_list()"></button>
     </component>
 </template>
 
 <script>
 #[prop]
 pub struct Hello{
-    my_text: String
+    my_text: String,
+    pub list: Vec<String>
 }
 
-let prop = default_prop!{
+#[event]
+#[derive(Debug, Clone)]
+pub enum HelloEvent{
+    Add
+}
+
+let mut prop = default_prop!{
     Hello{
-        my_text: "Clicked: 0".to_string()
+        my_text: "Clicked: 0".to_string(),
+        list: vec!["Hello".to_string()]
     }
 };
+
+fn add_list(){
+    let mut list = prop.get_list();
+    list.push("world".to_string());
+    prop.set_list(list);
+}
 </script>
 
 <style>

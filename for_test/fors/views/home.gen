@@ -1,6 +1,7 @@
 <template>
     <component name="Home" class="home_view">
-        <Hello id="header"></Hello>
+        <Hello :list="lbs" id="header" height="40.0"></Hello>
+        <label id="my_lb" :for="(index, item) in lbs" :text="item"></label>
         <button id="my_btn" theme="Error" @clicked="click_btn()">
             <label as_prop="slot" text="'Click Me!'" font_size="12.0"></label>
         </button>
@@ -14,24 +15,31 @@ import!{
 
 #[prop]
 pub struct Home{
-    num: u32
+    num: u32,
+    lbs: Vec<String>
 }
 
 // init instance prop
 let mut prop = default_prop!{
     Home{
-        num: 0
+        num: 0,
+        lbs: vec!["1".to_string(), "2".to_string(), "3".to_string()]
     }
 };
 
 fn click_btn(){
-    let mut num = prop.get_num();
-    num += 1;
-    prop.set_num(num);
+    // let mut num = prop.get_num();
+    // num += 1;
+    // prop.set_num(num);
     // use c_ref! you can get component ref
+    // let header = c_ref!(header);
+    // let num = prop.get_num();
+    // header.set_my_text(format!("Clicked: {}", num));
+
+    let mut list = c_ref!(header).get_list();
+    list.push("Rust".to_string());
     let header = c_ref!(header);
-    let num = prop.get_num();
-    header.set_my_text(format!("Clicked: {}", num));
+    header.set_list(list);
 }
 </script>
 

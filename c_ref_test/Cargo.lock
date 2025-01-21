@@ -999,6 +999,7 @@ version = "0.4.0"
 name = "makepad-platform"
 version = "0.6.0"
 dependencies = [
+ "bitflags 2.8.0",
  "hilog-sys",
  "makepad-android-state",
  "makepad-futures",

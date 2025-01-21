@@ -1,5 +1,25 @@
 <template>
-    <view id="EasyLabel" height="Fit" align="{x: 0.5}">
-        <label text="'You now using Makepad + GenUI + GenUI Components'" font_size="16.0" color="#FF7043"></label>
-    </view>
+    <component name="EasyLabel" height="100.0">
+        <view id="my_view" height="Fit" align="{x: 0.5}">
+            <view id="for_view" :for="(index, item) in lbs" flow="Down">
+                <label id="for_lb" :for="(index1, item1) in item" :text="item1" font_size="16.0" color="#FF7043"></label>
+            </view>
+        </view>
+    </component>
 </template>
+
+<script>
+#[prop]
+pub struct EasyLabel{
+    lbs: Vec<Vec<String>>
+}
+
+let mut prop = default_prop!{
+    EasyLabel{
+        lbs: vec![
+            vec!["Hello1".to_string()],
+            vec!["Hello2".to_string(), "World".to_string()],
+        ]
+    }
+};
+</script>
