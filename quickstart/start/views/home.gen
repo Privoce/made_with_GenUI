@@ -4,6 +4,8 @@
         <button id="my_btn" theme="Error" @clicked="click_btn()">
             <label as_prop="slot" text="'Click Me!'" font_size="12.0"></label>
         </button>
+        <label text="'Hello GenUI!!!'" font_size="16.0"></label>
+        <checkbox text="'I am a checkbox'"></checkbox>
     </component>
 </template>
 

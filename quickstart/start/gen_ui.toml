@@ -7,7 +7,7 @@ excludes = ["Cargo.toml", "Cargo.lock", "target", ".gen_ui_cache", "gen_ui.toml"
 [makepad]
 
 [makepad.root]
-path = "/Users/shengyifei/projects/gen_ui/made_with_GenUI/quick_start/quick_start/views/root.gen"
+path = "/Users/shengyifei/projects/gen_ui/made_with_GenUI/quickstart/start/views/root.gen"
 window = { height = "Fill", width = "Fill", flow = "Down", window_size = { inner_size = { x = 1080.0, y = 720.0 } } }
 
 [makepad.dependencies]

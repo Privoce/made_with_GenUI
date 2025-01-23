@@ -1,0 +1,10 @@
+version = "0.0.2"
+
+[values]
+"/Users/shengyifei/projects/gen_ui/made_with_GenUI/quickstart/start/components/mod.gen" = "1b9d22a39e09e542e513c6b8f4a98222ec412b13aa4a8a14b1d7acb8f0d8b0d2"
+"/Users/shengyifei/projects/gen_ui/made_with_GenUI/quickstart/start/views/home.gen" = "7ae655f4c39f2fdf095ec183f709416438c1b5ae3d420047e63d4422778d7ee0"
+"/Users/shengyifei/projects/gen_ui/made_with_GenUI/quickstart/start/views/mod.gen" = "1b457bd6d616f8c24d06ee67215421d5f0603ced802bc13afeedfa8cb40eb23c"
+"/Users/shengyifei/projects/gen_ui/made_with_GenUI/quickstart/start/views/root.gen" = "6362b1111bae1c69363df0d33f3370744e2295baa14d74c6d79a416c6e175657"
+"/Users/shengyifei/projects/gen_ui/made_with_GenUI/quickstart/start/src/main.rs" = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+"/Users/shengyifei/projects/gen_ui/made_with_GenUI/quickstart/start/components/hello.gen" = "f436e53ab8529ac5a4d43787070cbcb796eac48d9ff8e8788c888ac7d6fed7fb"
+"/Users/shengyifei/projects/gen_ui/made_with_GenUI/quickstart/start/components/easy.gen" = "b40097840abbb9ae1ec9cd58b27ee7191d55ec812d4ccf08dc0b78a3fc20c54d"

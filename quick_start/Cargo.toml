@@ -1,3 +1,0 @@
-[workspace]
-members = ["quick_start", "src_gen_0"]
-resolver = "2"

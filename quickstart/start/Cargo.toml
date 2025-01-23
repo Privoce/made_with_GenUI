@@ -1,5 +1,5 @@
 [package]
-name = "quick_start"
+name = "start"
 version = "0.1.0"
 edition = "2021"
 description = "This project is created by ract. Repo: https://github.com/Privoce/GenUI"
