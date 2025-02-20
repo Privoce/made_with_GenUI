@@ -1,0 +1,60 @@
+<template>
+    <component name="Home" class="home_view">
+        <Hello id="header"></Hello>
+        <button id="my_btn" theme="Error" @clicked="click_btn()">
+            <label as_prop="slot" text="'Click Me!'" font_size="12.0"></label>
+        </button>
+    </component>
+</template>
+
+<script>
+import!{
+    crate::components::hello::*;
+}
+
+#[prop]
+pub struct Home{
+    num: u32
+}
+
+// init instance prop
+let mut prop = default_prop!{
+    Home{
+        num: 0
+    }
+};
+
+fn click_btn(){
+    let mut num = prop.get_num();
+    num += 1;
+    prop.set_num(num);
+    // use c_ref! you can get component ref
+    let header = c_ref!(header);
+    let num = prop.get_num();
+    header.set_my_text(format!("Clicked: {}", num));
+}
+</script>
+
+<style>
+.home_view{
+    height: Fit;
+    flow: Down;
+    align: {
+        x: 0.5,
+        y: 0.5
+    };
+    spacing: 16.0;
+    padding: 12.0;
+    background_color: shader(|self|{
+        fn pixel(self) -> vec4 {
+            let center = vec2(0.5, 0.5)
+            let uv = self.pos - center
+            let radius = length(uv)
+            let angle = atan(uv.y, uv.x)
+            let color1 = mix(#f00, #00f, 0.5 + 10.5 * cos(angle + self.time))
+            let color2 = mix(#0f0, #ff0, 0.5 + 0.5 * sin(angle + self.time))
+            return mix(color1, color2, radius)
+        }
+    });
+}
+</style>

@@ -1,0 +1,2 @@
+target = "gen_ui"
+members = [{ source = "hello", target = "src_gen_0" }]

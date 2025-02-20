@@ -1,0 +1,2 @@
+target = "makepad"
+resources = [{ src = "makepad-widgets", target = "./dist/resources/makepad_widgets" }]

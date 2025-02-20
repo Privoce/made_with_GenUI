@@ -1,5 +1,5 @@
 [package]
-name = "start"
+name = "hello"
 version = "0.1.0"
 edition = "2021"
 description = "This project is created by ract. Repo: https://github.com/Privoce/GenUI"
@@ -7,5 +7,3 @@ license = "MIT"
 keywords = ["front_end", "ui"]
 
 [dependencies]
-serde_json = "1.0.68"
-serde = "1.0.130"

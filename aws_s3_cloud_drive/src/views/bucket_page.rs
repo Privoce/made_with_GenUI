@@ -341,7 +341,7 @@ impl BucketPage {
                         ));
                         children.last_mut().map(|(_, child)| {
                             child.as_glink().borrow_mut().map(|mut link| {
-                                link.set_text_and_redraw(cx, &share.name);
+                                link.set_text(cx, &share.name);
                                 link.href.replace(share.url.to_string());
                             });
                         });

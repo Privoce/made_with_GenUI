@@ -307,7 +307,7 @@ impl SiginPage {
             });
             self.redraw(cx);
             self.glabel(id!(res_str))
-                .set_text_and_redraw(cx, &state.msg);
+                .set_text(cx, state.msg.to_string());
         }
     }
     pub fn get(&mut self, cx: &mut Cx) {
@@ -344,7 +344,7 @@ impl SiginPage {
                     );
                 });
             self.glabel(id!(res_str))
-                .set_text_and_redraw(cx, &state.msg);
+                .set_text(cx, state.msg.to_string());
         }
     }
     pub fn update(&mut self) {

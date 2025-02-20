@@ -969,7 +969,7 @@ impl UploadPage {
             .map(|mut x| {
                 x.open(cx);
                 x.get_mut(cx, |cx, _, popup| {
-                    popup.glabel(id!(note_label)).set_text_and_redraw(cx, note);
+                    popup.glabel(id!(note_label)).set_text(cx, note.to_string());
                 });
             });
     }
@@ -1000,7 +1000,7 @@ impl UploadPage {
         self.gdrop_down(id!(url_popup)).borrow_mut().map(|mut x| {
             x.open(cx);
             x.get_mut(cx, |cx, _, popup| {
-                popup.ginput(id!(url_input)).set_text_and_redraw(cx, url);
+                popup.ginput(id!(url_input)).set_text(cx, url.to_string());
             });
         });
     }
@@ -1010,7 +1010,7 @@ impl UploadPage {
             .map(|mut x| {
                 x.open(cx);
                 x.get_mut(cx, |cx, _, popup| {
-                    popup.glabel(id!(note_label)).set_text_and_redraw(cx, note);
+                    popup.glabel(id!(note_label)).set_text(cx, note.to_string());
                 });
             });
     }
@@ -1026,15 +1026,15 @@ impl UploadPage {
 
                 if let Some((_, target)) = list.last_mut() {
                     target.as_gview().borrow().map(|t_view| {
-                        t_view.glabel(id!(f_name)).set_text_and_redraw(cx, &f.name);
+                        t_view.glabel(id!(f_name)).set_text(cx, f.name.to_string());
                         f.date.as_ref().map(|s| {
-                            t_view.glabel(id!(f_date)).set_text_and_redraw(cx, s);
+                            t_view.glabel(id!(f_date)).set_text(cx, s.to_string());
                         });
 
                         if f.size.is_some() {
                             // means file
                             t_view.glabel(id!(f_size)).borrow_mut().map(|mut x| {
-                                x.set_text(&format_size(f.size.unwrap()));
+                                x.set_text(cx, &format_size(f.size.unwrap()));
                                 x.visible = true;
                                 x.redraw(cx);
                             });

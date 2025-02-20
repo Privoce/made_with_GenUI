@@ -1,17 +1,16 @@
 // default template for root.gen
 <template>
-  <component name="UiRoot">
-    <view theme="Dark" height="Fill" width="Fill" align="0.5" spacing="12.0" flow="Down">
-      <label text="'This is an easy GenUI template'" font_size="36.0"></label>
-      <EasyLabel></EasyLabel>
+    <component name="UiRoot" spacing="40.0">
       <Home></Home>
-    </view>
-  </component>
+    </component>
 </template>
 
 <script>
 import!{
   crate::views::home::*;
-  crate::components::easy::*;
 }
 </script>
+
+<style>
+
+</style>
