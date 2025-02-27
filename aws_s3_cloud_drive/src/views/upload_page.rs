@@ -13,12 +13,15 @@ use crate::utils::{
 };
 
 live_design! {
-    import makepad_widgets::base::*;
-    import makepad_widgets::theme_desktop_dark::*;
-    import gen_components::components::*;
+    // import makepad_widgets::base::*;
+    // import makepad_widgets::theme_desktop_dark::*;
+    // import gen_components::components::*;
+    use link::widgets::*;
+    use link::gen_components::*;
+    use link::shaders::*;
 
     BOLD_FONT2 = dep("crate://self/resources/FiraCode-Bold.ttf");
-    UploadPage = {{UploadPage}}{
+    pub UploadPage = {{UploadPage}}{
         height: Fill,
         width: Fill,
         flow: Down,

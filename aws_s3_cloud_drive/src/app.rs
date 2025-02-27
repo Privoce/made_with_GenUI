@@ -7,12 +7,18 @@ use crate::{
 };
 
 live_design! {
-    import makepad_widgets::base::*;
-    import makepad_widgets::theme_desktop_dark::*;
-    import gen_components::components::*;
-    import crate::views::settings_page::*;
-    import crate::views::main_page::*;
+    // import makepad_widgets::base::*;
+    // import makepad_widgets::theme_desktop_dark::*;
+    // import gen_components::components::*;
+    // import crate::views::settings_page::*;
+    // import crate::views::main_page::*;
     // import crate::views::upload_page::*;
+    use link::widgets::*;
+    use link::gen_components::*;
+    use link::shaders::*;
+    use crate::views::main_page::*;
+    use crate::views::upload_page::*;
+    use crate::views::settings_page::*;
 
     App = {{App}}{
         root: <Root>{

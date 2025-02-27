@@ -7,16 +7,24 @@ use makepad_widgets::*;
 use super::{bucket_page::BucketPageEvent, upload_page::UploadPageWidgetExt};
 
 live_design! {
-    import makepad_widgets::base::*;
-    import makepad_widgets::theme_desktop_dark::*;
-    import gen_components::components::*;
-    import crate::views::start_page::*;
-    import crate::views::sigin_page::*;
-    import crate::views::settings_page::*;
-    import crate::views::bucket_page::*;
-    import crate::views::upload_page::*;
+    // import makepad_widgets::base::*;
+    // import makepad_widgets::theme_desktop_dark::*;
+    // import gen_components::components::*;
+    // import crate::views::start_page::*;
+    // import crate::views::sigin_page::*;
+    // import crate::views::settings_page::*;
+    // import crate::views::bucket_page::*;
+    // import crate::views::upload_page::*;
+    use link::widgets::*;
+    use link::gen_components::*;
+    use link::shaders::*;
+    use crate::views::start_page::*;
+    use crate::views::sigin_page::*;
+    use crate::views::settings_page::*;
+    use crate::views::bucket_page::*;
+    use crate::views::upload_page::*;
 
-    AppMainPage = {{AppMainPage}}{
+    pub AppMainPage = {{AppMainPage}}{
         height: Fill,
         width: Fill,
         flow: Down,
