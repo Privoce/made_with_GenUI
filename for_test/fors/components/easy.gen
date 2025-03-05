@@ -9,17 +9,19 @@
 </template>
 
 <script>
-#[prop]
+#[component]
 pub struct EasyLabel{
     lbs: Vec<Vec<String>>
 }
 
-let mut prop = default_prop!{
-    EasyLabel{
-        lbs: vec![
-            vec!["Hello1".to_string()],
-            vec!["Hello2".to_string(), "World".to_string()],
-        ]
+impl Default for EasyLabel{
+    fn default() -> Self{
+        Self{
+           lbs: vec![
+                vec!["Hello1".to_string()],
+                vec!["Hello2".to_string(), "World".to_string()],
+            ] 
+        }
     }
-};
+}
 </script>

@@ -1,5 +1,0 @@
-<template>
-    <component name="Df">
-        <label text="'this is a define!'"></label>
-    </component>
-</template>

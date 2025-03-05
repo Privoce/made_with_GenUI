@@ -1,22 +1,24 @@
 <template>
     <component name="Header">
-        <button id="header_btn" @clicked="click_h_btn()">
+        <button id="header_btn" @clicked="click_h_btn()" padding="12.0">
             <label as_prop="slot" :text="btn_name"></label>
         </button>
     </component>
 </template>
 
 <script>
-#[prop]
+#[component]
 pub struct Header{
     btn_name: String
 }
 
-let mut prop = default_prop!{
-    Header{
-        btn_name: "Header Btn!".to_string()
+impl Default for Header{
+    fn default()-> Self{
+        Self {
+            btn_name: "Header Btn!".to_string()
+        }
     }
-};
+}
 
 #[event]
 #[derive(Debug, Clone)]
@@ -24,13 +26,9 @@ pub enum HeaderEvent{
     ClickHeader
 }
 
-fn click_h_btn(){
-    dbg!("clicked header");
+impl Header{
+    fn click_h_btn(&self){
+        dbg!("clicked header");
+    }
 }
 </script>
-
-<style>
-#header_btn{
-    padding: 12.0;
-}
-</style>

@@ -8,7 +8,7 @@
 </template>
 
 <script>
-#[prop]
+#[component]
 pub struct Hello{
     my_text: String,
     pub list: Vec<String>
@@ -20,17 +20,21 @@ pub enum HelloEvent{
     Add
 }
 
-let mut prop = default_prop!{
-    Hello{
-        my_text: "Clicked: 0".to_string(),
-        list: vec!["Hello".to_string()]
+impl Default for Hello{
+    fn default() -> Self{
+        Self{
+            my_text: "Clicked: 0".to_string(),
+            list: vec!["Hello".to_string()]
+        }
     }
-};
+}
 
-fn add_list(){
-    let mut list = prop.get_list();
-    list.push("world".to_string());
-    prop.set_list(list);
+impl Hello{
+    fn add_list(&mut self){
+        let mut list = self.get_list();
+        list.push("world".to_string());
+        self.set_list(list);
+    }
 }
 </script>
 

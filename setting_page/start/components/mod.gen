@@ -1,4 +1,4 @@
 <script>
-pub mod root;
 pub mod hello;
+pub mod easy;
 </script>

@@ -1,0 +1,3 @@
+[workspace]
+members = ["start", "src_gen_0"]
+resolver = "2"

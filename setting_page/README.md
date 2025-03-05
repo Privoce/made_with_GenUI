@@ -15,11 +15,6 @@ Welcome to the GenUI Project! This project is built with the Ract tool and serve
 
 The GenUI project adopts a typical Rust Workspace structure, consisting of multiple sub-projects. Below is a description of the project directory and its functions:
 
-> [!TIP]
-> The following content symbols are explained:
-> - `#`: Descriptor, the specific name is unknown, for example, `#workspace` means the project name of a workspace project created by the user
-> - `[]`: means optional
-
 ```
 #workspace
 │
@@ -44,7 +39,6 @@ The GenUI project adopts a typical Rust Workspace structure, consisting of multi
 ├── .ract                      // Ract configuration file
 ├── Cargo.toml                 // Workspace configuration file
 ├── Cargo.lock                 // Dependency lock file
-├── [.gitignore]               // gitignore (optional)
 └── [LICENSE]                  // Project license file (optional)
 ```
 

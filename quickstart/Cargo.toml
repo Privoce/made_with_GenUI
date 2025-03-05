@@ -1,3 +1,3 @@
 [workspace]
-members = ["start", "src_gen_0"]
+members = ["hello", "src_gen_0"]
 resolver = "2"

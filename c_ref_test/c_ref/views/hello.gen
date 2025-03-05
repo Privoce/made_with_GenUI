@@ -11,27 +11,31 @@ import!{
     crate::components::header::*;
 }
 
-#[prop]
+#[component]
 pub struct Hello{
     txt: String
 }
 
-let mut prop = default_prop!{
-    Hello{
-        txt: "hello!!!".to_string()
+impl Default for Hello{
+    fn default() -> Self{
+        Self{
+            txt: "hello!!!".to_string()
+        }
     }
-};
+}
 
-fn click_btn(){
-    let lb = c_ref!(h_lb);
-    lb.set_text("world".to_string());
-    let txt = prop.get_txt();
-    dbg!(txt);
+impl Hello {
+    fn click_btn(&mut self){
+        let lb = c_ref!(h_lb);
+        lb.set_text("world".to_string());
+        let txt = self.get_txt();
+        dbg!(txt);
 
-    let header = c_ref!(my_header);
-    header.set_btn_name("clicked".to_string());
-    let header_btn_name = header.get_btn_name();
-    dbg!(header_btn_name);
-    
+        let header = c_ref!(my_header);
+        header.set_btn_name("clicked".to_string());
+        let header_btn_name = header.get_btn_name();
+        dbg!(header_btn_name);
+        
+    }
 }
 </script>

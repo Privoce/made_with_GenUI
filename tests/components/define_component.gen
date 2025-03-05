@@ -1,0 +1,5 @@
+<template>
+    <component name="Hello" class="hello_view">
+        <label id="my_lb" text="'my_text'" font_size="16.0"></label>
+    </component>
+</template>
