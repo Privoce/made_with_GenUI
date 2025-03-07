@@ -1,2 +1,3 @@
 target = "gen_ui"
-members = [{ source = "todo", target = "src_gen_0" }]
+members = [{ src = "todo", target = "src_gen_0" }]
+resources = [{ src = "gen_components", target = "../dist/resources/gen_components" }, { src = "makepad-widgets", target = "../dist/resources/makepad_widgets" }]

@@ -39,24 +39,10 @@
             <view background_visible="false" height="Fit">
                 <label font_size="12.0" text="'Account Settings'" color="#000"></label>
             </view>
-            <view height="Fit" background_visible="false" align="{y: 0.5}">
-                <view background_visible="false" flow="Down" spacing="4.0" height="Fit">
-                    <label text="'Two-Factor Authentication'" color="#000"></label>
-                    <label text="'Add an extra layer of security to your account'" color="#666"></label>
-                </view>
-                <checkbox theme="Info" selected="true" checkbox_type="Tick"></checkbox>
-            </view>
-            <view height="Fit" background_visible="false" align="{y: 0.5}">
-                <view background_visible="false" flow="Down" spacing="4.0" height="Fit">
-                    <label text="'Sync Across Devices'" color="#000"></label>
-                    <label text="'Keep your settings synchronized on all devices'" color="#666"></label>
-                </view>
-                <checkbox theme="Info" selected="true" checkbox_type="Tick"></checkbox>
-            </view>
-            <view height="Fit" background_visible="false" align="{y: 0.5}">
-                <view background_visible="false" flow="Down" spacing="4.0" height="Fit">
-                    <label text="'Activity Status'" color="#000"></label>
-                    <label text="'Show when you're active to other users'" color="#666"></label>
+            <view class="common_setting_box" :for="item in accout_settings" id="setting_box">
+                <view id="box_left">
+                    <label :text="item.title" color="#000" id="title_lb"></label>
+                    <label :text="item.msg" color="#666" id="msg_lb"></label>
                 </view>
                 <checkbox theme="Info" selected="false" checkbox_type="Tick"></checkbox>
             </view>
@@ -103,20 +89,40 @@
             <button theme="Warning">
                 <label as_prop="slot" text="'Save Change'"></label>
             </button>
-            <button id="my_button" theme="Dark" @clicked="clicked_my_btn()">
-                <label as_prop="slot" text="'MyButton'"></label>
-            </button>
         </view>
     </component>
 </template>
 
 <script>
-#[prop]
+#[component]
 pub struct Home{
     num: u32,
     accout_settings: Vec<AccountSetting>,
 }
 
+
+// init instance prop
+impl Default for Home{
+    fn default() ->Self{
+        Self{
+            num: 0,
+            accout_settings: vec![
+                AccountSetting::new("Two-Factor Authentication", "Add an extra layer of security to your account", true),
+                AccountSetting::new("Sync Across Devices", "Keep your settings synchronized on all devices", true),
+                AccountSetting::new("Activity Status", "Show when you're active to other users", false),
+            ]
+        }
+    }
+}
+
+impl Home{
+    fn clicked_my_btn(&self){
+        print!("clicked!");
+    }
+}
+
+
+#[prop]
 #[derive(Default, Debug, Clone)]
 pub struct AccountSetting{
     title: String,
@@ -133,23 +139,6 @@ impl AccountSetting {
         }
     }
 }
-
-// init instance prop
-let mut prop = default_prop!{
-    Home{
-        num: 0,
-        accout_settings: vec![
-            AccountSetting::new("Two-Factor Authentication", "Add an extra layer of security to your account", true),
-            AccountSetting::new("Sync Across Devices", "Keep your settings synchronized on all devices", true),
-            AccountSetting::new("Activity Status", "Show when you're active to other users", false),
-        ]
-    }
-};
-
-fn clicked_my_btn(){
-    print!("clicked!");
-}
-
 </script>
 
 <style>
@@ -171,6 +160,17 @@ fn clicked_my_btn(){
         padding: 12.0;
         flow: Down;
         spacing: 16.0;
+        .common_setting_box{
+            height: Fit;
+            background_visible: false;
+            align: {y: 0.5};
+            #box_left{
+                background_visible: false;
+                flow: Down;
+                spacing: 4.0;
+                height: Fit;
+            }
+        }
         .input_view{
             height: 52.0;
             flow: Down;

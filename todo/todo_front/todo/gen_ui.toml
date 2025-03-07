@@ -7,12 +7,12 @@ excludes = ["Cargo.toml", "Cargo.lock", "target", ".gen_ui_cache", "gen_ui.toml"
 [makepad]
 
 [makepad.root]
-path = "/Users/shengyifei/projects/gen_ui/made_with_GenUI/todo/todo_front/todo/views/root.gen"
-window = { height = "Fill", width = "Fill", flow = "Down", window_size = { inner_size = { x = 680.0, y = 720.0 } } }
+path = "/Users/shengyifei/projects/gen_ui/made_with_GenUI/todo_front/todo/views/root.gen"
+window = { height = "Fill", width = "Fill", flow = "Down", window_size = { inner_size = { x = 1080.0, y = 720.0 } } }
 
 [makepad.dependencies]
-makepad-widgets = { path = "/Users/shengyifei/projects/makepad/makepad/widgets" }
-gen_components = { path = "/Users/shengyifei/projects/gen_ui/components" }
+makepad-widgets = { path = "/Users/shengyifei/projects/gen_ui/ract_workspace/ract/target/release/chain/makepad/widgets" }
+gen_components = { path = "/Users/shengyifei/projects/gen_ui/ract_workspace/ract/target/release/chain/gen_components" }
 
 [plugins]
 gen_makepad_http = ".plugins/gen_makepad_http"

@@ -1,9 +1,3 @@
 version = "0.0.2"
 
 [values]
-"/Users/shengyifei/projects/gen_ui/made_with_GenUI/c_ref_test/c_ref/views/root.gen" = "228fd1d758d426b8bd6b58dfb8d75ab1f2208052e3a5068a3c1384144c82ddb7"
-"/Users/shengyifei/projects/gen_ui/made_with_GenUI/c_ref_test/c_ref/views/mod.gen" = "98206c40b5d6d0abdbcbdb8dac634b093810d8b6d7906d1bafaede8c82e2e3f8"
-"/Users/shengyifei/projects/gen_ui/made_with_GenUI/c_ref_test/c_ref/components/header.gen" = "e069302244e5a11011ec0d29153752a93e2c6ca4dfebbf30b2cc48a49944b504"
-"/Users/shengyifei/projects/gen_ui/made_with_GenUI/c_ref_test/c_ref/components/mod.gen" = "24b909c34b13dde19513375ee352ff46c277fc1f7c128a6b3277ac138076cbf4"
-"/Users/shengyifei/projects/gen_ui/made_with_GenUI/c_ref_test/c_ref/src/main.rs" = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-"/Users/shengyifei/projects/gen_ui/made_with_GenUI/c_ref_test/c_ref/views/hello.gen" = "56f5fed6fe3fa97e20ab39ecf6128228a5e1d389955cde8b9adf4811a546e759"

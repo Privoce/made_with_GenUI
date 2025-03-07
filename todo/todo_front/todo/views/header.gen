@@ -6,6 +6,9 @@
 </template>
 
 <script>
+#[component]
+pub struct Header{}
+
 #[event]
 #[derive(Clone, Debug)]
 pub enum HeaderEvent{
@@ -13,11 +16,13 @@ pub enum HeaderEvent{
     Share
 }
 
-let mut click_add = ||{
-    dbg!("clicked add svg");
-    // active!(HeaderEvent::Add);
-    let _ = active!(HeaderEvent::Add);
-};
+impl Header{
+    fn click_add(&mut self){
+        dbg!("clicked add svg");
+        // active!(HeaderEvent::Add);
+        let _ = active!(HeaderEvent::Add);
+    }
+}
 </script>
 
 <style>

@@ -1,5 +1,6 @@
 <script>
 pub mod root;
 pub mod todo_list;
+pub mod home;
 pub mod header;
 </script>

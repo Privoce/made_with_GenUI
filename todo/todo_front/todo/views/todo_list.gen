@@ -27,7 +27,7 @@ import!{
     crate::views::header::*;
 }
 
-#[prop]
+#[component]
 pub struct TodoList{
     // todo_list: Vec<(bool, String)>,
     todo_list: Vec<TodoItem>,
@@ -36,93 +36,101 @@ pub struct TodoList{
     info: String
 }
 
-let mut prop = default_prop!{
-    // todo_list: vec![(false, "提醒事项1".to_string()), (false, "测试事项2".to_string())],
-    TodoList{
-        todo_list: vec![],
-        info: "在输入框中添加todo后请点击右上角添加按钮".to_string()
-    }
-};
 
-fn change_input(param: impl EventParam){
-    if let InputEventType::KeyDown(code) = param.ty{
-        if let KeyCode::ReturnKey = code{
-            let txt = prop.get_input_txt();
-            dbg!(txt);
+impl Default for TodoList{
+    fn default() ->Self{
+        Self{
+            todo_list: vec![],
+            info: "在输入框中添加todo后请点击右上角添加按钮".to_string(),
+            num: Default::default(),
+            input_txt: Default::default()
         }
     }
 }
 
-fn call_add(){
-    dbg!("call add");
-
-    if prop.get_input_txt().is_empty(){
-        let lb = c_ref!(info_lb);
-        lb.set_color("#FF0000".to_string());
-        prop.set_info("请输入todo，当前为空".to_string());
-    }else{
-        let txt = prop.get_input_txt();
-        let body = format!(r#"{{
-            "todo": {{
-                "text": "{}",
-                "done": false
-            }}
-        }}"#, txt);
-        dbg!("send post!");
-        let _ = http_post!(save_todo, "", body);
+impl TodoList{
+    fn change_input(&mut self, param: impl EventParam){
+        if let InputEventType::KeyDown(code) = param.ty{
+            if let KeyCode::ReturnKey = code{
+                let txt = self.get_input_txt();
+                dbg!(txt);
+            }
+        }
     }
-}
+    fn call_add(&mut self){
+        dbg!("call add");
 
-#[before_create]
-fn before_create(){
-    // get todos from http
-    let _ = http_get!(http_response1);
-    //let todos = prop.get_todo_list();
-    //prop.set_num(todos.len().to_string());
-}
-
-#[http_response]
-fn http_response1(response: &HttpResponse){
-    dbg!("response");
-    if response.status_code == 200 {
-        let todos = response.get_string_body().unwrap();
-        let todos: Value = serde_json::from_str(&todos).unwrap();
-        let todo_items: Vec<TodoItem> = todos["data"]
-            .as_array()
-            .unwrap()
-            .iter().take(5).map({ |todo|
-                TodoItem {
-                    id: todo["id"].as_u64().unwrap() as u64,
-                    text: todo["text"].as_str().unwrap().to_string(),
-                    done: todo["done"].as_bool().unwrap()
-                }
-            }).collect();
-
-        prop.set_todo_list(todo_items);
+        if self.get_input_txt().is_empty(){
+            let lb = c_ref!(info_lb);
+            lb.set_color("#FF0000".to_string());
+            self.set_info("请输入todo，当前为空".to_string());
+        }else{
+            let txt = self.get_input_txt();
+            let body = format!(r#"{{
+                "todo": {{
+                    "text": "{}",
+                    "done": false
+                }}
+            }}"#, txt);
+            dbg!("send post!");
+            let _ = http_post!(save_todo, "", body);
+        }
     }
-}
 
-#[http_response]
-fn save_todo(response: &HttpResponse){
-    if response.status_code == 201 {
-        dbg!("save");
-        let todo_response = response.get_string_body().unwrap();
-        let todo: Value = serde_json::from_str(&todo_response).unwrap();
-        let new_todo = TodoItem {
-            id: todo["data"]["id"].as_u64().unwrap() as u64,
-            text: todo["data"]["text"].as_str().unwrap().to_string(),
-            done: todo["data"]["done"].as_bool().unwrap()
-        };
-        let mut todos = prop.get_todo_list();
-        todos.push(new_todo);
-        prop.set_todo_list(todos);
-        prop.set_info("添加todo成功!".to_string());
-    }else{
-        println!("{:?}", response);
+    #[before_mount]
+    fn before_create(&mut self){
+        // get todos from http
+        self.set_num("2".to_string());
+        let _ = http_get!(http_response1);
+        //let todos = self.get_todo_list();
+        //self.set_num(todos.len().to_string());
     }
+
+    #[http_response]
+    fn http_response1(&mut self, response: &HttpResponse){
+        dbg!("response");
+        if response.status_code == 200 {
+            let todos = response.get_string_body().unwrap();
+            let todos: Value = serde_json::from_str(&todos).unwrap();
+            let todo_items: Vec<TodoItem> = todos["data"]
+                .as_array()
+                .unwrap()
+                .iter().take(5).map({ |todo|
+                    TodoItem {
+                        id: todo["id"].as_u64().unwrap() as u64,
+                        text: todo["text"].as_str().unwrap().to_string(),
+                        done: todo["done"].as_bool().unwrap()
+                    }
+                }).collect();
+
+            self.set_todo_list(todo_items);
+        }
+    }
+
+    #[http_response]
+    fn save_todo(&mut self, response: &HttpResponse){
+        if response.status_code == 201 {
+            dbg!("save");
+            let todo_response = response.get_string_body().unwrap();
+            let todo: Value = serde_json::from_str(&todo_response).unwrap();
+            let new_todo = TodoItem {
+                id: todo["data"]["id"].as_u64().unwrap() as u64,
+                text: todo["data"]["text"].as_str().unwrap().to_string(),
+                done: todo["data"]["done"].as_bool().unwrap()
+            };
+            let mut todos = self.get_todo_list();
+            todos.push(new_todo);
+            self.set_todo_list(todos);
+            self.set_info("添加todo成功!".to_string());
+        }else{
+            println!("{:?}", response);
+        }
+    }
+
 }
 
-#[derive(Clone, Debug)]
+#[prop]
+#[derive(Clone, Debug, Default)]
 pub struct TodoItem {
     pub id: u64,
     pub text: String,
