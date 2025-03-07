@@ -1,0 +1,24 @@
+<template>
+    <component name="NestedFor" height="60" theme="Error">
+        <view :for="item in alist" id="for_wrapper">
+            <view id="wrapper">
+                <label id="inner_label" :text="item"></label>
+            </view>
+        </view>
+    </component>
+</template>
+
+<script>
+#[component]
+pub struct NestedFor{
+    alist: Vec<String>
+}
+
+impl Default for NestedFor{
+    fn default() -> Self{
+        Self{
+            alist: vec!["Hello".to_string(), "World".to_string()]
+        }
+    }
+}
+</script>

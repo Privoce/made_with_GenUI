@@ -5,12 +5,14 @@
         <button id="my_btn" theme="Error" @clicked="click_btn()">
             <label as_prop="slot" text="'Click Me!'" font_size="12.0"></label>
         </button>
+        <NestedFor></NestedFor>
     </component>
 </template>
 
 <script>
 import!{
     crate::components::hello::*;
+    crate::views::nested::*;
 }
 
 #[component]
