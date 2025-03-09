@@ -1,0 +1,40 @@
+<template>
+    <component name="Easy" spacing="8.0" flow="Down">
+        <tag text="'hello'"></tag>
+        <tag text="'hello'" color="#ff0000"></tag>
+        <tag text="'hello'" closeable theme="Info" font_size="14.0" border_radius="6.0"></tag>
+        <toggle></toggle>
+        <toggle theme="Error" selected="true"></toggle>
+        <loading theme="Error"></loading>
+        <loading id="dot_load" loading_type="DotLine"  @opened="open_loading()"></loading>
+        <collapse height="180.0" width="300.0" position="Bottom" opened="false">
+            <view as_prop="header" theme="Info" height="40.0">
+                <label text="'default collapse'"></label>
+            </view>
+            <view as_prop="body" theme="Error" height="140.0">
+                <button></button>
+            </view>
+        </collapse>
+        <drop_down>
+            <button id="trigger">
+                <label as_prop="slot" text="'Open Dialog'"></label>
+            </button>
+            <dialog as_prop="popup">
+                <popup_container as_prop="container" height="220.0" width="360.0" flow="Down" theme="Info">
+                    <label text="'Container'"></label>
+                </popup_container>
+            </dialog>
+        </drop_down>
+    </component>
+</template>
+
+<script>
+#[component]
+pub struct Easy{}
+
+impl Easy{
+    fn open_loading(&self){
+        dbg!("open loading");
+    }
+}
+</script>

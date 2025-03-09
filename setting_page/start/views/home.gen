@@ -53,7 +53,7 @@
             </view>
             <view height="60.0" align="{y: 0.5}" background_color="#F9FAFB">
                 <view background_visible="false" height="Fit" width="Fit" margin="24.0">
-                    <image src="dep('crate://self/resources/computer.png')" height="16.0" width="16.0"></image>
+                    <image src="Live(dep('crate://self/resources/computer.png'))" height="16.0" width="16.0"></image>
                 </view>
                 <view background_visible="false" flow="Down" spacing="6.0" height="Fit">
                     <label id="con_title" text="'MacBook Pro'" color="#000"></label>
@@ -63,7 +63,7 @@
             </view>
             <view height="60.0" align="{y: 0.5}" background_color="#F9FAFB">
                 <view background_visible="false" height="Fit" width="Fit" margin="24.0">
-                    <image src="dep('crate://self/resources/phone.png')" height="16.0" width="16.0"></image>
+                    <image src="Live(dep('crate://self/resources/phone.png'))" height="16.0" width="16.0"></image>
                 </view>
                 <view background_visible="false" flow="Down" spacing="6.0" height="Fit">
                     <label id="con_title" text="'iPhone 15 Pro'" color="#000"></label>
@@ -73,7 +73,7 @@
             </view>
             <view height="60.0" align="{y: 0.5}" background_color="#F9FAFB">
                 <view background_visible="false" height="Fit" width="Fit" margin="24.0">
-                    <image src="dep('crate://self/resources/browser.png')" height="16.0" width="16.0"></image>
+                    <image src="Live(dep('crate://self/resources/browser.png'))" height="16.0" width="16.0"></image>
                 </view>
                 <view background_visible="false" flow="Down" spacing="6.0" height="Fit">
                     <label id="con_title" text="'MacBook Pro'" color="#000"></label>
