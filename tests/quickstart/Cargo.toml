@@ -1,0 +1,9 @@
+[package]
+name = "quickstart"
+version = "0.1.0"
+edition = "2021"
+description = "This project is created by ract. Repo: https://github.com/Privoce/GenUI"
+license = "MIT"
+keywords = ["front_end", "ui"]
+
+[dependencies]

@@ -1,0 +1,5 @@
+<template>
+    <view id="EasyLabel" height="Fit" align="{x: 0.5}">
+        <label text="'You now using Makepad + GenUI + GenUI Components'" font_size="16.0" color="#FF7043"></label>
+    </view>
+</template>

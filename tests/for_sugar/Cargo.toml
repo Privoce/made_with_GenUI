@@ -1,0 +1,10 @@
+[package]
+name = "for_sugar"
+version = "0.1.0"
+edition = "2021"
+authors = ["syf"]
+description = "test for sugar"
+license = "MIT"
+keywords = ["front_end", "ui"]
+
+[dependencies]

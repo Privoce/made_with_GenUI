@@ -1,3 +1,0 @@
-[workspace]
-members = ["fors", "src_gen_0"]
-resolver = "2"

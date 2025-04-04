@@ -1,0 +1,56 @@
+<template>
+    <component name="Home" class="home_view">
+        <Hello id="header"></Hello>
+        <label id="my_lb" :text="txt"></label>
+        <button id="my_btn" theme="Error" @clicked="click_btn()">
+            <label as_prop="slot" text="'Click Me!'" font_size="12.0"></label>
+        </button>
+    </component>
+</template>
+
+<script>
+import!{
+    crate::components::hello::*;
+}
+
+#[component]
+pub struct Home{
+    num: u32,
+    txt: String
+}
+
+// init prop
+impl Default for Home{
+    fn default() -> Self{
+        Self{
+            num: 0,
+            txt: "Wait to change".to_string()
+        }
+    }
+}
+
+impl Home{
+    fn click_btn(&mut self){
+        let mut header = c_ref!(header);
+        let mut my_lb = c_ref!(my_lb);
+        self.num += 1;
+        let new_val = format!("Clicked: {}", self.num);
+        header.set_my_text(new_val.to_string());
+        my_lb.set_text(new_val);
+        my_lb.set_color("#ff0000".to_string());
+    }
+}
+</script>
+
+<style>
+.home_view{
+    height: Fit;
+    flow: Down;
+    align: {
+        x: 0.5,
+        y: 0.5
+    };
+    spacing: 16.0;
+    padding: 12.0;
+}
+</style>

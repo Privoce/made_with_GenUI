@@ -1,9 +1,0 @@
-<script>
-mod test_event;
-
-use crate::hello::*;
-
-fn hello(){
-    println!("hello world");
-}
-</script>

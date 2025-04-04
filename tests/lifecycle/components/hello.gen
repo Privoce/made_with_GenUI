@@ -1,0 +1,54 @@
+<template>
+    <component name="Hello" class="hello_view" spacing="12.0">
+        <label id="my_lb" :text="my_text" font_size="16.0"></label>
+        <label :text="fmt_count()"></label>
+    </component>
+</template>
+
+<script>
+#[component]
+pub struct Hello{
+    my_text: String,
+    count: u32,
+}
+
+impl Default for Hello{
+    fn default() -> Self{
+        Self{
+            my_text: "Clicked: 0".to_string(),
+            count: 0
+        }
+    }
+}
+
+impl Hello{
+    #[computed([count])]
+    fn fmt_count(&self) -> String{
+        format!("count: {}", self.count)
+    }
+
+    #[before_update]
+    fn do_before_update(&mut self) -> (){
+        println!("do before update => hello.gen!");
+        self.set_my_text(format!("{} => handle before", &self.my_text));
+    }
+
+    #[updated]
+    fn do_updated(&mut self){
+        println!("do updated => hello.gen!");
+        let new_val = self.get_count() + 1;
+        self.set_count(new_val);
+    }   
+}
+</script>
+
+<style>
+.hello_view{
+    height: Fit;
+    width: Fill;
+    align: {
+        x: 0.5, 
+        y: 0.5
+    };
+}
+</style>

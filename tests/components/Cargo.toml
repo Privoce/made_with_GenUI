@@ -1,0 +1,10 @@
+[package]
+name = "components"
+version = "0.1.0"
+edition = "2021"
+authors = ["syf"]
+description = "test each components"
+license = "MIT"
+keywords = ["front_end", "ui"]
+
+[dependencies]

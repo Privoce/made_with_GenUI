@@ -1,0 +1,10 @@
+[package]
+name = "c_ref"
+version = "0.1.0"
+edition = "2021"
+authors = ["syf"]
+description = "test c_ref! macro"
+license = "MIT"
+keywords = ["front_end", "ui"]
+
+[dependencies]

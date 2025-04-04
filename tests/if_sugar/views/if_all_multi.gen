@@ -1,0 +1,72 @@
+<template>
+    <component name="IfAllMulti" spacing="12.0">
+        <label :if="vis" text="'hello'"></label>
+        <label else text="'world'"></label>
+        <label :if="is_b()" text="'你好'"></label>
+        <label :else_if="is_c()" text="'is c'"></label>
+        <label else text="'世界'"></label>
+        <button @clicked="show_hello()"></button>
+        <button @clicked="next_vis()"></button>
+    </component>
+</template>
+
+<script>
+#[component]
+pub struct IfAllMulti{
+    vis: bool,
+    vis2: Vis,
+}
+
+impl Default for IfAllMulti{
+    fn default() -> Self{
+        Self{
+            vis: true,
+            vis2: Vis::B,
+        }
+    }
+}
+
+impl IfAllMulti{
+    fn show_hello(&mut self){
+        self.set_vis(!self.vis);
+    }
+    fn next_vis(&mut self) ->(){
+        if self.vis2.is_a(){
+            self.set_vis2(Vis::B);
+        }else if self.vis2.is_b(){
+            self.set_vis2(Vis::C);
+        }else{
+            self.set_vis2(Vis::A);
+        }
+    }
+    #[computed([vis2])]
+    fn is_b(&self) -> bool{
+        return self.vis2.is_b();
+    }
+    #[computed([vis2])]
+    fn is_c(&self) -> bool{
+        return self.vis2.is_c();
+    }
+}
+
+#[prop]
+#[derive(Default, Clone, Copy, Debug)]
+pub enum Vis{
+    #[default]
+    A,
+    B,
+    C
+}
+
+impl Vis{
+    pub fn is_a(&self) -> bool{
+        matches!(self, Vis::A)
+    }
+    pub fn is_b(&self) -> bool{
+        matches!(self, Vis::B)
+    }
+    pub fn is_c(&self) -> bool{
+        matches!(self, Vis::C)
+    }
+}
+</script>

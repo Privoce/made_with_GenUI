@@ -1,0 +1,10 @@
+[package]
+name = "router"
+version = "0.1.0"
+edition = "2021"
+authors = ["syf"]
+description = "test gen_ui router"
+license = "MIT"
+keywords = ["front_end", "ui"]
+
+[dependencies]

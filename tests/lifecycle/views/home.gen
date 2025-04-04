@@ -1,0 +1,75 @@
+<template>
+    <component name="Home" class="home_view">
+        <Hello id="header"></Hello>
+        <label id="ref_lb" text="'nothing'"></label>
+        <label id="up_lb" text="'update'"></label>
+        <button id="my_btn" theme="Error" @clicked="click_btn()">
+            <label as_prop="slot" text="'Click Me!'" font_size="12.0"></label>
+        </button>
+    </component>
+</template>
+
+<script>
+import!{
+    crate::components::hello::*;
+}
+
+#[component]
+pub struct Home{
+    num: u32
+}
+
+// init prop
+impl Default for Home{
+    fn default() -> Self{
+        Self{
+            num: 0
+        }
+    }
+}
+
+impl Home{
+    fn click_btn(&mut self){
+        let mut header = c_ref!(header);
+        let mut ref_lb = c_ref!(ref_lb);
+        self.num += 1;
+        header.set_my_text(format!("Clicked: {}", self.num));
+        ref_lb.set_text(format!("Clicked: {}", self.num));
+    }
+    #[before_update]
+    fn do_before_update(&mut self) -> (){
+        println!("do before update => home.gen!");
+        let mut lb = c_ref!(up_lb);
+        lb.set_text(format!("do before update: {}", self.num));
+    }
+
+    #[updated]
+    fn do_updated(&mut self){
+        println!("do updated => home.gen!");
+        self.num += 2;
+    }   
+
+    #[before_mount]
+    fn do_before_mount(&self){
+        println!("do before mounted: {}", self.num);
+    }
+
+    #[mounted]
+    fn do_mounted(&self){
+        println!("do mounted");
+    }
+}
+</script>
+
+<style>
+.home_view{
+    height: Fit;
+    flow: Down;
+    align: {
+        x: 0.5,
+        y: 0.5
+    };
+    spacing: 16.0;
+    padding: 12.0;
+}
+</style>

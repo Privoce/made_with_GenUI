@@ -1,0 +1,31 @@
+<template>
+    <component name="Home" class="home_view">
+        <label text="'hello'" :if="vis"></label>
+        <button @clicked="show_hello()">
+            <label as_prop="slot" text="'show hello'"></label>
+        </button>
+    </component>
+</template>
+
+<script>
+#[component]
+pub struct Home{
+    vis: bool
+}
+
+// init prop
+impl Default for Home{
+    fn default() -> Self{
+        Self{
+            vis: true,
+        }
+    }
+}
+
+impl Home{
+    fn show_hello(&mut self){
+        self.set_vis(!self.vis);
+    }
+}
+</script>
+

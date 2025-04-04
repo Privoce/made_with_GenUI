@@ -1,0 +1,4 @@
+<script>
+pub mod hello;
+pub mod easy;
+</script>

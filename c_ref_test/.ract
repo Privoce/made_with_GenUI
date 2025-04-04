@@ -1,3 +1,0 @@
-target = "gen_ui"
-members = [{ src = "c_ref", target = "src_gen_0" }]
-resources = [{ src = "gen_components", target = "../dist/resources/gen_components" }, { src = "makepad-widgets", target = "../dist/resources/makepad_widgets" }]

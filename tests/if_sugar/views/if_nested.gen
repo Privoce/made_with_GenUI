@@ -1,0 +1,38 @@
+<template>
+    <component name="IfNested" spacing="12.0" flow="Down">
+        <label :if="vis" text="'hello'"></label>
+        <view else>
+            <label :if="vis2" text="'world'"></label>
+            <label else text="'genui'"></label>
+            <button @clicked="show_vis2()"></button>
+        </view>
+        <button @clicked="show_hello()"></button>
+    </component>
+</template>
+
+<script>
+#[component]
+pub struct IfNested{
+    vis: bool,
+    vis2: bool,
+}
+
+// init prop
+impl Default for IfNested{
+    fn default() -> Self{
+        Self{
+            vis: true,
+            vis2: true,
+        }
+    }
+}
+
+impl IfNested{
+    fn show_hello(&mut self){
+        self.set_vis(!self.vis);
+    }
+    fn show_vis2(&mut self) {
+        self.set_vis2(!self.vis2);
+    }
+}
+</script>

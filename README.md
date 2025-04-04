@@ -5,3 +5,10 @@
 - [gosim example](https://gen.ipter.org/1/)
 - [Shader example](https://gen.ipter.org/3/)
 - wiki: some help doc for Makepad/GenUI
+
+
+## test deps
+gen_components = {path="/Users/shengyifei/projects/gen_ui/components"}
+makepad-widgets = {path="/Users/shengyifei/projects/makepad/makepad/widgets"}
+
+/Users/shengyifei/projects/gen_ui/ract_workspace/ract/target/release/ract

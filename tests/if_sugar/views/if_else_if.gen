@@ -1,0 +1,35 @@
+<template>
+    <component name="IfElseIf" spacing="12.0">
+        <label :if="vis1" text="'vis1'"></label>
+        <label :if="vis2" text="'vis2'"></label>
+        <button @clicked="show_vis()"></button>
+    </component>
+</template>
+
+<script>
+#[component]
+pub struct IfElseIf{
+    vis1: bool,
+    vis2: bool
+}
+
+// init prop
+impl Default for IfElseIf{
+    fn default() -> Self{
+        Self{
+            vis1: true,
+            vis2: true,
+        }
+    }
+}
+
+impl IfElseIf{
+    fn show_vis(&mut self){
+        if !self.vis2{
+            self.set_vis2(!self.vis2);
+        }else{
+            self.set_vis1(!self.vis1);
+        }
+    }
+}
+</script>

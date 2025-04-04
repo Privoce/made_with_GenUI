@@ -1,0 +1,45 @@
+<template>
+    <component name="MultiIf" class="home_view" spacing="12.0">
+        <label text="'if1'" :if="vis1"></label>
+        <label text="'if2'" :if="vis2"></label>
+        <label text="'if3'" :if="un_vis()"></label>
+        <button @clicked="show_vis1()">
+            <label as_prop="slot" text="'show if1'"></label>
+        </button>
+         <button @clicked="show_vis2()">
+            <label as_prop="slot" text="'show if2'"></label>
+        </button>
+    </component>
+</template>
+
+<script>
+#[component]
+pub struct MultiIf{
+    vis1: bool,
+    vis2: bool
+}
+
+// init prop
+impl Default for MultiIf{
+    fn default() -> Self{
+        Self{
+            vis1: true,
+            vis2: false,
+        }
+    }
+}
+
+impl MultiIf{
+    fn show_vis1(&mut self){
+        self.set_vis1(!self.vis1);
+    }
+    #[computed([vis1])]
+    fn un_vis(&self) -> bool{
+        return !self.vis1
+    }
+    fn show_vis2(&mut self){
+        self.set_vis2(!self.vis2);
+    }
+}
+</script>
+

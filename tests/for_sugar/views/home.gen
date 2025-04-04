@@ -1,0 +1,54 @@
+<template>
+    <component name="Home" class="home_view">
+        <Hello :list="lbs" id="header" height="40.0"></Hello>
+        <label id="my_lb" :for="(index, item) in lbs" :text="item"></label>
+        <button id="my_btn" theme="Error" @clicked="click_btn()">
+            <label as_prop="slot" text="'Click Me!'" font_size="12.0"></label>
+        </button>
+        <NestedFor></NestedFor>
+    </component>
+</template>
+
+<script>
+import!{
+    crate::components::hello::*;
+    crate::views::nested::*;
+}
+
+#[component]
+pub struct Home{
+    num: u32,
+    lbs: Vec<String>
+}
+
+impl Default for Home{
+    fn default() -> Self{
+        Self{
+            num: 0,
+            lbs: vec!["1".to_string(), "2".to_string(), "3".to_string()]
+        }
+    }
+}
+
+impl Home{
+    fn click_btn(&mut self){
+        let mut list = c_ref!(header).get_list();
+        list.push("Rust".to_string());
+        let mut header = c_ref!(header);
+        header.set_list(list);
+    }
+}
+</script>
+
+<style>
+.home_view{
+    height: Fit;
+    flow: Down;
+    align: {
+        x: 0.5,
+        y: 0.5
+    };
+    spacing: 16.0;
+    padding: 12.0;
+}
+</style>

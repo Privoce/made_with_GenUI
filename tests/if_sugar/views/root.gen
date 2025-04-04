@@ -1,0 +1,33 @@
+// default template for root.gen
+<template>
+  <component name="UiRoot">
+    <view theme="Dark" height="Fill" width="Fill" align="0.5" spacing="12.0" flow="Down">
+      <Home></Home>
+      <IfAllMulti></IfAllMulti>
+      <IfElseIfElse></IfElseIfElse>
+      <IfElseAndIfElse></IfElseAndIfElse>
+      <IfElse />
+      <IfElseIf></IfElseIf>
+      <IfIfElse></IfIfElse>
+      <IfMultiElseIf></IfMultiElseIf>
+      <MultiIf></MultiIf>
+      <IfNested></IfNested>
+    </view>
+  </component>
+</template>
+
+<script>
+import!{
+  crate::views::home::*;
+  crate::components::easy::*;
+  crate::views::multi_if::*;
+  crate::views::if_all_multi::*;
+  crate::views::if_else_and_if_else::*;
+  crate::views::if_else_if_else::*;
+  crate::views::if_else_if::*;
+  crate::views::if_else::*;
+  crate::views::if_if_else::*;
+  crate::views::if_multi_else_if::*;
+  crate::views::if_nested::*;
+}
+</script>

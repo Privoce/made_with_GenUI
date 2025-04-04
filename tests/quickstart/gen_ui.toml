@@ -1,0 +1,16 @@
+[compiler]
+target = "makepad"
+logo = true
+log_level = "info"
+excludes = ["Cargo.toml", "Cargo.lock", "target", ".gen_ui_cache", "gen_ui.toml", ".plugins"]
+
+[makepad]
+
+[makepad.root]
+path = "/Users/shengyifei/projects/gen_ui/made_with_GenUI/tests/quickstart/views/root.gen"
+window = { height = "Fill", width = "Fill", flow = "Down", window_size = { inner_size = { x = 1080.0, y = 720.0 } } }
+
+[makepad.dependencies]
+makepad-widgets = { path = "/Users/shengyifei/projects/makepad/makepad/widgets" }
+
+[plugins]

@@ -1,0 +1,29 @@
+<template>
+    <component name="IfElse">
+        <label :if="vis" text="'hello'"></label>
+        <label else text="'world'"></label>
+        <button @clicked="show_hello()"></button>
+    </component>
+</template>
+
+<script>
+#[component]
+pub struct IfElse{
+    vis: bool
+}
+
+// init prop
+impl Default for IfElse{
+    fn default() -> Self{
+        Self{
+            vis: true,
+        }
+    }
+}
+
+impl IfElse{
+    fn show_hello(&mut self){
+        self.set_vis(!self.vis);
+    }
+}
+</script>

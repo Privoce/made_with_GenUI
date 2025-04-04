@@ -1,0 +1,15 @@
+target = "gen_ui"
+members = [
+    { src = "c_ref", target = "src_gen_0" },
+    { src = "components", target = "src_gen_1" },
+    { src = "lifecycle", target = "src_gen_2" },
+    { src = "quickstart", target = "src_gen_3" },
+    { src = "for_sugar", target = "src_gen_4" },
+    { src = "if_sugar", target = "src_gen_5" },
+    { src = "router", target = "src_gen_6" },
+]
+resources = [
+    { src = "gen_components", target = "../dist/resources/gen_components" },
+    { src = "makepad-widgets", target = "../dist/resources/makepad_widgets" },
+]
+compiles = [5]

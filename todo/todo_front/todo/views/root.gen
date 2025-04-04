@@ -12,3 +12,7 @@ import!{
   crate::views::todo_list::*;
 }
 </script>
+
+<script>
+router!(app_router);
+</script>

@@ -1,0 +1,82 @@
+<template>
+    <component name="IfMultiElseIf" class="home_view" spacing="12.0">
+        <label text="'if1'" :if="is_a()"></label>
+        <label text="'if2'" :else_if="is_b()"></label>
+        <label text="'if3'" :else_if="is_c()"></label>
+        <label text="'if4'" :else_if="is_d(3)"></label>
+        <label text="'other'" else></label>
+        <button @clicked="next_vis()">
+            <label as_prop="slot" text="'next'"></label>
+        </button>
+    </component>
+</template>
+
+<script>
+#[component]
+pub struct IfMultiElseIf{
+    vis: Vis,
+    count: u32
+}
+
+// init prop
+impl Default for IfMultiElseIf{
+    fn default() -> Self{
+        Self{
+           vis: Vis::C,
+           count: 0,
+        }
+    }
+}
+
+impl IfMultiElseIf{
+    #[computed([vis])]
+    fn is_a(&self) -> bool{
+        self.vis.is_a()
+    }
+    #[computed([vis])]
+    fn is_b(&self) -> bool{
+        self.vis.is_b()
+    }
+    #[computed([vis])]
+    fn is_c(&self) -> bool{
+        self.vis.is_c()
+    }
+    #[computed([count])]
+    fn is_d(&mut self, add: u32) -> bool{
+        // self.set_count(self.count + add);
+        self.count += add;
+        self.count % 2 == 0
+    }
+    pub fn next_vis(&mut self){
+        if self.vis.is_a(){
+            self.set_vis(Vis::B);
+        }else if self.vis.is_b(){
+            self.set_vis(Vis::C);
+        }else{
+            self.set_vis(Vis::A);
+        }
+    }
+}
+
+#[prop]
+#[derive(Default, Clone, Copy, Debug)]
+pub enum Vis{
+    #[default]
+    A,
+    B,
+    C
+}
+
+impl Vis{
+    pub fn is_a(&self) -> bool{
+        matches!(self, Vis::A)
+    }
+    pub fn is_b(&self) -> bool{
+        matches!(self, Vis::B)
+    }
+    pub fn is_c(&self) -> bool{
+        matches!(self, Vis::C)
+    }
+}
+</script>
+

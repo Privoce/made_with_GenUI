@@ -1,0 +1,34 @@
+<template>
+    <component name="IfElseAndIfElse">
+        <label :if="vis" text="'hello'"></label>
+        <label else text="'world'"></label>
+        <label :if="vis2" text="'你好'"></label>
+        <label else text="'世界'"></label>
+        <button @clicked="show_hello()"></button>
+    </component>
+</template>
+
+<script>
+#[component]
+pub struct IfElseAndIfElse{
+    vis: bool,
+    vis2: bool,
+}
+
+// init prop
+impl Default for IfElseAndIfElse{
+    fn default() -> Self{
+        Self{
+            vis: true,
+            vis2: false,
+        }
+    }
+}
+
+impl IfElseAndIfElse{
+    fn show_hello(&mut self){
+        self.set_vis(!self.vis);
+        self.set_vis2(!self.vis2);
+    }
+}
+</script>
