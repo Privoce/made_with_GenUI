@@ -1,0 +1,17 @@
+version = "0.0.2"
+
+[values]
+"/Users/shengyifei/projects/gen_ui/made_with_GenUI/tests/router/views/root.gen" = "2b92ea11d32902a75cd53a8f6469fddafd7f97623313504d255f01ec008418f6"
+"/Users/shengyifei/projects/gen_ui/made_with_GenUI/tests/router/components/mod.gen" = "1b9d22a39e09e542e513c6b8f4a98222ec412b13aa4a8a14b1d7acb8f0d8b0d2"
+"/Users/shengyifei/projects/gen_ui/made_with_GenUI/tests/router/components/easy.gen" = "b40097840abbb9ae1ec9cd58b27ee7191d55ec812d4ccf08dc0b78a3fc20c54d"
+"/Users/shengyifei/projects/gen_ui/made_with_GenUI/tests/router/components/hello.gen" = "e05a9b8e11e62c974911e590d7fbae50801e9b6f7786a1c3bd70805f62c36d02"
+"/Users/shengyifei/projects/gen_ui/made_with_GenUI/tests/router/router/my_router.gen" = "c58c10e33a1559d8946d1d280dfc16b73f0ffb2d8d707a4a4bf3587b643eab24"
+"/Users/shengyifei/projects/gen_ui/made_with_GenUI/tests/router/views/mod.gen" = "9fc388745601574bc64f5871d19a3e30af12f545178e50204c6f363acd033567"
+"/Users/shengyifei/projects/gen_ui/made_with_GenUI/tests/router/resources/login.svg" = "7e282915860e9ce015067315c8a2ba6201ef8a897299f2cbb43dd43805a387cf"
+"/Users/shengyifei/projects/gen_ui/made_with_GenUI/tests/router/router/mod.gen" = "bd5315b6e1d11df5de6402f99edbbf35082ee0da8f286fea3a864a3f27654876"
+"/Users/shengyifei/projects/gen_ui/made_with_GenUI/tests/router/router.toml" = "c4c689d243f83b4947627915f01b6d14f04b0cc65b17d2c6c2ec7b4b75e19fa6"
+"/Users/shengyifei/projects/gen_ui/made_with_GenUI/tests/router/views/login.gen" = "8ba7c39d1cca1889ca58de436688b25abb9dd8fa203a29940344d5d2742e6c01"
+"/Users/shengyifei/projects/gen_ui/made_with_GenUI/tests/router/views/register.gen" = "fd7ee7b01dbfc15a090c46982ea54f7bbaa2750cd13120746cbafcac62c764f9"
+"/Users/shengyifei/projects/gen_ui/made_with_GenUI/tests/router/views/about.gen" = "f138ae91136531421c2b81570f66d7cb2d2ae97616273135ec6d0cf7b4f2c3ef"
+"/Users/shengyifei/projects/gen_ui/made_with_GenUI/tests/router/views/home.gen" = "178a74d81f5c82d27847cb7bb2c6512e75ac43a2349bf087535a57367c8de125"
+"/Users/shengyifei/projects/gen_ui/made_with_GenUI/tests/router/src/main.rs" = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"

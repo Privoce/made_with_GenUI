@@ -1,0 +1,5 @@
+<template>
+    <component name="About">
+        <label text="'this is About Page'" font_size="16.0"></label>
+    </component>
+</template>

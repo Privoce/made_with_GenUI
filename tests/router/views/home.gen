@@ -1,44 +1,51 @@
 <template>
-    <component name="Home" class="home_view">
-        <Hello id="header"></Hello>
-        <button id="my_btn" theme="Error" @clicked="click_btn()">
-            <label as_prop="slot" text="'Click Me!'" font_size="12.0"></label>
-        </button>
+    <component name="Home" class="home_view" flow="Right">
+        <view height="Fill" width="160.0" flow="Down" spacing="12.0" theme="Info" align="0.5">
+            <button id="to_login_btn" theme="Error" @clicked="to_page('login')">
+                <label as_prop="slot" text="'To Login'" font_size="12.0"></label>
+            </button>
+            <button id="to_register_btn" theme="Error" @clicked="to_page('register')">
+                <label as_prop="slot" text="'To Register'" font_size="12.0"></label>
+            </button>
+            <button id="to_about_btn" theme="Error" @clicked="to_page('about')">
+                <label as_prop="slot" text="'To About'" font_size="12.0"></label>
+            </button>
+            <button id="to_back_btn" theme="Success" @clicked="to_page('back')">
+                <label as_prop="slot" text="'Nav Back'" font_size="12.0"></label>
+            </button>
+        </view>
+        <MyRouter id="my_router"></MyRouter>
     </component>
 </template>
 
 <script>
 import!{
     crate::components::hello::*;
+    crate::router::my_router::*;
 }
 
 #[component]
-pub struct Home{
-    num: u32
-}
-
-// init prop
-impl Default for Home{
-    fn default() -> Self{
-        Self{
-            num: 0
-        }
-    }
-}
+pub struct Home{}
 
 impl Home{
-    fn click_btn(&mut self){
-        let mut header = c_ref!(header);
-        self.num += 1;
-        header.set_my_text(format!("Clicked: {}", self.num));
+    fn to_page(&mut self, page: &str) -> () {
+        let mut my_router = c_ref!(my_router);
+        
+        match page {
+            "login" => { my_router.nav_to(id!(login)); }
+            "register" => { my_router.nav_to(id!(register)); },
+            "about" => { my_router.nav_to(id!(nav_about)); },
+            "back" => { my_router.nav_back(); }
+            _ => {}
+        }
     }
 }
 </script>
 
 <style>
 .home_view{
-    height: Fit;
-    flow: Down;
+    height: Fill;
+    width: Fill;
     align: {
         x: 0.5,
         y: 0.5

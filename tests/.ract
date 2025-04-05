@@ -12,4 +12,4 @@ resources = [
     { src = "gen_components", target = "../dist/resources/gen_components" },
     { src = "makepad-widgets", target = "../dist/resources/makepad_widgets" },
 ]
-compiles = [5]
+compiles = [6]

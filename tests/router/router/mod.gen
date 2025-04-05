@@ -1,0 +1,3 @@
+<script>
+pub mod my_router;
+</script>
