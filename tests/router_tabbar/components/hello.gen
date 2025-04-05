@@ -1,0 +1,31 @@
+<template>
+    <component name="Hello" class="hello_view">
+        <label id="my_lb" :text="my_text" font_size="16.0"></label>
+    </component>
+</template>
+
+<script>
+#[component]
+pub struct Hello{
+    my_text: String
+}
+
+impl Default for Hello{
+    fn default() -> Self{
+        Self{
+            my_text: "Clicked: 0".to_string()
+        }
+    }
+}
+</script>
+
+<style>
+.hello_view{
+    height: Fit;
+    width: Fill;
+    align: {
+        x: 0.5, 
+        y: 0.5
+    };
+}
+</style>

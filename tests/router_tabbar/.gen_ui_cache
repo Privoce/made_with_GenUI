@@ -1,0 +1,16 @@
+version = "0.0.2"
+
+[values]
+"/Users/shengyifei/projects/gen_ui/made_with_GenUI/tests/router_tabbar/views/about.gen" = "f138ae91136531421c2b81570f66d7cb2d2ae97616273135ec6d0cf7b4f2c3ef"
+"/Users/shengyifei/projects/gen_ui/made_with_GenUI/tests/router_tabbar/components/easy.gen" = "b40097840abbb9ae1ec9cd58b27ee7191d55ec812d4ccf08dc0b78a3fc20c54d"
+"/Users/shengyifei/projects/gen_ui/made_with_GenUI/tests/router_tabbar/views/login.gen" = "8ba7c39d1cca1889ca58de436688b25abb9dd8fa203a29940344d5d2742e6c01"
+"/Users/shengyifei/projects/gen_ui/made_with_GenUI/tests/router_tabbar/resources/login.svg" = "7e282915860e9ce015067315c8a2ba6201ef8a897299f2cbb43dd43805a387cf"
+"/Users/shengyifei/projects/gen_ui/made_with_GenUI/tests/router_tabbar/components/hello.gen" = "e05a9b8e11e62c974911e590d7fbae50801e9b6f7786a1c3bd70805f62c36d02"
+"/Users/shengyifei/projects/gen_ui/made_with_GenUI/tests/router_tabbar/views/root.gen" = "c58c10e33a1559d8946d1d280dfc16b73f0ffb2d8d707a4a4bf3587b643eab24"
+"/Users/shengyifei/projects/gen_ui/made_with_GenUI/tests/router_tabbar/components/mod.gen" = "1b9d22a39e09e542e513c6b8f4a98222ec412b13aa4a8a14b1d7acb8f0d8b0d2"
+"/Users/shengyifei/projects/gen_ui/made_with_GenUI/tests/router_tabbar/views/register.gen" = "fd7ee7b01dbfc15a090c46982ea54f7bbaa2750cd13120746cbafcac62c764f9"
+"/Users/shengyifei/projects/gen_ui/made_with_GenUI/tests/router_tabbar/views/mod.gen" = "b220d59fe63c913653fdf7681d8f9d728ce0b202987440f3cc124f3ec6fda142"
+"/Users/shengyifei/projects/gen_ui/made_with_GenUI/tests/router_tabbar/resources/register.svg" = "4ec70375520cdc662dee82d248c5e4b31c1813c07490ede2e0fda217e9fc9c84"
+"/Users/shengyifei/projects/gen_ui/made_with_GenUI/tests/router_tabbar/router.toml" = "bc6c473b62d5604bc5884e8fcae021da70ea12b09d42e1948c5eee0bffd9a1ef"
+"/Users/shengyifei/projects/gen_ui/made_with_GenUI/tests/router_tabbar/views/home.gen" = "ef40ab391ccd679ffda034e492eee5ceca8a91f74a7aa0e1dfa153cea68acfb7"
+"/Users/shengyifei/projects/gen_ui/made_with_GenUI/tests/router_tabbar/src/main.rs" = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"

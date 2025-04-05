@@ -1,3 +1,3 @@
 [workspace]
-members = ["c_ref", "components", "lifecycle", "quickstart", "for_sugar", "if_sugar", "router", "src_gen_3", "src_gen_0", "src_gen_2", "src_gen_4", "src_gen_5", "src_gen_6"]
+members = ["c_ref", "components", "lifecycle", "quickstart", "for_sugar", "if_sugar", "router", "src_gen_3", "src_gen_0", "src_gen_2", "src_gen_4", "src_gen_5", "src_gen_6", "src_gen_7"]
 resolver = "2"

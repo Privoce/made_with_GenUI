@@ -7,9 +7,10 @@ members = [
     { src = "for_sugar", target = "src_gen_4" },
     { src = "if_sugar", target = "src_gen_5" },
     { src = "router", target = "src_gen_6" },
+    { src = "router_tabbar", target = "src_gen_7" },
 ]
 resources = [
     { src = "gen_components", target = "../dist/resources/gen_components" },
     { src = "makepad-widgets", target = "../dist/resources/makepad_widgets" },
 ]
-compiles = [6]
+compiles = [7]

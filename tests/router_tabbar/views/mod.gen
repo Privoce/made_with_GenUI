@@ -1,0 +1,7 @@
+<script>
+pub mod root;
+pub mod login;
+pub mod register;
+pub mod about;
+pub mod home;
+</script>
