@@ -661,6 +661,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "gen_macro"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f476b33c6ef0b5f85922e65bf829757b2eb3bec1c5ce29499ff195be33dcd0b6"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
 name = "getrandom"
 version = "0.2.15"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1060,6 +1071,12 @@ dependencies = [
  "arrayvec",
  "smallvec",
 ]
+
+[[package]]
+name = "lazy_static"
+version = "1.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bbd2bcb4c963f2ddae06a2efc7e9f3591312473c50c6685e1f298068316e66fe"
 
 [[package]]
 name = "libc"
@@ -2185,6 +2202,26 @@ version = "0.1.0"
 dependencies = [
  "gen_components",
  "makepad-widgets",
+]
+
+[[package]]
+name = "src_gen_8"
+version = "0.1.0"
+dependencies = [
+ "gen_components",
+ "makepad-widgets",
+]
+
+[[package]]
+name = "src_gen_9"
+version = "0.1.0"
+dependencies = [
+ "gen_components",
+ "gen_macro",
+ "lazy_static",
+ "makepad-widgets",
+ "serde",
+ "serde_json",
 ]
 
 [[package]]

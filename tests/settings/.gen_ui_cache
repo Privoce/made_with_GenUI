@@ -1,0 +1,15 @@
+version = "0.0.2"
+
+[values]
+"/Users/shengyifei/projects/gen_ui/made_with_GenUI/tests/settings/resources/genui.png" = "11de4eaa0eab05c8e4014dd99d8c536b6369bea697d8f8054f4eaa5e5b539cb0"
+"/Users/shengyifei/projects/gen_ui/made_with_GenUI/tests/settings/components/easy.gen" = "b40097840abbb9ae1ec9cd58b27ee7191d55ec812d4ccf08dc0b78a3fc20c54d"
+"/Users/shengyifei/projects/gen_ui/made_with_GenUI/tests/settings/components/hello.gen" = "e05a9b8e11e62c974911e590d7fbae50801e9b6f7786a1c3bd70805f62c36d02"
+"/Users/shengyifei/projects/gen_ui/made_with_GenUI/tests/settings/views/mod.gen" = "1b457bd6d616f8c24d06ee67215421d5f0603ced802bc13afeedfa8cb40eb23c"
+"/Users/shengyifei/projects/gen_ui/made_with_GenUI/tests/settings/views/root.gen" = "2e3b7fe407d317ff830f1501e1ccf299cabafb35bec76ddadaa0b2c3ac7e1942"
+"/Users/shengyifei/projects/gen_ui/made_with_GenUI/tests/settings/components/mod.gen" = "1b9d22a39e09e542e513c6b8f4a98222ec412b13aa4a8a14b1d7acb8f0d8b0d2"
+"/Users/shengyifei/projects/gen_ui/made_with_GenUI/tests/settings/views/home.gen" = "e484aeeb1f93722e85bbedf1877b35d9c5fe13267ac24904183794b0775227a2"
+"/Users/shengyifei/projects/gen_ui/made_with_GenUI/tests/settings/resources/browser.png" = "2ae731e1bd4a03993695f6418b12667ea70413bccbabfc30e7fd4bce7e8362b9"
+"/Users/shengyifei/projects/gen_ui/made_with_GenUI/tests/settings/src/main.rs" = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+"/Users/shengyifei/projects/gen_ui/made_with_GenUI/tests/settings/resources/computer.png" = "b069f584c6afce54003f299caa2d285b89451f0e39e883869f1c831e2e230ee3"
+"/Users/shengyifei/projects/gen_ui/made_with_GenUI/tests/settings/resources/phone.png" = "6ef37a708a01452d798f2cf46b789bbba3772d9779540b19dd25ec09f43a9283"
+"/Users/shengyifei/projects/gen_ui/made_with_GenUI/tests/settings/resources/avatar.jpg" = "8ba598352c1939df6acf3e0176f5a9ac92b235682f4160e777d477e0a9a1ce32"
